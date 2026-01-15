@@ -27,10 +27,12 @@ header {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    background: yellow;
+    background: black;
     align-items: center;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 200px;
+    padding-right: 200px;
+
+
 
 }
 
@@ -43,9 +45,14 @@ nav ul li {
     display:inline-block;
     margin-right: 10px;
     font-size: 1.2rem;
-    padding: 5px 15px 5px 15px;
     border-radius: 5px;
     background-color: grey;
+}
+
+nav ul li a {
+    padding: 5px 15px 5px 15px;
+    width: 100%;
+
 }
 
     
