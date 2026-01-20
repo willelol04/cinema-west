@@ -35,7 +35,7 @@ input[type="checkbox"]:not(:checked) {
 }
 
 input[type="checkbox"][disabled] {
-    visibility: hidden;
+
 }
 
 </style>

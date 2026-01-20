@@ -7,6 +7,7 @@
 
 <template>
   <Navbar />
+  <br>
   <main>
   <Hero />
   <Booking />

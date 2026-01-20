@@ -27,10 +27,7 @@ header {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    background: black;
     align-items: center;
-    padding-left: 200px;
-    padding-right: 200px;
 
 
 
@@ -43,16 +40,19 @@ header img {
 
 nav ul li {
     display:inline-block;
-    margin-right: 10px;
     font-size: 1.2rem;
     border-radius: 5px;
     background-color: grey;
 }
 
+nav ul li:not(:last-child) {
+    margin-right: 10px;
+}
+
 nav ul li a {
     padding: 5px 15px 5px 15px;
     width: 100%;
-
+    
 }
 
     

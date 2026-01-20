@@ -9,11 +9,25 @@
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis deleniti sed accusantium amet sint a minima quisquam molestias laboriosam eum natus ut ex eius consequatur doloremque architecto dolorum, incidunt odio!</p>
         <a href="#">Bläddra bland filmer...</a>
         </div>
-        <img src="../assets/hero.jpg">
+        <img src="../assets/movie1.webp">
     </section>
 
 </template>
 
+<style scoped>
+    section img {
+        width: 100%;
+
+    }
+    
+    .hero-description {
+        position: absolute;
+        top: 50%;
+    }
+</style>
+
+
+<!--
 
 <style scoped>
 
@@ -36,16 +50,6 @@ section img {
     height: auto;
 }
 
-.hero-description {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: start;
-    gap: 10%;
-    height: 100%;
-
-}
-
 
 .hero-description a {
     width: 33%;
@@ -60,4 +64,15 @@ section img {
     text-decoration: underline;
 }
 
+.hero-description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 10%;
+    height: 100%;
+
+}
 </style>
+
+-->
