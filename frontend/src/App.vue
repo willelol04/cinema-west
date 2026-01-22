@@ -9,7 +9,6 @@
   <Navbar />
   <br>
   <main>
-  <Hero />
   <Booking />
   </main>
 

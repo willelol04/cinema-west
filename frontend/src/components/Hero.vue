@@ -9,7 +9,6 @@
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis deleniti sed accusantium amet sint a minima quisquam molestias laboriosam eum natus ut ex eius consequatur doloremque architecto dolorum, incidunt odio!</p>
         <a href="#">Bläddra bland filmer...</a>
         </div>
-        <img src="../assets/movie1.webp">
     </section>
 
 </template>
