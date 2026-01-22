@@ -1,7 +1,7 @@
 <script setup>
   import Navbar from '@/components/Navbar.vue'
-  import Hero from '@/components/Hero.vue'
-  import Booking from '@/components/Booking.vue'
+  import Footer from '@/components/Footer.vue'
+  import { RouterView } from 'vue-router';
 </script>
 
 
@@ -12,11 +12,10 @@
 
 
 <template>
-  <Navbar />
-  <br>
-  <main>
-  <Booking />
-  </main>
+  <Navbar userType="yaaaay"/>
+  <RouterView />
+
+  <Footer/>
 
 </template>
 
