@@ -19,3 +19,7 @@ a:hover {
     text-decoration: underline;
     text-decoration-thickness: 2px;
 }
+
+ul {
+    list-style-type: none;
+}
