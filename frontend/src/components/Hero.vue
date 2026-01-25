@@ -87,8 +87,10 @@
     
     .tmdb-attribution  {
         right: 0;
-        position: absolute;
         width: 100%;
+        padding: 5px;
+        margin-top: 5px;
+        background: black;
     }
     
     

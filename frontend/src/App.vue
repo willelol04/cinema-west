@@ -12,7 +12,7 @@
 
 
 <template>
-  <Navbar userType="yaaaay"/>
+  <Navbar userType="Logga in"/>
   <RouterView />
 
   <Footer/>

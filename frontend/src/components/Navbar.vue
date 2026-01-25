@@ -17,8 +17,8 @@
         <h1><RouterLink to="/">cinema west</RouterLink></h1>
         <nav>
             <ul>
-                <li :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']"><RouterLink to="/">Home</RouterLink></li>
-                <li :class="[isActive('/movies') ? 'activeNavLink' : '', 'nav-item']"><RouterLink to="/movies">Movies</RouterLink></li>
+                <li ><RouterLink :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>
+                <li ><RouterLink :class="[isActive('/movies') ? 'activeNavLink' : '', 'nav-item']" to="/movies">Movies</RouterLink></li>
                 <li class="nav-item"><a href="#">{{ userType }}</a></li>
             </ul>
         </nav>
@@ -31,6 +31,8 @@
 .activeNavLink {
     text-decoration: underline;
     text-decoration-thickness: 2px;
+    background-color: black;
+    color: white
 }
 
 * {
@@ -58,7 +60,6 @@ header h1 {
 nav ul li {
     display:inline-block;
     font-size: 20px;
-    border-radius: 5px;
 }
 
 nav ul li:not(:last-child) {
@@ -67,8 +68,13 @@ nav ul li:not(:last-child) {
 
 
 nav ul li a {
-    padding: 45px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px;
     width: 100%;
+    transition: 500ms;
     
 }
 
