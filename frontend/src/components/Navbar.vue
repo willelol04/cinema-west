@@ -1,15 +1,25 @@
 <script setup>
+    
+    import { useRoute, RouterLink } from 'vue-router';
+    
+    const props = defineProps(['userType'])
+    
+
+    const isActive = (currentRoutePath) => {
+        const route = useRoute();
+        return route.path === currentRoutePath;
+    }
 
 </script>
 
 <template>
     <header>
-        <img src="../assets/logo-big.png" alt="cinema-west logo">
+        <h1><RouterLink to="/">cinema west</RouterLink></h1>
         <nav>
             <ul>
-                <li class="nav-item"><a href="#">Home</a></li>
-                <li class="nav-item"><a href="#">Movies</a></li>
-                <li class="nav-item"><a href="#">Log in</a></li>
+                <li ><RouterLink :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>
+                <li ><RouterLink :class="[isActive('/movies') ? 'activeNavLink' : '', 'nav-item']" to="/movies">Movies</RouterLink></li>
+                <li class="nav-item"><a href="#">{{ userType }}</a></li>
             </ul>
         </nav>
     </header>
@@ -18,42 +28,56 @@
 
 <style scoped>
 
+.activeNavLink {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    background-color: black;
+    color: white
+}
+
 * {
     box-sizing: border-box;
     font-family:Arial, Helvetica, sans-serif;
 }
 
 header {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     flex-direction: row;
     align-items: center;
-
-
-
+    padding-left: 200px;
+    padding-right: 200px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    border-bottom: 1px solid black;
 }
 
-header img {
-    height: 120px;
-    width: auto;
+header h1 {
+    font-size: 35px;
 }
 
 nav ul li {
     display:inline-block;
-    font-size: 1.2rem;
-    border-radius: 5px;
-    background-color: grey;
+    font-size: 20px;
 }
 
 nav ul li:not(:last-child) {
     margin-right: 10px;
 }
 
+
 nav ul li a {
-    padding: 5px 15px 5px 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px;
     width: 100%;
+    transition: 500ms;
     
 }
+
 
     
 </style>

@@ -1,77 +1,100 @@
 <script setup>
-
+    import { RouterLink } from 'vue-router';
 </script>
 
 <template>
     <section>
-        <div class="hero-description">
-        <h2>Star wars</h2>
+        <button onclick="console.log('hej')"><i class="pi pi-chevron-left"></i></button>
+        <div class="hero-left">
+        <h1>Jack Reacher</h1>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis deleniti sed accusantium amet sint a minima quisquam molestias laboriosam eum natus ut ex eius consequatur doloremque architecto dolorum, incidunt odio!</p>
-        <a href="#">Bläddra bland filmer...</a>
+        <RouterLink to="/movies">Bläddra bland filmer...</RouterLink>
         </div>
+        
+        <div class="hero-right">
+        <img class="hero-image" src="https://image.tmdb.org/t/p/original/cOg3UT2NYWHZxp41vpxAnVCOC4M.jpg">
+        <div class="tmdb-attribution"><img src="../assets/tmdb-logo-text.svg"></div>
+        </div>
+        <button><i class="pi pi-chevron-right"></i></button>
     </section>
 
 </template>
 
 <style scoped>
-    section img {
+
+    section{ 
         width: 100%;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        padding-left: 200px;
+        padding-right: 200px;
+        padding-top: 50px;
+        padding-bottom: 50px;
+        border-bottom: 1px solid black;
+    }
+    
+    button {
+        padding: 10px;
+    }
+    
+    i {
+        font-size: 1.2rem;
+    }
+    
+    .hero-right {
+        width: 20%;
+        position: relative;
+    }
+    
+    .hero-right img {
+        width: 100%;
+        height: auto;
+        text-align: right;
+    }
+    
+    section div {
+        width: 70%;
+    }
+    
+
+    .hero-left > * {
+        margin-bottom: 50px;
 
     }
     
-    .hero-description {
-        position: absolute;
-        top: 50%;
+    
+    
+    .hero-left a {
+        padding: 20px;
+        background-color: black;
+        width: 200px;
+        display: block;
+        border-radius: 7px;
+        color: white;
+        transition: 300ms;
     }
+    
+    
+    .hero-left h1 {
+        font-size: 25px;
+    }
+    
+    .hero-left a:hover {
+        text-decoration: underline;
+    }
+    
+    .tmdb-attribution  {
+        right: 0;
+        width: 100%;
+        padding: 5px;
+        margin-top: 5px;
+        background: black;
+    }
+    
+    
+    
+
+    
 </style>
-
-
-<!--
-
-<style scoped>
-
-section {
-    height: 50vh;
-    background: black;
-    padding-left: 200px;
-    padding-right: 200px;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
-    gap: 5%;
-    width: 100%;
-}
-
-section img {
-    width: 60%;
-    height: auto;
-}
-
-
-.hero-description a {
-    width: 33%;
-    display: block;
-    background: white;
-    color: black;
-    padding: 25px;
-    border-radius: 10px;
-}
-
-.hero-description a:hover {
-    text-decoration: underline;
-}
-
-.hero-description {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: start;
-    gap: 10%;
-    height: 100%;
-
-}
-</style>
-
--->

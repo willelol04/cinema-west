@@ -1,15 +1,24 @@
 import './assets/main.css'
 
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import 'primeicons/primeicons.css';
+import router from './router';
 
-createApp(App).mount('#app')
+const app = createApp(App)
 
-console.log("yoo")
+app.use(router);
 
-const promise = await fetch("http://localhost:8000/")
-const returnedText = await promise.json();
-console.log(returnedText.message);
 
-const fastapiParagraph = document.querySelector("#fastapi-test");
-fastapiParagraph.innerText = returnedText.message;
+app.mount('#app');
+
+
+//console.log("yoo")
+//
+//const promise = await fetch("http://localhost:8000/")
+//const returnedText = await promise.json();
+//console.log(returnedText.message);
+//
+//const fastapiParagraph = document.querySelector("#fastapi-test");
+//fastapiParagraph.innerText = returnedText.message;
+//
