@@ -4,7 +4,10 @@
 
 <template>
     <footer>
+        <div class="descriptions">
             <p>Copyright &copy; 2025 cinema west</p>
+            <p>This service uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</p>
+        </div>
         <ul>
             <li><a href="#"><i class="pi pi-facebook"></i></a></li>
             <li><a href="#"><i class="pi pi-twitter"></i></a></li>

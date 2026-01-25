@@ -5,13 +5,16 @@
 <template>
     <section>
         <button onclick="console.log('hej')"><i class="pi pi-chevron-left"></i></button>
-        <div class="hero-description">
+        <div class="hero-left">
         <h1>Jack Reacher</h1>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis deleniti sed accusantium amet sint a minima quisquam molestias laboriosam eum natus ut ex eius consequatur doloremque architecto dolorum, incidunt odio!</p>
         <RouterLink to="/movies">Bläddra bland filmer...</RouterLink>
         </div>
         
-        <img src="https://image.tmdb.org/t/p/original/cOg3UT2NYWHZxp41vpxAnVCOC4M.jpg">
+        <div class="hero-right">
+        <img class="hero-image" src="https://image.tmdb.org/t/p/original/cOg3UT2NYWHZxp41vpxAnVCOC4M.jpg">
+        <div class="tmdb-attribution"><img src="../assets/tmdb-logo-text.svg"></div>
+        </div>
         <button><i class="pi pi-chevron-right"></i></button>
     </section>
 
@@ -40,86 +43,56 @@
         font-size: 1.2rem;
     }
     
-    section img {
+    .hero-right {
         width: 20%;
+        position: relative;
+    }
+    
+    .hero-right img {
+        width: 100%;
+        height: auto;
+        text-align: right;
     }
     
     section div {
         width: 70%;
     }
     
-    .hero-description >:not(:last-child) {
+
+    .hero-left > * {
         margin-bottom: 50px;
+
     }
     
     
-    .hero-description a {
+    
+    .hero-left a {
         padding: 20px;
         background-color: black;
+        width: 200px;
+        display: block;
         border-radius: 7px;
         color: white;
         transition: 300ms;
     }
     
-    .hero-description h1 {
+    
+    .hero-left h1 {
         font-size: 25px;
     }
     
-    .hero-description a:hover {
+    .hero-left a:hover {
         text-decoration: underline;
     }
     
+    .tmdb-attribution  {
+        right: 0;
+        position: absolute;
+        width: 100%;
+    }
+    
+    
+    
 
     
 </style>
-
-
-<!--
-
-<style scoped>
-
-section {
-    height: 50vh;
-    background: black;
-    padding-left: 200px;
-    padding-right: 200px;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
-    gap: 5%;
-    width: 100%;
-}
-
-section img {
-    width: 60%;
-    height: auto;
-}
-
-
-.hero-description a {
-    width: 33%;
-    display: block;
-    background: white;
-    color: black;
-    padding: 25px;
-    border-radius: 10px;
-}
-
-.hero-description a:hover {
-    text-decoration: underline;
-}
-
-.hero-description {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: start;
-    gap: 10%;
-    height: 100%;
-
-}
-</style>
-
--->

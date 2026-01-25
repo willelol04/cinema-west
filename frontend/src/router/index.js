@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import HomeView from '@/views/HomeView.vue';
 import MoviesView from '@/views/MoviesView.vue';
+import MovieView from '@/views/MovieView.vue';
 import AdminView from '@/views/AdminView.vue';
 import AdminMovies from '@/components/AdminMovies.vue';
 import AdminScreenings from '@/components/AdminScreenings.vue';
@@ -20,6 +21,11 @@ const router = createRouter({
             path: '/movies',
             name: 'movies',
             component: MoviesView,
+        },
+        {
+            path: '/movie/:id',
+            name: 'movie',
+            component: MovieView,
         },
         {
             path: '/admin',
