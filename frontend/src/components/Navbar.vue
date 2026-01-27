@@ -1,15 +1,12 @@
 <script setup>
     
     import { useRoute, RouterLink } from 'vue-router';
-    import { reactive } from 'vue';
+    import { ref, reactive } from 'vue';
     
     const props = defineProps(['userType'])
     
     
-    const state = reactive({
-        dropDownState: false,
-
-    });
+    const dropDownState = ref(false);
 
     const isActive = (currentRoutePath) => {
         const route = useRoute();
@@ -18,14 +15,14 @@
     
 
     const toggleDropdown = () => {
-        state.dropDownState = !state.dropDownState;
-        console.log(state.dropDownState);
+        dropDownState.value = !dropDownState.value;
+        console.log(dropDownState.value);
         console.log("click");
     };
     
 
     function returnDropDownState() {
-        return state.dropDownState;
+        return dropDownState.value === true;
     }
     
     const userType = "Min profil";
@@ -41,11 +38,11 @@
                 <li ><RouterLink :class="[isActive('/about') ? 'activeNavLink' : '', 'nav-item']" to="/about">About</RouterLink></li>
             </ul>
         <div class="nav-dropdown">
-        <button @click="toggleDropdown()" class="nav-item user-btn"><i style="color: black; margin-right: 10px;" class="pi pi-user"></i>{{ userType }}<i v-if="state.dropDownState" style="color: black; margin-left: 10px;" class="pi pi-chevron-down"></i><i v-else style="color: black; margin-left: 10px;" class="pi pi-chevron-right"></i></button>
-        <ul :class="[state.dropDownState ? 'displayDropdown' : '', 'dropdown-list']" >
-            <li><RouterLink class="nav-item" to="/admin/movies" >Min profil</RouterLink></li>
-            <li><a class="nav-item" href="#">Mina biljetter</a></li>
-            <li><a class="nav-item" href="#">Logga ut</a></li>
+        <button @click="toggleDropdown()" class="nav-item user-btn"><i style="color: black; margin-right: 10px;" class="pi pi-user"></i>{{ userType }}<i v-if="returnDropDownState()" style="color: black; margin-left: 10px;" class="pi pi-chevron-down"></i><i v-else style="color: black; margin-left: 10px;" class="pi pi-chevron-right"></i></button>
+        <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
+            <li><RouterLink class="nav-item" to="/admin/movies" >My profile</RouterLink></li>
+            <li><a class="nav-item" href="#">My tickets</a></li>
+            <li><a class="nav-item" href="#">Log out</a></li>
         </ul>
         </div>
         </nav>

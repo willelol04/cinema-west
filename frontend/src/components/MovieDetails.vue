@@ -82,7 +82,7 @@ button {
 }
 
 .movie-details h3 {
-    color: rgb(102, 99, 99);
+    opacity: 60%;
 }
 
 .movie-title {

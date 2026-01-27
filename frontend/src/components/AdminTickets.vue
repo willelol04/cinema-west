@@ -18,8 +18,7 @@
     
 
     <div class="added-movies">
-    <h1>Anna Andersson - Biljetter</h1>
-    <MoviesList />
+    <MoviesList title="Anna Andersson - Biljetter"/>
     </div>
     
 </template>

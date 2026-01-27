@@ -1,9 +1,17 @@
 <script setup>
     import { RouterLink } from 'vue-router';
+    
+    defineProps({
+        title: {
+            type: String,
+            default: 'Movies',
+        }
+    });
 </script>
 
 <template>
     <section>
+    <h1>{{ title }}</h1>
     <div class="movies-container">
         <div class="movie-card">
             <img src="../assets/poster_examples/jack2.jpg">

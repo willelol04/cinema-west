@@ -18,8 +18,7 @@
     
 
     <div class="added-movies">
-    <h1>Already added movies:</h1>
-    <MoviesList />
+    <MoviesList title="Already added movies:"/>
     </div>
 
 </template>

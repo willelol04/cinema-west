@@ -7,11 +7,8 @@
 </script>
 <template>
   <Hero/>
-  
-  <h1>På bio idag - 2026-01-27</h1>
-  <MoviesList />
-  <h1>På bio imorgon - 2026-01-28</h1>
-  <MoviesList />
+  <MoviesList title="På bio idag - 2026-01-27"/>
+  <MoviesList title="På bio imorgon - 2026-01-28"/>
 
 </template>
 <style scoped>

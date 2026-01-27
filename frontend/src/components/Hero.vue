@@ -8,7 +8,7 @@
             title: "Star wars: the last jedi",
             description: 'Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.',
             date: '2024-01-01',
-            image: './src/assets/poster_examples/starwars.png',
+            image: './src/assets/poster_examples/jack1.jpg',
 
         },
         {
@@ -58,7 +58,7 @@
 
 section {
     width: 100%;
-    height: 500px;
+    height: 550px;
     background-image: url('../assets/space.jpg');
     background: linear-gradient(circle, rgba(99, 97, 97, 0.63), rgba(0, 0, 0, 0.5)),
     url('../assets/space.jpg');
@@ -84,7 +84,7 @@ p {
 
 .timeline img {
     display: block;
-
+    width: 250px;
     left: 0;
     transition: 300ms;
 }

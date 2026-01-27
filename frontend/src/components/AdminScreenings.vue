@@ -36,8 +36,7 @@
     
 
     <div class="added-movies">
-    <h1>Current Movie Screenings:</h1>
-    <MoviesList />
+    <MoviesList title="Upcoming screenings:"/>
     </div>
     
 </template>
