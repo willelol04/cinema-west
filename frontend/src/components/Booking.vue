@@ -47,7 +47,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: white;
+    filter:blur(50%);
+    display: none;
 
 }
 
@@ -55,6 +56,7 @@
     padding: 50px;
     border: 5px solid grey;
     border-radius: 5px;
+    background-color: white;
 }
 
 .screen {

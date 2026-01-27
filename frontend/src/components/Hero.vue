@@ -1,100 +1,104 @@
 <script setup>
     import { RouterLink } from 'vue-router';
+    import Timeline from 'primevue/timeline';
+    import Carousel from 'primevue/carousel';
+    
+    const upcomingPremieres = [
+        {
+            title: "Star wars: the last jedi",
+            description: 'Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.',
+            date: '2024-01-01',
+            image: './src/assets/poster_examples/starwars.png',
+
+        },
+        {
+            title: "Star wars: the last jedi",
+            description: 'Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.',
+            date: '2024-01-01',
+            image: './src/assets/poster_examples/starwars.png',
+
+        },
+        {
+            title: "Star wars: the last jedi",
+            description: 'Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.',
+            date: '2024-01-01',
+            image: './src/assets/poster_examples/starwars.png',
+
+        },
+    ];
+    
+    
+
+
 </script>
 
 <template>
     <section>
-        <button onclick="console.log('hej')"><i class="pi pi-chevron-left"></i></button>
-        <div class="hero-left">
-        <h1>Jack Reacher</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis deleniti sed accusantium amet sint a minima quisquam molestias laboriosam eum natus ut ex eius consequatur doloremque architecto dolorum, incidunt odio!</p>
-        <RouterLink to="/movies">Bläddra bland filmer...</RouterLink>
+    <h1>Kommande filmpremiärer:</h1>
+    <Timeline class="timeline" :value="upcomingPremieres" layout="horizontal" align="middle">
+        <div class="timeline-item">
+            
         </div>
-        
-        <div class="hero-right">
-        <img class="hero-image" src="https://image.tmdb.org/t/p/original/cOg3UT2NYWHZxp41vpxAnVCOC4M.jpg">
-        <div class="tmdb-attribution"><img src="../assets/tmdb-logo-text.svg"></div>
-        </div>
-        <button><i class="pi pi-chevron-right"></i></button>
+        <template #marker="slotProps">
+            <RouterLink to="/movie/3">
+            <div class="timeline-marker">
+            <img :src="slotProps.item.image">
+            <p>{{ slotProps.item.title }}</p>
+            <p class="premiere">Premiär: {{ slotProps.item.date }}</p>
+            </div>
+            </RouterLink>
+        </template>
+        <template #content="slotProps">
+        </template>
+    </Timeline>
     </section>
-
 </template>
 
 <style scoped>
 
-    section{ 
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row;
-        align-items: center;
-        padding-left: 200px;
-        padding-right: 200px;
-        padding-top: 50px;
-        padding-bottom: 50px;
-        border-bottom: 1px solid black;
-    }
-    
-    button {
-        padding: 10px;
-    }
-    
-    i {
-        font-size: 1.2rem;
-    }
-    
-    .hero-right {
-        width: 20%;
-        position: relative;
-    }
-    
-    .hero-right img {
-        width: 100%;
-        height: auto;
-        text-align: right;
-    }
-    
-    section div {
-        width: 70%;
-    }
-    
+section {
+    width: 100%;
+    height: 500px;
+    background-image: url('../assets/space.jpg');
+    background: linear-gradient(circle, rgba(99, 97, 97, 0.63), rgba(0, 0, 0, 0.5)),
+    url('../assets/space.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
 
-    .hero-left > * {
-        margin-bottom: 50px;
+    text-align: left;
+    padding: 20px 200px;
+    backdrop-filter: blur(10px)
+}
 
-    }
-    
-    
-    
-    .hero-left a {
-        padding: 20px;
-        background-color: black;
-        width: 200px;
-        display: block;
-        border-radius: 7px;
-        color: white;
-        transition: 300ms;
-    }
-    
-    
-    .hero-left h1 {
-        font-size: 25px;
-    }
-    
-    .hero-left a:hover {
-        text-decoration: underline;
-    }
-    
-    .tmdb-attribution  {
-        right: 0;
-        width: 100%;
-        padding: 5px;
-        margin-top: 5px;
-        background: black;
-    }
-    
-    
-    
+.timeline {
+    width: 100%;
+    color:white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8)
 
-    
+}
+
+p {
+    display: block;
+    text-align: center;
+}
+
+.timeline img {
+    display: block;
+
+    left: 0;
+    transition: 300ms;
+}
+
+.premiere {
+    color: #e50914d5;
+}
+.timeline img:hover{
+    box-shadow: 2px 2px 61px 0px rgba(245,239,239,0.75);
+    -webkit-box-shadow: 2px 2px 61px 0px rgba(245,239,239,0.75);
+    -moz-box-shadow: 2px 2px 61px 0px rgba(245,239,239,0.75);
+    cursor:pointer;
+    transform: translateY(-5px);
+
+}
+
 </style>

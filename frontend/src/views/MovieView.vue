@@ -1,11 +1,11 @@
 <script setup>
-    import Movie from '@/components/Movie.vue';
+    import MovieDetails from '@/components/MovieDetails.vue';
     import Booking from '@/components/Booking.vue';
 
 </script>
 
 <template>
-    <Movie />
+    <MovieDetails />
     <Booking />
 
 
