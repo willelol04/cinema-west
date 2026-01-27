@@ -28,7 +28,13 @@ a {
     margin-top: 30px;
     border-radius: 5px;
     background-color: #e50914;
-    color: black;
+    color: white;
+    transition: 300ms;
+}
+
+a:hover {
+    color: #e50914; 
+    background-color: rgb(233, 222, 222);
 }
 
 </style>
