@@ -4,6 +4,8 @@ import HomeView from '@/views/HomeView.vue';
 import MoviesView from '@/views/MoviesView.vue';
 import MovieView from '@/views/MovieView.vue';
 import AdminView from '@/views/AdminView.vue';
+import NotFoundView from '@/views/NotFoundView.vue';
+
 import AdminMovies from '@/components/AdminMovies.vue';
 import AdminScreenings from '@/components/AdminScreenings.vue';
 import AdminTickets from '@/components/AdminTickets.vue';
@@ -44,6 +46,11 @@ const router = createRouter({
                     component: AdminTickets,
                 },
             ],
+        },
+        {
+            path: '/:catchAll(.*)',
+            name: 'not-found',
+            component: NotFoundView,
         },
         
     ],

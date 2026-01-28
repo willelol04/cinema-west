@@ -43,8 +43,8 @@
 
 .side-nav {
     width: 15%;
-    background: rgb(146, 140, 140);
     padding-top: 100px;
+    border-right: 1px solid #404040;
 }
 
 main {
@@ -54,8 +54,9 @@ main {
     flex-direction: column;
     justify-content: space-around;
 }
+
 .activeNavLink {
-    background-color: rgb(110, 106, 106);
+    color: #e50914;
 }
     
 ul {
@@ -74,11 +75,11 @@ li a {
     width: 100%;
     display: block;
     padding: 15px;
+    transition: 300ms;
 }
     
 a:hover {
-    text-decoration: none;
-    background-color: rgb(110, 106, 106);
+    color:#e50914;
 }
 
 

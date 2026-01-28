@@ -3,10 +3,11 @@
     background: none;
     box-shadow: none;
     border: none;
-    color: black;
     box-sizing: border-box;
     padding: 0;
-    margin: 0;
+    margin: 0;            
+    font-family: 'Inter', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
 }
 
 
@@ -14,11 +15,11 @@ button:hover, a:hover {
     cursor: pointer;
 }
 
-
-a:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
+body {
+    background: #1a1a1a;
 }
+
+
 
 ul {
     list-style-type: none;

@@ -18,13 +18,13 @@
         </div>
         <div class="movie-screenings">
             <h3>Boka biljetter:</h3>
-            <button>14 januari 14.00</button>
-            <button>31 januari 19.00</button>
-            <button>1 februari 21.00</button>
-            <button>1 februari 21.00</button>
-            <button>1 februari 21.00</button>
-            <button>1 februari 21.00</button>
-            <button>1 februari 21.00</button>
+            <button class="movie-date-btn">14 januari 14.00</button>
+            <button class="movie-date-btn">31 januari 19.00</button>
+            <button class="movie-date-btn">1 februari 21.00</button>
+            <button class="movie-date-btn">1 februari 21.00</button>
+            <button class="movie-date-btn">1 februari 21.00</button>
+            <button class="movie-date-btn">1 februari 21.00</button>
+            <button class="movie-date-btn">1 februari 21.00</button>
         </div>
     </div>
     </div>
@@ -62,23 +62,27 @@
 
 
 button {
-    background-color: black;
+    background-color: #2d2d2d;
     color: white;
     padding: 30px;
-    border: 1px solid black;
+    border: 1px solid #404040;
 }
 
 button {
     margin: 15px;
 }
 
-button:hover {
-    background: white;
-    color: black;
+.movie-date-btn:hover {
+    background: #e50914;
+}
+
+.movie-date-btn {
+    border-radius: 5px;
+    transition: 250ms;
 }
 
 .movie-details h3 {
-    color: rgb(102, 99, 99);
+    opacity: 60%;
 }
 
 .movie-title {

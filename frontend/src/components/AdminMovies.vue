@@ -18,8 +18,7 @@
     
 
     <div class="added-movies">
-    <h1>Already added movies:</h1>
-    <MoviesList />
+    <MoviesList title="Already added movies:"/>
     </div>
 
 </template>
@@ -38,12 +37,17 @@ form {
 input {
     border: 1px solid black;
     padding: 10px;
+    background: white;
+    color: black;
+    border-bottom: 1px solid #404040;
 
 }
 
 
+
 input[type="search"] {
     width: 50%;
+    border-radius: 50px;
 }
     
 </style>
