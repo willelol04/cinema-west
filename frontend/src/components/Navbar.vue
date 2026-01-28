@@ -1,15 +1,15 @@
 <script setup>
     
     import { useRoute, RouterLink } from 'vue-router';
-    import { ref, reactive } from 'vue';
+    import { ref, reactive, watch } from 'vue';
     
     const props = defineProps(['userType'])
     
     
     const dropDownState = ref(false);
+    const route = useRoute();
 
     const isActive = (currentRoutePath) => {
-        const route = useRoute();
         return route.path === currentRoutePath;
     }
     
@@ -26,7 +26,13 @@
     }
     
     const userType = "Min profil";
-
+    
+    watch(
+      () => route.fullPath,
+      () => {
+        dropDownState.value = false
+      }
+    );
 </script>
 
 <template>
