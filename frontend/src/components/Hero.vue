@@ -33,25 +33,23 @@
 </script>
 
 <template>
-    <section>
-    <h1>Kommande filmpremiärer:</h1>
-    <Timeline class="timeline" :value="upcomingPremieres" layout="horizontal" align="middle">
-        <div class="timeline-item">
-            
-        </div>
-        <template #marker="slotProps">
-            <RouterLink to="/movie/3">
-            <div class="timeline-marker">
-            <img :src="slotProps.item.image">
-            <p>{{ slotProps.item.title }}</p>
-            <p class="premiere">Premiär: {{ slotProps.item.date }}</p>
-            </div>
-            </RouterLink>
-        </template>
-        <template #content="slotProps">
-        </template>
-    </Timeline>
-    </section>
+      <Carousel3d>
+    <Slide :index="0">
+      Slide 1 Content
+    </Slide>
+    <Slide :index="1">
+      Slide 2 Content
+    </Slide>
+        <Slide :index="2">
+      Slide 3 Content
+    </Slide>
+    <Slide :index="3">
+      Slide 4 Content
+    </Slide>
+    <Slide :index="4">
+      Slide 5 Content
+    </Slide>
+  </Carousel3d>
 </template>
 
 <style scoped>
