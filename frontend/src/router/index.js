@@ -5,10 +5,12 @@ import MoviesView from '@/views/MoviesView.vue';
 import MovieView from '@/views/MovieView.vue';
 import AdminView from '@/views/AdminView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
+import NotFoundView from '@/views/AboutView.vue';
 
 import AdminMovies from '@/components/AdminMovies.vue';
 import AdminScreenings from '@/components/AdminScreenings.vue';
 import AdminTickets from '@/components/AdminTickets.vue';
+import AboutView from '@/views/AboutView.vue';
 
 
 const router = createRouter({
@@ -18,6 +20,11 @@ const router = createRouter({
             path: '/',
             name: 'home',
             component: HomeView,
+        },
+        {
+            path: '/',
+            name: 'about',
+            component: AboutView,
         },
         {
             path: '/movies',
