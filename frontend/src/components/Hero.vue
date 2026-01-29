@@ -40,7 +40,7 @@
 onMounted(async function fetchUpcoming() {
     const upcomingMoviePromise = await fetch("http://localhost:8000/getupcoming")
     const upcomingMovieObject = await upcomingMoviePromise.json();
-    upcomingMovies.value = upcomingMovieObject.results.slice(0,5);
+    upcomingMovies.value = upcomingMovieObject.results.slice(0,20);
     console.log(upcomingMovies.value[0])
     console.log(upcomingMovies.value[1].title)
     fetchComplete.value = true;

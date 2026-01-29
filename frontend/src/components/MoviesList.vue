@@ -104,8 +104,8 @@ import MoviesView from '@/views/MoviesView.vue';
     <div class="movies-header">
     <h1 class="title">{{ props.title }}</h1>
     <div v-if="movies.length > display" class="scroll">
-        <button :class="[!canScrollLeft() ? 'disabled-scroll-button': '', 'scroll-left']"  @click="scrollLeft()" ><i class="pi pi-chevron-circle-left" ></i></button>
-        <button :class="[!canScrollRight() ? 'disabled-scroll-button': '', 'scroll-right']"  @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
+        <button class="scroll-left" :disabled="!canScrollLeft()"  @click="scrollLeft()" ><i class="pi pi-chevron-circle-left" ></i></button>
+        <button class="scroll-right"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
     </div>
     </div>
     <div class="movies-container">
@@ -157,11 +157,9 @@ section {
     margin-right: 8px;
 }
 
-.disabled-scroll-button {
-    opacity: 50%;
-}
-.disabled-scroll-button:hover {
+.scroll button:disabled {
     cursor: default;
+    opacity: 50%;
 }
 
 .movies-container {
