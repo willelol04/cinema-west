@@ -56,7 +56,7 @@ onMounted(async function fetchUpcoming() {
 
 <template>
     <section>
-    <h1 style="text-align: center;">Kommande premiärer:</h1>
+    <h1 style="text-align: center;">Upcoming premieres</h1>
  <Carousel3d v-if="fetchComplete" class="carousel" :space="600" :display="3" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="500" :height="326">
     <Slide v-for="(item, ind) in upcomingMovies" class="slide" :index="ind">
     <div class="upcoming-movie">

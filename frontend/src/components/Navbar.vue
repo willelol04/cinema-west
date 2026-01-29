@@ -25,7 +25,7 @@
         return dropDownState.value === true;
     }
     
-    const userType = "Min profil";
+    const userType = "My profile";
     
     watch(
       () => route.fullPath,
