@@ -1,6 +1,6 @@
 <script setup>
     import { RouterLink } from 'vue-router';
-    import { ref } from 'vue';
+    import { onMounted, ref } from 'vue';
     import Timeline from 'primevue/timeline';
     import Carousel from 'primevue/carousel';
     
@@ -33,6 +33,22 @@
         window.location.href = "/movie/3";
     }
     
+    const upcomingMovies = ref([]);
+    const fetchComplete = ref(false);
+    
+    
+onMounted(async function fetchUpcoming() {
+    const upcomingMoviePromise = await fetch("http://localhost:8000/getupcoming")
+    const upcomingMovieObject = await upcomingMoviePromise.json();
+    upcomingMovies.value = upcomingMovieObject.results.slice(0,5);
+    console.log(upcomingMovies.value[0])
+    console.log(upcomingMovies.value[1].title)
+    fetchComplete.value = true;
+
+})
+
+
+
     
 
 
@@ -41,18 +57,18 @@
 <template>
     <section>
     <h1 style="text-align: center;">Kommande premiärer:</h1>
- <Carousel3d class="carousel" :space="600" :display="3" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="500" :height="326">
-    <Slide v-for="(item, ind) in [1,1,1,1]" class="slide" :index="ind">
+ <Carousel3d v-if="fetchComplete" class="carousel" :space="600" :display="3" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="500" :height="326">
+    <Slide v-for="(item, ind) in upcomingMovies" class="slide" :index="ind">
     <div class="upcoming-movie">
-    <img src="../assets/poster_examples/starwars.png">
+    <img :src="`https://image.tmdb.org/t/p/original`+item.poster_path" height="326" width="auto">
     <div class="right">
-        {{ upcomingPremieres[0].title }} - {{ ind }}
+        {{ item.title }}
         <br>
         <br>
-        {{ upcomingPremieres[0].date }}
+        {{ item.release_date }}
         <br>
         <br>
-        {{ upcomingPremieres[0].description }}
+        {{ item.overview }}
     </div>
     </div>
     </Slide>

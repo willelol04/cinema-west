@@ -29,12 +29,3 @@ app.use(Carousel3dPlugin);
 app.mount('#app');
 
 
-//console.log("yoo")
-//
-//const promise = await fetch("http://localhost:8000/")
-//const returnedText = await promise.json();
-//console.log(returnedText.message);
-//
-//const fastapiParagraph = document.querySelector("#fastapi-test");
-//fastapiParagraph.innerText = returnedText.message;
-//
