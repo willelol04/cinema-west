@@ -1,5 +1,6 @@
 <script setup>
     import { RouterLink } from 'vue-router';
+    import { ref } from 'vue';
     import Timeline from 'primevue/timeline';
     import Carousel from 'primevue/carousel';
     
@@ -27,10 +28,76 @@
         },
     ];
     
+
+    const goToMovie = () => {
+        window.location.href = "/movie/3";
+    }
+    
     
 
 
 </script>
+
+<template>
+    <section>
+    <h1 style="text-align: center;">Kommande premiärer:</h1>
+ <Carousel3d class="carousel" :space="600" :display="3" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="500" :height="326">
+    <Slide v-for="(item, ind) in [1,1,1,1]" class="slide" :index="ind">
+    <div class="upcoming-movie">
+    <img src="../assets/poster_examples/starwars.png">
+    <div class="right">
+        {{ upcomingPremieres[0].title }} - {{ ind }}
+        <br>
+        <br>
+        {{ upcomingPremieres[0].date }}
+        <br>
+        <br>
+        {{ upcomingPremieres[0].description }}
+    </div>
+    </div>
+    </Slide>
+
+
+  </Carousel3d>
+  </section>
+</template>
+
+<style scoped>
+
+section {
+    padding: 20px 10vw;
+}
+
+.slide, .current {
+    background-color: rgba(43, 43, 43, 0.753);
+    border-radius: 5px;
+    transition: 300ms;
+}
+
+.slide:hover {
+    cursor:pointer;
+}
+
+.upcoming-movie {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+
+
+.right {
+    padding: 20px;
+}
+
+
+
+
+ 
+
+</style>
+
+<!--
 
 <template>
     <section>
@@ -102,3 +169,8 @@ p {
 }
 
 </style>
+
+
+
+
+-->

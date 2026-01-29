@@ -16,15 +16,18 @@
 
     </div>
     
-
-    <div class="added-movies">
+    <!--
     <MoviesList title="Already added movies:"/>
-    </div>
+    -->
 
 </template>
 
 
 <style scoped>
+
+h1 {
+    display: block;
+}
 
 label {
     display: block;
@@ -47,7 +50,8 @@ input {
 
 input[type="search"] {
     width: 50%;
-    border-radius: 50px;
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
 }
     
 </style>

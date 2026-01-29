@@ -30,9 +30,12 @@ footer {
     padding-right: 200px;
     padding-top: 50px;
     padding-bottom: 50px;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
+    border-top: 1px solid #404040;
     font-size: 20px;
+    position: absolute;
+    bottom: 0;
+    margin-top: 20px;
+    height: 200px;
 }
 
 

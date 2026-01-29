@@ -44,7 +44,7 @@
                 <li ><RouterLink :class="[isActive('/about') ? 'activeNavLink' : '', 'nav-item']" to="/about">About</RouterLink></li>
             </ul>
         <div class="nav-dropdown">
-        <button @click="toggleDropdown()" class="nav-item user-btn"><i style="color: black; margin-right: 10px;" class="pi pi-user"></i>{{ userType }}<i v-if="returnDropDownState()" style="color: black; margin-left: 10px;" class="pi pi-chevron-down"></i><i v-else style="color: black; margin-left: 10px;" class="pi pi-chevron-right"></i></button>
+        <button @click="toggleDropdown()" class="nav-item user-btn">{{ userType }}<i v-if="returnDropDownState()" class="pi pi-chevron-down"></i><i v-else class="pi pi-chevron-right"></i></button>
         <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
             <li><RouterLink class="nav-item" to="/admin/movies" >My profile</RouterLink></li>
             <li><a class="nav-item" href="#">My tickets</a></li>
@@ -75,7 +75,7 @@ nav {
     color: white;
     border-bottom: 1px solid #404040;
     padding-bottom: 20px;
-    padding: 20px 200px;
+    padding: 20px 20vw;
 }
 
 header h1 {
@@ -87,12 +87,10 @@ nav ul li {
     font-size: 18px;
 }
 
-.nav-item:not(:last-child) {
-    margin-right: 10px;
-}
 
 
-.nav-item {
+
+li .nav-item {
     transition: 300ms;
     margin-right: 20px;
     width: 100%;
@@ -103,21 +101,19 @@ nav ul li {
     color: #e50914;
 }
     
-.user-btn {
-    width: 175px;
-    background-color: white;
-    color: #1a1a1a;
-    padding: 8px 5px;
-    border-radius: 5px;
-    font-size: 18px;
+
+.pi {
+    color: white;
+    margin-left: 15px;
+    
 }
     
 
 .dropdown-list {
     width: 175px;
     position: fixed;
-    background-color: white;
-    color: #1a1a1a;
+    background-color: rgba(43, 43, 43, 0.753);
+    color: white;
     padding: 10px 15px;
     border-radius: 5px;
     display: none;
@@ -133,7 +129,7 @@ nav ul li {
 }
 
 .nav-dropdown ul li a {
-    color: #1a1a1a;
+    color: white;
     padding: 5px;
     display: block;
     
@@ -145,6 +141,16 @@ nav ul li {
 }
     
     
+.user-btn {
+    width: 175px;
+    background-color: rgba(43, 43, 43, 0.753);
+    color: white;
+    padding: 8px 5px;
+    border-radius: 5px;
+    font-size: 18px;
+    border: 1px solid #404040;
+    margin: 0;
+}
 
 
 

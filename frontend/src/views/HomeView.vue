@@ -7,12 +7,11 @@
 </script>
 <template>
   <Hero/>
-  <MoviesList title="På bio idag - 2026-01-27"/>
-  <MoviesList title="På bio imorgon - 2026-01-28"/>
+  <div class="hr" style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b"></div>
+  <MoviesList title="På bio idag"/>
+  <div class="hr" style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b" ></div>
+  <MoviesList title="På bio imorgon" />
 
 </template>
 <style scoped>
-    h1 {
-      padding: 60px 200px;
-    }
 </style>
