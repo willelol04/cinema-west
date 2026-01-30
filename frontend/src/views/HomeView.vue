@@ -8,9 +8,9 @@
 <template>
   <Hero/>
   <div class="hr" style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b"></div>
-  <MoviesList title="Today's screenings"/>
+  <MoviesList title="Playing Today:"/>
   <div class="hr" style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b" ></div>
-  <MoviesList title="Tomorrow's screenings" />
+  <MoviesList title="Playing Tomorrow:" />
 
 </template>
 <style scoped>

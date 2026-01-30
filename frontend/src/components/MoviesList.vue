@@ -108,21 +108,29 @@ import MoviesView from '@/views/MoviesView.vue';
         <button class="scroll-right"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
     </div>
     </div>
-    <div class="movies-container">
-        <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="index">
+        <TransitionGroup name="list" tag="div" class="movies-container">
+        <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
         <RouterLink :to="`/movie/`+ index ">
             <img src="../assets/poster_examples/jack2.jpg">
             <h2>{{ movie.title }}</h2>
         </RouterLink>
         </div>
-
-    </div>
+        </TransitionGroup>
 
     </section>
 
 </template>
 
 <style scoped>
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
 
 
 .movies-header {
@@ -162,13 +170,12 @@ section {
     opacity: 50%;
 }
 
-.movies-container {
+.movies-container, .movies-grid {
     width: 100%;
     display: grid;
     margin: 0 auto;
     grid-template-columns: repeat(5, minmax(100px, 1fr));
     gap: 30px;
-    overflow: auto;
     padding-top: 10px;
 
 }
@@ -201,9 +208,10 @@ section {
 .movie-card {
     background-color: #2d2d2d;
     border-radius: 10px;
-    transition: 300ms;
     border: 1px solid #404040;
     border-bottom: none;
+    transition: 300ms;
+
 
 }
 
@@ -224,4 +232,21 @@ section {
     text-align: center;
 }
 
+.list-move, 
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.list-leave-active {
+  display: none;
+}
 </style>

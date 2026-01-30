@@ -3,6 +3,7 @@
     import { onMounted, ref } from 'vue';
     import Timeline from 'primevue/timeline';
     import Carousel from 'primevue/carousel';
+    import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
     
     const upcomingPremieres = [
         {
@@ -38,12 +39,19 @@
     
     
 onMounted(async function fetchUpcoming() {
-    const upcomingMoviePromise = await fetch("http://localhost:8000/getupcoming")
-    const upcomingMovieObject = await upcomingMoviePromise.json();
-    upcomingMovies.value = upcomingMovieObject.results.slice(0,20);
-    console.log(upcomingMovies.value[0])
-    console.log(upcomingMovies.value[1].title)
-    fetchComplete.value = true;
+    try {
+        const upcomingMoviePromise = await fetch("http://localhost:8000/getupcoming")
+        const upcomingMovieObject = await upcomingMoviePromise.json();
+        upcomingMovies.value = upcomingMovieObject.results.slice(0,20);
+        fetchComplete.value = true;
+
+    } catch(e) {
+        console.log(e);
+        setInterval(() => {
+            fetchUpcoming()
+        }, 10000);
+        
+    }
 
 })
 
@@ -56,7 +64,7 @@ onMounted(async function fetchUpcoming() {
 
 <template>
     <section>
-    <h1 style="text-align: center;">Upcoming premieres</h1>
+    <h1 style="text-align: center;">Coming soon</h1>
  <Carousel3d v-if="fetchComplete" class="carousel" :space="600" :display="3" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="500" :height="326">
     <Slide v-for="(item, ind) in upcomingMovies" class="slide" :index="ind">
     <div class="upcoming-movie">
@@ -75,11 +83,18 @@ onMounted(async function fetchUpcoming() {
 
 
   </Carousel3d>
+  <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
   </section>
 </template>
 
 <style scoped>
 
+
+.fetch-loading {
+    margin: 0 auto;
+    text-align: center;
+    padding: 100px;
+}
 section {
     padding: 20px 10vw;
 }
@@ -105,8 +120,6 @@ section {
 .right {
     padding: 20px;
 }
-
-
 
 
  

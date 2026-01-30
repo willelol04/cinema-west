@@ -33,10 +33,21 @@
         dropDownState.value = false
       }
     );
+    
+
+    const isDesktop = true;
+    const showSideNav = ref(false)
+    
+
+    const toggleSidenav = () => {
+        showSideNav.value = !showSideNav.value;
+    }
+
 </script>
 
 <template>
         <nav>
+        <div v-if="isDesktop" class="desktop-nav">
         <h1><RouterLink to="/">cinema west</RouterLink></h1>
             <ul>
                 <li ><RouterLink :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>
@@ -51,12 +62,58 @@
             <li><a class="nav-item" href="#">Log out</a></li>
         </ul>
         </div>
+
+        </div>
+        <div v-else class="mobile-nav">
+        <h1><RouterLink to="/">cinema west</RouterLink></h1>
+            <button v-if="!showSideNav" @click="toggleSidenav()"><i class="pi pi-bars sidenav-toggle"></i></button>
+            <button v-else @click="toggleSidenav()"><i class="pi pi-times sidenav-toggle"></i></button>
+        </div>
         </nav>
+        <Transition name="fade">
+        <div v-if="showSideNav" class="side-nav">
+            <ul>
+                <li><RouterLink to="#">Home</RouterLink></li>
+                <li><RouterLink to="#">Movies</RouterLink></li>
+                <li><RouterLink to="#">About</RouterLink></li>
+                <li><RouterLink to="#">My profile</RouterLink></li>
+                <li><RouterLink to="#">Log out</RouterLink></li>
+            </ul>
+        </div>
+        </Transition>
         
 </template>
 
 
 <style scoped>
+
+.sidenav-toggle {
+    z-index: 3;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.side-nav {
+    height: 100vh;
+    width: 400px;
+    position:fixed;
+    top: 0;
+    left: 0;
+    text-align: center;
+    background-color: black;
+    z-index: 1;
+}
+
+.side-nav li {
+    display: block;
+}
 
 .activeNavLink {
     color: #e50914;
@@ -66,7 +123,7 @@
     box-sizing: border-box;
 }
 
-nav {
+.desktop-nav {
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -87,6 +144,15 @@ nav ul li {
     font-size: 18px;
 }
 
+
+.mobile-nav {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20vw;
+}
 
 
 
