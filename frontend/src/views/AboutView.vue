@@ -29,7 +29,7 @@
             
             
         </div>
-        <RouterLink to="/">Go back to home</RouterLink>
+    
     </section>
 
 </template>
@@ -43,7 +43,7 @@ section {
     text-align: center;
 }
 .about {
-  min-height: 100vh;
+  min-height: 73vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -65,9 +65,15 @@ background-image: url("@/assets/hero.jpg");
   background-color: #1a1a1a;
   border: 1px solid rgba(255, 255, 255, 0.12);
 
-  text-align: center;
-}
+  text-align: left;
 
+}
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 36px;
+
+}
 a {
     padding: 5px 10px;
     display: block;
