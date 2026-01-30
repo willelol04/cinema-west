@@ -21,7 +21,7 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
     const num = numbers_tried;
 
     try {
-        const upcomingMoviePromise = await fetch("http://localhost:8000/getupcoming")
+        const upcomingMoviePromise = await fetch("http://localhost:8000/movies/upcoming")
         const upcomingMovieObject = await upcomingMoviePromise.json();
         upcomingMovies.value = upcomingMovieObject.results;
         fetchComplete.value = true;
@@ -110,6 +110,9 @@ section {
 
 .right {
     padding: 20px;
+}
+
+.carousel {
 }
 
 

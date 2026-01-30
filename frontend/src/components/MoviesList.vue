@@ -121,8 +121,8 @@ import MoviesView from '@/views/MoviesView.vue';
     <div class="movies-header">
     <h1 class="title">{{ props.title }}</h1>
     <div v-if="movies.length > display" class="scroll">
-        <button class="scroll-left" :disabled="!canScrollLeft()"  @click="scrollLeft()" ><i class="pi pi-chevron-circle-left" ></i></button>
-        <button class="scroll-right"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
+        <button class="scroll-left scroll-button" :disabled="!canScrollLeft()"  @click="scrollLeft()" ><i class="pi pi-chevron-circle-left" ></i></button>
+        <button class="scroll-right scroll-button"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
     </div>
     </div>
         <TransitionGroup name="list" tag="div" class="movies-container">
@@ -276,4 +276,10 @@ section {
 .list-leave-active {
   display: none;
 }
+        
+.scroll-button i {
+    transition: 300ms;
+    color: white;
+}
+
 </style>
