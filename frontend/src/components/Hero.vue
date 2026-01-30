@@ -1,34 +1,12 @@
 <script setup>
+    import { format, formatDistance, formatRelative, subDays } from 'date-fns';
     import { RouterLink } from 'vue-router';
     import { onMounted, ref } from 'vue';
     import Timeline from 'primevue/timeline';
     import Carousel from 'primevue/carousel';
     import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
     
-    const upcomingPremieres = [
-        {
-            title: "Star wars: the last jedi",
-            description: 'Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.',
-            date: '2024-01-01',
-            image: './src/assets/poster_examples/jack1.jpg',
 
-        },
-        {
-            title: "Star wars: the last jedi",
-            description: 'Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.',
-            date: '2024-01-01',
-            image: './src/assets/poster_examples/starwars.png',
-
-        },
-        {
-            title: "Star wars: the last jedi",
-            description: 'Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.Lorem ipsum ipsum, dolor sit atmuet.',
-            date: '2024-01-01',
-            image: './src/assets/poster_examples/starwars.png',
-
-        },
-    ];
-    
 
     const goToMovie = () => {
         window.location.href = "/movie/3";
@@ -45,9 +23,18 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
     try {
         const upcomingMoviePromise = await fetch("http://localhost:8000/getupcoming")
         const upcomingMovieObject = await upcomingMoviePromise.json();
-        upcomingMovies.value = upcomingMovieObject.results.slice(0,20);
+        upcomingMovies.value = upcomingMovieObject.results;
         fetchComplete.value = true;
         console.log("successful - ", num);
+//        const today = Date.now();
+//        const movie_one = Date.parse(upcomingMovies.value[3].release_date);
+//        if (today > movie_one) {
+//            console.log("movie already out");
+//        } else {
+//            console.log("movie not out");
+//        }
+//        
+//        console.log(upcomingMovies.value.filter((movie) => Date.parse(movie.release_date) > today))
 
     } catch(e) {
         console.log(e);
@@ -77,7 +64,7 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
         {{ item.title }}
         <br>
         <br>
-        {{ item.release_date }}
+        {{ format(item.release_date, 'MMMM do yyyy') }}
         <br>
         <br>
         {{ item.overview }}

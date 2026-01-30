@@ -26,7 +26,7 @@ async def root():
 @app.get("/getupcoming")
 async def getUpcoming():
             
-    url = "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1"
+    url = "https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=en-US&page=1&primary_release_date.gte=2026-02-12&primary_release_date.lte=2026-10-12&with_origin_country=US&sort_by=popularity.desc"
 
     headers = {
     "accept": "application/json",

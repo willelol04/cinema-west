@@ -5,6 +5,7 @@ import MoviesView from '@/views/MoviesView.vue';
     
     const start_ind = ref(0);
 
+
     const props = defineProps({
         title: {
             type: String,
@@ -17,6 +18,10 @@ import MoviesView from '@/views/MoviesView.vue';
         display: {
             type: Number,
             default: 5,
+        },
+        showTimes: {
+            type: Boolean,
+            default: false,
         }
     });
     
@@ -24,39 +29,51 @@ import MoviesView from '@/views/MoviesView.vue';
     const movies = [
         {
             title: 'Jack reacher 0',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 1',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 2',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 3',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 4',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 5',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 6',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 7',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 8',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 9',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 10',
+            times: ['22.43', '19.00', '14.00'],
         },
         {
             title: 'Jack reacher 11',
+            times: ['22.43', '19.00', '14.00'],
         },
     ];
     
@@ -113,6 +130,9 @@ import MoviesView from '@/views/MoviesView.vue';
         <RouterLink :to="`/movie/`+ index ">
             <img src="../assets/poster_examples/jack2.jpg">
             <h2>{{ movie.title }}</h2>
+            <ul class="time-list" v-if="showTimes">
+                <li class="time" v-for="time in movie.times">{{ time }}</li>
+            </ul>
         </RouterLink>
         </div>
         </TransitionGroup>
@@ -132,6 +152,13 @@ import MoviesView from '@/views/MoviesView.vue';
   transform: translateX(30px);
 }
 
+
+
+.time {
+    display: inline-block;
+    margin-right: 20px;
+
+}
 
 .movies-header {
     width: 100%;
