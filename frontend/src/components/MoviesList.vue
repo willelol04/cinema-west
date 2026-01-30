@@ -11,6 +11,59 @@ import MoviesView from '@/views/MoviesView.vue';
             type: String,
             default: 'Movies',
         },
+        movies: {
+            type: Array,
+            default: [
+                {
+                    title: 'Jack reacher 0',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 1',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 2',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 3',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 4',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 5',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 6',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 7',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 8',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 9',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 10',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+                {
+                    title: 'Jack reacher 11',
+                    times: ['22.43', '19.00', '14.00'],
+                },
+            ],
+        },
         limit: {
             type: Number,
             default: 200,
@@ -79,7 +132,7 @@ import MoviesView from '@/views/MoviesView.vue';
     
     
     const visibleMovies = computed(() => {
-        const slice = movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
+        const slice = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
         return slice;
 
     });
@@ -93,7 +146,7 @@ import MoviesView from '@/views/MoviesView.vue';
     };
 
     const canScrollRight = () => {
-        if((start_ind.value + 1) * props.display < movies.length) {
+        if((start_ind.value + 1) * props.display < props.movies.length) {
             return true;
         }
         return false;
@@ -127,8 +180,9 @@ import MoviesView from '@/views/MoviesView.vue';
     </div>
         <TransitionGroup name="list" tag="div" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
-        <RouterLink :to="`/movie/`+ index ">
-            <img src="../assets/poster_examples/jack2.jpg">
+        <RouterLink :to="`/movie/`+ (movie.id ? movie.id : index) ">
+            <img v-if=movie.poster_path :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
+            <img v-else src="../assets/poster_examples/jack2.jpg">
             <h2>{{ movie.title }}</h2>
             <ul class="time-list" v-if="showTimes">
                 <li class="time" v-for="time in movie.times">{{ time }}</li>

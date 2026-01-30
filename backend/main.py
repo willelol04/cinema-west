@@ -8,6 +8,8 @@ import datetime
 app = FastAPI()
 load_dotenv()
 tmdb_key = os.getenv('TMDBKEY')
+banned_keywords = os.getenv('BANNED_KEYWORDS')
+banned_keyword_list = banned_keywords.split(':')
 
 tmdb_headers = {
     "accept": "application/json",
@@ -43,8 +45,8 @@ async def getUpcoming():
     url = "/discover/movie"
     today = datetime.date.today()
     print(today)
-    params = {"include_adult": False, 
-              "include_video": False, 
+    params = {
+              "include_video": 'false', 
               "language": "en-US", 
               "page": 1, 
               "primary_release_date.gte": today, 
@@ -53,6 +55,18 @@ async def getUpcoming():
               "sort_by":"popularity.desc",
               }
     return await getFromTMDB(url, params)
+
+@app.get("/movies/search/{movie}")
+async def searchMovie(movie):
+    if movie not in banned_keyword_list:
+        url = "https://api.themoviedb.org/3/search/movie"
+        params = { 
+                  "language": "en-US", 
+                  "page": 1, 
+                  "query": movie,
+                  "sort_by":"popularity.desc",
+                  }
+        return await getFromTMDB(url, params)
 
 @app.on_event("shutdown")
 def shutdown():
