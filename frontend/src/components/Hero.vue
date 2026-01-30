@@ -37,20 +37,24 @@
     const upcomingMovies = ref([]);
     const fetchComplete = ref(false);
     
+
     
-onMounted(async function fetchUpcoming() {
+onMounted(async function fetchUpcoming(numbers_tried = 1) {
+    const num = numbers_tried;
+
     try {
         const upcomingMoviePromise = await fetch("http://localhost:8000/getupcoming")
         const upcomingMovieObject = await upcomingMoviePromise.json();
         upcomingMovies.value = upcomingMovieObject.results.slice(0,20);
         fetchComplete.value = true;
+        console.log("successful - ", num);
 
     } catch(e) {
         console.log(e);
-        setInterval(() => {
-            fetchUpcoming()
-        }, 10000);
-        
+        setTimeout(() => {fetchUpcoming(1+num)}, 20000);
+        console.log("failed - ", num);
+    } finally {
+        console.log("quit");
     }
 
 })
@@ -65,7 +69,7 @@ onMounted(async function fetchUpcoming() {
 <template>
     <section>
     <h1 style="text-align: center;">Coming soon</h1>
- <Carousel3d v-if="fetchComplete" class="carousel" :space="600" :display="3" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="500" :height="326">
+ <Carousel3d v-if="fetchComplete" class="carousel" :space="600" :display="3" :autoplay-timeout="10000" :autoplay="true" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="500" :height="326">
     <Slide v-for="(item, ind) in upcomingMovies" class="slide" :index="ind">
     <div class="upcoming-movie">
     <img :src="`https://image.tmdb.org/t/p/original`+item.poster_path" height="326" width="auto">
