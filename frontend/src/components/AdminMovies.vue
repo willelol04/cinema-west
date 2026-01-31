@@ -1,5 +1,5 @@
 <script setup>
-    import MoviesList from '@/components/MoviesList.vue';
+    import MoviesListAdmin from '@/components/MoviesListAdmin.vue';
 import { roundToNearestMinutes } from 'date-fns';
 import { Fieldset } from 'primevue';
 import { onMounted, ref, watch } from 'vue';
@@ -11,17 +11,15 @@ import { useRouter, routeLocationKey, useRoute } from 'vue-router';
     
     const route = useRoute();
     const router = useRouter();
-    console.log(route.fullPath);
+
 async function fetchMovieResults(numbers_tried = 1) { 
     const num = numbers_tried;
-    console.log(route.params.id)
-    console.log(search_field.value);
 
     try {
     const movieResultsPromise = await fetch(`http://localhost:8000/movies/search/${route.query.q}`)
     const movieResultsObject = await movieResultsPromise.json();
     movieResults.value = movieResultsObject.results;
-    console.log(movieResults.value)
+    console.log(movieResults.value);
     fetchComplete.value = true;
     search_field.value = '';
 
@@ -64,7 +62,9 @@ const onSubmit = () => {
 
     </div>
     
-    <MoviesList v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieResults"></MoviesList>
+    <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieResults">
+    </MoviesListAdmin>
+    <div v-if="movieResults.length === 0 && route.query.q" class="empty">No results were found</div>
     
     <!--
     <MoviesList title="Already added movies:"/>

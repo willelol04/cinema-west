@@ -1,7 +1,7 @@
 <script setup>
     import { RouterLink } from 'vue-router';
     import { ref, computed, onMounted } from 'vue';
-import MoviesView from '@/views/MoviesView.vue';
+    import MoviesView from '@/views/MoviesView.vue';
     
     const start_ind = ref(0);
 
@@ -180,14 +180,19 @@ import MoviesView from '@/views/MoviesView.vue';
     </div>
         <TransitionGroup name="list" tag="div" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
-        <RouterLink :to="`/movie/`+ (movie.id ? movie.id : index) ">
             <img v-if=movie.poster_path :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
             <img v-else src="../assets/poster_examples/jack2.jpg">
+            <div class="movie-details">
             <h2>{{ movie.title }}</h2>
+            <p v-if="movie.overview">{{ movie.overview }}</p>
             <ul class="time-list" v-if="showTimes">
                 <li class="time" v-for="time in movie.times">{{ time }}</li>
             </ul>
-        </RouterLink>
+            </div>
+            <div class="movie-actions">
+                <button v-if="index % 2 === 0" class="movie-action movie-add"><i class="pi pi-plus-circle"></i>Lägg till</button>
+                <button v-else class="movie-action movie-remove"><i class="pi pi-trash"></i>Ta bort</button>
+            </div>
         </div>
         </TransitionGroup>
 
@@ -205,6 +210,22 @@ import MoviesView from '@/views/MoviesView.vue';
   opacity: 0;
   transform: translateX(30px);
 }
+
+.movie-actions {
+    border-left: 1px solid #404040;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.movie-action {
+    width: 100%;
+    height: 100%;
+}
+
+
 
 
 
@@ -254,7 +275,7 @@ section {
 .movies-container, .movies-grid {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(5, minmax(100px, 1fr));
+    grid-template-columns: 1fr;
     margin: 0 auto;
     gap: 30px;
     padding-top: 10px;
@@ -262,11 +283,10 @@ section {
 }
 
 .movie-card img {
-    width: 100%;
-    border-radius: 10px;
-    border-bottom-left-radius: 0px;
+    height: 300px;
+    border-radius: 10px; 
+    border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
-    
 }
 
 .link {
@@ -290,8 +310,10 @@ section {
     background-color: #2d2d2d;
     border-radius: 10px;
     border: 1px solid #404040;
-    border-bottom: none;
     transition: 300ms;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 6fr 1fr;
 
 
 }
@@ -300,7 +322,7 @@ section {
 
 .movie-card:hover {
     transform: translateY(-10px);
-    cursor: pointer;
+    cursor: default;
 }
 
 
@@ -310,7 +332,7 @@ section {
 }
 
 .movie-card h2 {
-    text-align: center;
+    text-align: left;
 }
 
 .list-move, 
@@ -335,5 +357,38 @@ section {
     transition: 300ms;
     color: white;
 }
+        
 
+.movie-details {
+    padding: 20px;
+    text-align: left;
+}
+        
+.movie-add i {
+    color: green;
+    background-color: none;
+    display: block;
+}
+
+.movie-remove i {
+    color: #e50914;
+    background-color: none;
+    display: block;
+}
+    
+.movie-actions, .movie-action i {
+    transition: 300ms;
+    border-radius:inherit;
+    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0px;
+}
+        
+
+.movie-actions:hover {
+    background-color: rgb(112, 109, 109);
+    & i {
+    background-color: rgb(112, 109, 109);
+
+    }
+}
 </style>
