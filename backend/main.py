@@ -4,6 +4,9 @@ import os
 from dotenv import load_dotenv
 import httpx
 import datetime
+import asyncio
+import aiomysql
+import json
 
 app = FastAPI()
 load_dotenv()
@@ -68,10 +71,62 @@ async def searchMovie(movie):
                   }
         return await getFromTMDB(url, params)
 
+
+
+
+
+@app.on_event("startup")
+async def startup_create_pool():
+    global pool
+    pool = await aiomysql.create_pool(host='127.0.0.1', port=3306, 
+                                  user='cinema', password='6P3AZdYtUaWb7tBxHQa%', db='cinema')
+
+
+
+
+inc = 0
+
+@app.get("/addmovie")
+async def add_movie():
+    global inc
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute('use cinema;')
+            await cur.execute(f'insert into movie(id, title, overview, release_date, language) values(1352, "movie {inc}", "Lorem ipsum dolor sit amet, ipsum dolor sit amet, ipsum dolor sit amet.", "2024-01-01", "en");')
+            
+            await conn.commit()
+            print("movie added -", inc)
+            inc = inc +1
+
+@app.get("/movies/all")
+async def get_movies_all():
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute('select * from movie;')
+            r = await cur.fetchall()
+            #print(r)
+            #print(cur.description)
+            
+            returnList = {}
+            for row in r:
+                currObj = {}
+                for n in range(len(cur.description)):
+                    currObj[str(cur.description[n][0])]=str(row[n])
+                print(currObj)
+                returnList.append(currObj)
+            #print(returnList)
+    
+            return returnList
+    
+
+        
+        
 @app.on_event("shutdown")
 async def shutdown():
     print("\n\nclosing tmdb_client\n\n")
     await tmdb_client.aclose()
     print("closed tmdb")
-
-
+    print("\n\nclosing pool\n\n")
+    pool.close()
+    await pool.wait_closed()
+    print("closed pool")

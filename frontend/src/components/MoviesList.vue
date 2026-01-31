@@ -79,61 +79,12 @@ import MoviesView from '@/views/MoviesView.vue';
     });
     
     
-    const movies = [
-        {
-            title: 'Jack reacher 0',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 1',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 2',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 3',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 4',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 5',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 6',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 7',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 8',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 9',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 10',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 11',
-            times: ['22.43', '19.00', '14.00'],
-        },
-    ];
+;
     
     
     const visibleMovies = computed(() => {
-        const slice = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
-        return slice;
+        const visible = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
+        return visible;
 
     });
     
@@ -166,6 +117,7 @@ import MoviesView from '@/views/MoviesView.vue';
     }
     
     
+    console.log(props.movies);
     
 </script>
 
@@ -181,7 +133,7 @@ import MoviesView from '@/views/MoviesView.vue';
         <TransitionGroup name="list" tag="div" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
         <RouterLink :to="`/movie/`+ (movie.id ? movie.id : index) ">
-            <img v-if=movie.poster_path :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
+            <img v-if="movie.poster_path && movie.poster_path !== 'None'" :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
             <img v-else src="../assets/poster_examples/jack2.jpg">
             <h2>{{ movie.title }}</h2>
             <ul class="time-list" v-if="showTimes">

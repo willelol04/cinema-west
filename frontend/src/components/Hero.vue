@@ -24,6 +24,7 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
         const upcomingMoviePromise = await fetch("http://localhost:8000/movies/upcoming")
         const upcomingMovieObject = await upcomingMoviePromise.json();
         upcomingMovies.value = upcomingMovieObject.results;
+        console.log(upcomingMovies.value);
         fetchComplete.value = true;
         console.log("successful - ", num);
 //        const today = Date.now();
@@ -61,7 +62,7 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
     <div class="upcoming-movie">
     <img :src="`https://image.tmdb.org/t/p/original`+item.poster_path" height="326" width="auto">
     <div class="right">
-        {{ item.title }}
+        {{ item.title }} - {{ item.id }}
         <br>
         <br>
         {{ format(item.release_date, 'MMMM do yyyy') }}
