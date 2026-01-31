@@ -69,8 +69,9 @@ async def searchMovie(movie):
         return await getFromTMDB(url, params)
 
 @app.on_event("shutdown")
-def shutdown():
+async def shutdown():
     print("\n\nclosing tmdb_client\n\n")
-    tmdb_client.aclose()
+    await tmdb_client.aclose()
+    print("closed tmdb")
 
 

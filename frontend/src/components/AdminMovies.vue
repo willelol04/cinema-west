@@ -1,42 +1,52 @@
 <script setup>
     import MoviesList from '@/components/MoviesList.vue';
+import { roundToNearestMinutes } from 'date-fns';
 import { Fieldset } from 'primevue';
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { useRouter, routeLocationKey, useRoute } from 'vue-router';
 
     const search_field = defineModel('Bing');
     const fetchComplete = ref(false);
     const movieResults = ref([]);
-
-async function fetchMovieResults(numbers_tried = 1) {
+    
+    const route = useRoute();
+    const router = useRouter();
+    console.log(route.fullPath);
+async function fetchMovieResults(numbers_tried = 1) { 
     const num = numbers_tried;
+    console.log(route.params.id)
     console.log(search_field.value);
 
     try {
-        const movieResultsPromise = await fetch(`http://localhost:8000/movies/search/${search_field.value}`)
-        const movieResultsObject = await movieResultsPromise.json();
-        movieResults.value = movieResultsObject.results;
-        console.log(movieResults.value)
-        fetchComplete.value = true;
-        //console.log("successful - ", num);
-//        const today = Date.now();
-//        const movie_one = Date.parse(upcomingMovies.value[3].release_date);
-//        if (today > movie_one) {
-//            console.log("movie already out");
-//        } else {
-//            console.log("movie not out");
-//        }
-//        
-//        console.log(upcomingMovies.value.filter((movie) => Date.parse(movie.release_date) > today))
+    const movieResultsPromise = await fetch(`http://localhost:8000/movies/search/${route.query.q}`)
+    const movieResultsObject = await movieResultsPromise.json();
+    movieResults.value = movieResultsObject.results;
+    console.log(movieResults.value)
+    fetchComplete.value = true;
+    search_field.value = '';
 
-    } catch(e) {
-        console.log(e);
-        setTimeout(() => {fetchMovieResults(1+num)}, 20000);
-        console.log("failed - ", num);
-    } finally {
-        console.log("quit");
-    }
+} catch(e) {
+    console.log(e);
+    setTimeout(() => {fetchMovieResults(1+num)}, 20000);
+    console.log("failed - ", num);
+} finally {
+    console.log("quit");
+}
 
 }
+watch(
+() => route.query.q,    
+() => {if(route.query.q) fetchMovieResults()},
+{immediate: true},
+
+)
+
+const onSubmit = () => {
+  router.push({query: {q: search_field.value}});
+};
+
+
+
 
 
 </script>
@@ -45,8 +55,8 @@ async function fetchMovieResults(numbers_tried = 1) {
 <template>
     
     <div class="search-movies">
-    <h1>Admin - Movie database</h1>
-    <form @submit.prevent="fetchMovieResults">
+    <h1>Discover movies</h1>
+    <form method="GET" @submit.prevent="onSubmit">
         <label for="movie-search">Sök efter film på TMDB:</label>
         <input type="search" v-model="search_field" id="movie-search">
         <input type="submit" value="Sök">
@@ -54,7 +64,7 @@ async function fetchMovieResults(numbers_tried = 1) {
 
     </div>
     
-    <MoviesList v-if="fetchComplete" :movies="movieResults"></MoviesList>
+    <MoviesList v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieResults"></MoviesList>
     
     <!--
     <MoviesList title="Already added movies:"/>
