@@ -165,7 +165,24 @@
         }
     }
     
-    
+   
+    const addMovie = async (movie) => {
+        const response = await fetch("http://localhost:8000/addmovie", {
+            method: "POST",
+            body: {
+                id: movie.id,
+                title: movie.title,
+                overview: movie.overview,
+                poster_path: movie.poster_path,
+                release_date: movie.release_date,
+                language: movie.original_language
+            }
+
+        });
+        
+        console.log(response);
+
+    }
     
 </script>
 
@@ -186,7 +203,7 @@
             </ul>
             </div>
             <div class="movie-actions">
-                <button v-if="index % 2 === 0" class="movie-action movie-add"><i class="pi pi-plus-circle"></i>Lägg till</button>
+                <button @click="addMovie(movie)"v-if="index % 2 === 0" class="movie-action movie-add"><i class="pi pi-plus-circle"></i>Lägg till</button>
                 <button v-else class="movie-action movie-remove"><i class="pi pi-trash"></i>Ta bort</button>
             </div>
         </div>

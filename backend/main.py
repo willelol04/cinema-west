@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import httpx
 import datetime
+from pydantic import BaseModel
 import asyncio
 import aiomysql
 import json
@@ -84,19 +85,8 @@ async def startup_create_pool():
 
 
 
-inc = 0
 
-@app.get("/addmovie")
-async def add_movie():
-    global inc
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            await cur.execute('use cinema;')
-            await cur.execute(f'insert into movie(id, title, overview, release_date, language) values(1352, "movie {inc}", "Lorem ipsum dolor sit amet, ipsum dolor sit amet, ipsum dolor sit amet.", "2024-01-01", "en");')
-            
-            await conn.commit()
-            print("movie added -", inc)
-            inc = inc +1
+
 
 @app.get("/movies/all")
 async def get_movies_all():
@@ -117,9 +107,39 @@ async def get_movies_all():
             #print(returnList)
     
             return returnList
-    
 
-        
+class Movie(BaseModel):
+    id: str
+    title: str
+    overview: str
+    poster_path: str
+    release_date: str
+    language: str
+
+@app.post("/addmovie") 
+async def add_movie(movie: Movie):
+    print(movie)
+    return {movie}
+    """
+    Docstring for add_movie
+    
+    :param movie: Description
+    :type movie: Movie
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute('use cinema;')
+            await cur.execute(f'insert into movie(id, title, overview, release_date, language) values(1352, "movie {inc}", "Lorem ipsum dolor sit amet, ipsum dolor sit amet, ipsum dolor sit amet.", "2024-01-01", "en");')
+            
+            await conn.commit()
+            print("movie added -", inc)
+            inc = inc +1
+    """
+
+
+
+
+
+
         
 @app.on_event("shutdown")
 async def shutdown():
