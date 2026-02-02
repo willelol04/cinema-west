@@ -13,7 +13,7 @@ import { useRouter, routeLocationKey, useRoute } from 'vue-router';
     const router = useRouter();
 
 async function movieIsAdded(id) {
-    const promise = await fetch('http://localhost:8000/movie/'+id);
+    const promise = await fetch('http://localhost:8000/movie/isadded/'+id);
     const result = await promise.json();
     console.log(result.message);
     return result.message;

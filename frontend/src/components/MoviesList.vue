@@ -68,10 +68,7 @@ import MoviesView from '@/views/MoviesView.vue';
             type: Number,
             default: 200,
         },
-        display: {
-            type: Number,
-            default: 5,
-        },
+        display: Number,
         showTimes: {
             type: Boolean,
             default: false,
@@ -83,8 +80,13 @@ import MoviesView from '@/views/MoviesView.vue';
     
     
     const visibleMovies = computed(() => {
-        const visible = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
-        return visible;
+        if(props.display) {
+            const visible = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
+            return visible;
+
+        } else { 
+            return props.movies;
+        }
 
     });
     
@@ -135,7 +137,7 @@ import MoviesView from '@/views/MoviesView.vue';
         <RouterLink :to="`/movie/`+ (movie.id ? movie.id : index) ">
             <img v-if="movie.poster_path && movie.poster_path !== 'None'" :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
             <img v-else src="../assets/poster_examples/jack2.jpg">
-            <h2>{{ movie.title }}</h2>
+            <h2 class="movie-card-title">{{ movie.title }}</h2>
             <ul class="time-list" v-if="showTimes">
                 <li class="time" v-for="time in movie.times">{{ time }}</li>
             </ul>
@@ -251,8 +253,11 @@ section {
 
 
 .movie-card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
     cursor: pointer;
+    box-shadow: 1px 1px 35px 0px rgba(255,255,255,0.75);
+    -webkit-box-shadow: 1px 1px 35px 0px rgba(255,255,255,0.75);
+    -moz-box-shadow: 1px 1px 35px 0px rgba(255,255,255,0.75);
 }
 
 
@@ -263,6 +268,7 @@ section {
 
 .movie-card h2 {
     text-align: center;
+    font-size: 18px;
 }
 
 .list-move, 

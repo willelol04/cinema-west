@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import httpx
 import datetime
 from pydantic import BaseModel
+from typing import Optional
 import asyncio
 import aiomysql
 import json
@@ -57,7 +58,7 @@ async def get_from_db(query, values):
             await cur.execute(query, values)
             result = await cur.fetchall()
             print(result)
-            return result
+            return {"result": result, "description": cur.description}
 
 
 async def getFromTMDB(path, parameters): 
@@ -99,14 +100,28 @@ async def searchMovie(movie):
         return await getFromTMDB(url, params)
 
 
-@app.get("/movie/{id}")
+@app.get("/movie/isadded/{id}")
 async def movie_is_added(id):
     query = "select id from movie where id=%s;"
     values = id
     result = await get_from_db(query, values)
-
     print(result)
-    return {"message": True if len(result) != 0 else False}
+    return {"message": True if len(result['result']) != 0 else False}
+
+@app.get("/movie/{id}")
+async def get_movie(id):
+    query = "select * from movie where id=%s;"
+    values = id
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(query, values)
+            result = await cur.fetchone()
+            print(result)
+            movie = {}
+            for n in range(len(result)):
+                movie[cur.description[n][0]] = result[n]
+            return movie
+
 
 
 
@@ -141,20 +156,20 @@ async def get_movies_all():
             return returnList
 
 class Movie(BaseModel):
-    adult: bool
-    backdrop_path: str
-    genre_ids: list
-    id: int
-    original_language: str
-    original_title: str
-    overview: str
-    popularity: float
-    poster_path: str
-    release_date: str
-    title: str
-    video: bool
-    vote_average: float
-    vote_count: int
+    adult: Optional[bool] = None
+    backdrop_path: Optional[str] = None
+    genre_ids: Optional[list] = None
+    id: Optional[int] = None
+    original_language: Optional[str] = None
+    original_title: Optional[str] = None
+    overview: Optional[str] = None
+    popularity: Optional[float] = None
+    poster_path: Optional[str] = None
+    release_date: Optional[str] = None
+    title: Optional[str] = None
+    video: Optional[bool] = None
+    vote_average: Optional[float] = None
+    vote_count: Optional[int] = None
     
     
 

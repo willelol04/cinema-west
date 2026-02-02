@@ -19,33 +19,13 @@ import { ConfirmPopupStyle } from 'primevue';
  
  onMounted(testFetch)
  
- 
- async function testAddMovie() {
-  const promise = await fetch('http://localhost:8000/addmovie', {
-                  method: "POST",
-                  body: JSON.stringify({"name": "movie-name"}),
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-  });
-  console.log(promise);
-  const data = await promise.json();
-  const getData = data;
-  console.log(getData);
-  //ourMovies.value = getData;
-  
- } 
- 
- 
- onMounted(testAddMovie)
- 
 </script>
 <template>
   <Hero/>
   <div class="hr"  style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b"></div>
-  <MoviesList title="Playing Today:"/>
+  <MoviesList :display="5" title="Playing Today:"/>
   <div class="hr" style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b" ></div>
-  <MoviesList title="Playing Tomorrow:" :showTimes="true" />
+  <MoviesList :display="5" title="Playing Tomorrow:" :showTimes="true" />
 
 </template>
 <style scoped>
