@@ -2,6 +2,7 @@
     import { RouterLink } from 'vue-router';
     import { ref, computed, onMounted } from 'vue';
     import MoviesView from '@/views/MoviesView.vue';
+import MovieDetails from './MovieDetails.vue';
     
     const start_ind = ref(0);
 
@@ -79,56 +80,8 @@
     });
     
     
-    const movies = [
-        {
-            title: 'Jack reacher 0',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 1',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 2',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 3',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 4',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 5',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 6',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 7',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 8',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 9',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 10',
-            times: ['22.43', '19.00', '14.00'],
-        },
-        {
-            title: 'Jack reacher 11',
-            times: ['22.43', '19.00', '14.00'],
-        },
-    ];
+ 
+
     
     
     const visibleMovies = computed(() => {
@@ -169,21 +122,33 @@
     const addMovie = async (movie) => {
         const response = await fetch("http://localhost:8000/addmovie", {
             method: "POST",
-            body: {
-                id: movie.id,
-                title: movie.title,
-                overview: movie.overview,
-                poster_path: movie.poster_path,
-                release_date: movie.release_date,
-                language: movie.original_language
+            body: JSON.stringify(movie),
+            headers: {
+                "Content-Type": "application/json"
             }
 
         });
         
         console.log(response);
+        movie.isAdded = true;
+
+    }
+    const deleteMovie = async (movie) => {
+        const response = await fetch("http://localhost:8000/delete_movie", {
+            method: "POST",
+            body: JSON.stringify(movie),
+            headers: {
+                "Content-Type": "application/json"
+            }
+
+        });
+        
+        console.log(response);
+        movie.isAdded = false;
 
     }
     
+
 </script>
 
 <template>
@@ -203,8 +168,8 @@
             </ul>
             </div>
             <div class="movie-actions">
-                <button @click="addMovie(movie)"v-if="index % 2 === 0" class="movie-action movie-add"><i class="pi pi-plus-circle"></i>Lägg till</button>
-                <button v-else class="movie-action movie-remove"><i class="pi pi-trash"></i>Ta bort</button>
+                <button @click="addMovie(movie)" v-if="!movie.isAdded" class="movie-action movie-add"><i class="pi pi-plus-circle"></i>Lägg till</button>
+                <button @click="deleteMovie(movie)" v-else class="movie-action movie-remove"><i class="pi pi-trash"></i>Ta bort</button>
             </div>
         </div>
         </TransitionGroup>

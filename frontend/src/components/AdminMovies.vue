@@ -12,13 +12,28 @@ import { useRouter, routeLocationKey, useRoute } from 'vue-router';
     const route = useRoute();
     const router = useRouter();
 
+async function movieIsAdded(id) {
+    const promise = await fetch('http://localhost:8000/movie/'+id);
+    const result = await promise.json();
+    console.log(result.message);
+    return result.message;
+}
+
 async function fetchMovieResults(numbers_tried = 1) { 
     const num = numbers_tried;
 
     try {
     const movieResultsPromise = await fetch(`http://localhost:8000/movies/search/${route.query.q}`)
     const movieResultsObject = await movieResultsPromise.json();
+    for (const movie of movieResultsObject.results) {
+        if (await movieIsAdded(movie.id) == true) {
+            movie.isAdded = true;
+            console.log(movie.id, "is added")
+        }
+    }
+    
     movieResults.value = movieResultsObject.results;
+
     console.log(movieResults.value);
     fetchComplete.value = true;
     search_field.value = '';

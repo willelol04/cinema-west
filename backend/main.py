@@ -29,9 +29,35 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 @app.get("/")
 async def root():
     return {'message': 'hello world'}
+
+async def post_to_db(item: BaseModel, query, values):
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(query, values)
+            print("movie added")
+            await conn.commit()
+    return {"returnMessage": "successfully added item"} 
+
+async def delete_from_db(item: BaseModel, query, values):
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(query, values)
+            print("movie deleted")
+            await conn.commit()
+    return {"returnMessage": "successfully deleted item"} 
+
+
+async def get_from_db(query, values):
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(query, values)
+            result = await cur.fetchall()
+            print(result)
+            return result
 
 
 async def getFromTMDB(path, parameters): 
@@ -73,6 +99,15 @@ async def searchMovie(movie):
         return await getFromTMDB(url, params)
 
 
+@app.get("/movie/{id}")
+async def movie_is_added(id):
+    query = "select id from movie where id=%s;"
+    values = id
+    result = await get_from_db(query, values)
+
+    print(result)
+    return {"message": True if len(result) != 0 else False}
+
 
 
 
@@ -97,44 +132,51 @@ async def get_movies_all():
             #print(r)
             #print(cur.description)
             
-            returnList = {}
+            returnList = []
             for row in r:
                 currObj = {}
                 for n in range(len(cur.description)):
                     currObj[str(cur.description[n][0])]=str(row[n])
                 print(currObj)
                 returnList.append(currObj)
-            #print(returnList)
+            print(returnList)
     
             return returnList
 
 class Movie(BaseModel):
-    id: str
-    title: str
+    adult: bool
+    backdrop_path: str
+    genre_ids: list
+    id: int
+    original_language: str
+    original_title: str
     overview: str
+    popularity: float
     poster_path: str
     release_date: str
-    language: str
+    title: str
+    video: bool
+    vote_average: float
+    vote_count: int
+    
+    
+
+class TestItem(BaseModel):
+    name: str
 
 @app.post("/addmovie") 
 async def add_movie(movie: Movie):
-    print(movie)
-    return {movie}
-    """
-    Docstring for add_movie
-    
-    :param movie: Description
-    :type movie: Movie
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            await cur.execute('use cinema;')
-            await cur.execute(f'insert into movie(id, title, overview, release_date, language) values(1352, "movie {inc}", "Lorem ipsum dolor sit amet, ipsum dolor sit amet, ipsum dolor sit amet.", "2024-01-01", "en");')
-            
-            await conn.commit()
-            print("movie added -", inc)
-            inc = inc +1
-    """
+    query = 'insert into movie(id, title, overview, poster_path, release_date, language) values(%s, %s, %s, %s, %s, %s);'
+    values = (movie.id, movie.original_title, movie.overview, movie.poster_path, movie.release_date, movie.original_language)
+    await post_to_db(movie, query, values)
+    return {"returnMessage": movie} 
 
+@app.post("/delete_movie") 
+async def delete_movie(movie: Movie):
+    query = 'delete from cinema.movie where id=%s;'
+    values = (movie.id)
+    await delete_from_db(movie, query, values)
+    return {"returnMessage": movie} 
 
 
 
