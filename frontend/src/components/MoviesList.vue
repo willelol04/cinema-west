@@ -286,7 +286,8 @@ section {
 /* ensure leaving items are taken out of layout flow so that moving
    animations can be calculated correctly. */
 .list-leave-active {
-  display: none;
+    visibility: hidden;
+    transition: none;
 }
         
 .scroll-button i {
