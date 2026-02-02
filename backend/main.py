@@ -129,9 +129,6 @@ async def get_movies_all():
         async with conn.cursor() as cur:
             await cur.execute('select * from movie;')
             r = await cur.fetchall()
-            #print(r)
-            #print(cur.description)
-            
             returnList = []
             for row in r:
                 currObj = {}

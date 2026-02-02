@@ -85,8 +85,8 @@ import MovieDetails from './MovieDetails.vue';
     
     
     const visibleMovies = computed(() => {
-        const slice = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
-        return slice;
+        const visible = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
+        return visible;
 
     });
     
