@@ -1,7 +1,10 @@
 <script setup>
-    import { RouterLink } from 'vue-router';
-    import { ref, computed, onMounted } from 'vue';
+import { RouterLink } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
 import MoviesView from '@/views/MoviesView.vue';
+
+
+
     
     const start_ind = ref(0);
 
@@ -121,6 +124,7 @@ import MoviesView from '@/views/MoviesView.vue';
     
     console.log(props.movies);
     
+    
 </script>
 
 <template>
@@ -132,7 +136,7 @@ import MoviesView from '@/views/MoviesView.vue';
         <button class="scroll-right scroll-button"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
     </div>
     </div>
-        <TransitionGroup name="list" tag="div" class="movies-container">
+        <TransitionGroup @enter="onEnter" name="list" tag="div" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
         <RouterLink :to="`/movie/`+ (movie.id ? movie.id : index) ">
             <img v-if="movie.poster_path && movie.poster_path !== 'None'" :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
