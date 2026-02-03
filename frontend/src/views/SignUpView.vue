@@ -1,34 +1,31 @@
 <script setup>
-    import { RouterLink } from 'vue-router';
-    import { reactive } from 'vue';
-    
-    const formData = reactive({
-        f_name: '',
-        l_name: '',
-        email: '',
-        password: '',
-    })
+import { RouterLink } from 'vue-router';
+import { reactive } from 'vue';
 
-     const onSubmit = async () => {
-        console.log(formData);
-        await adduser();
-    }
+const formData = reactive({
+    f_name: '',
+    l_name: '',
+    email: '',
+    password: '',
+});
 
-    const adduser = async () => {
-        const response = await fetch("http://localhost:8000/adduser", {
-            method: "POST",
-            body: JSON.stringify(formData),
-            headers: {
-                "Content-Type": "application/json"
-            }
+ const onSubmit = async () => {
+    console.log(formData);
+    await adduser();
+};
 
-        });
-        
-        const message = await response.text();
-        
-        console.log(message);
+const adduser = async () => {
+    const response = await fetch("http://localhost:8000/adduser", {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: {
+            "Content-Type": "application/json"
+        }
 
-    }
+    });
+    const message = await response.text();
+    console.log(message);
+};
 
 </script>
 

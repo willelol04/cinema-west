@@ -10,6 +10,8 @@ create table user(id int AUTO_INCREMENT not null, f_name varchar(50) not null, l
 
 drop table theatre;
 create table theatre(id int auto_increment not null, name varchar(30) not null, primary key(id));
+insert into theatre(name) values("Alpha");
+insert into theatre(name) values("Beta");
 
 drop table seat;
 create table seat(id int AUTO_INCREMENT not null, number int not null, theatre_id int not null, primary key(id), Foreign Key (theatre_id) REFERENCES theatre(id), unique key(theatre_id, number))

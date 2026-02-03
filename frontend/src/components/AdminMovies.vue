@@ -1,16 +1,16 @@
 <script setup>
-    import MoviesListAdmin from '@/components/MoviesListAdmin.vue';
+import MoviesListAdmin from '@/components/MoviesListAdmin.vue';
 import { roundToNearestMinutes } from 'date-fns';
 import { Fieldset } from 'primevue';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter, routeLocationKey, useRoute } from 'vue-router';
 
-    const search_field = defineModel('Bing');
-    const fetchComplete = ref(false);
-    const movieResults = ref([]);
-    
-    const route = useRoute();
-    const router = useRouter();
+const search_field = defineModel('Bing');
+const fetchComplete = ref(false);
+const movieResults = ref([]);
+
+const route = useRoute();
+const router = useRouter();
 
 async function movieIsAdded(id) {
     const promise = await fetch('http://localhost:8000/movie/isadded/'+id);
@@ -21,7 +21,6 @@ async function movieIsAdded(id) {
 
 async function fetchMovieResults(numbers_tried = 1) { 
     const num = numbers_tried;
-
     try {
     const movieResultsPromise = await fetch(`http://localhost:8000/movies/search/${route.query.q}`)
     const movieResultsObject = await movieResultsPromise.json();
@@ -38,14 +37,13 @@ async function fetchMovieResults(numbers_tried = 1) {
     fetchComplete.value = true;
     search_field.value = '';
 
-} catch(e) {
+    } catch(e) {
     console.log(e);
     setTimeout(() => {fetchMovieResults(1+num)}, 20000);
     console.log("failed - ", num);
-} finally {
+    } finally {
     console.log("quit");
-}
-
+    }
 }
 watch(
 () => route.query.q,    
@@ -57,10 +55,6 @@ watch(
 const onSubmit = () => {
   router.push({query: {q: search_field.value}});
 };
-
-
-
-
 
 </script>
 

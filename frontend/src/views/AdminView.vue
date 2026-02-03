@@ -1,10 +1,10 @@
 <script setup>
-    import { RouterView, useRoute } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 
-    const isActive = (currentRoutePath) => {
-        const route = useRoute();
-        return route.path === currentRoutePath;
-    }
+const isActive = (currentRoutePath) => {
+    const route = useRoute();
+    return route.path === currentRoutePath;
+}
 </script>
 
 <template>

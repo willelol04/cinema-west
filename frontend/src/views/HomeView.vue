@@ -1,23 +1,23 @@
 <script setup>
-  import Hero from '@/components/Hero.vue';
-  import MoviesList from '@/components/MoviesList.vue';
-  import Booking from '@/components/Booking.vue';
-  import { ref, onMounted } from 'vue';
+import Hero from '@/components/Hero.vue';
+import MoviesList from '@/components/MoviesList.vue';
+import Booking from '@/components/Booking.vue';
+import { ref, onMounted } from 'vue';
 import { ConfirmPopupStyle } from 'primevue';
   
- const ourMovies = ref([]) 
+const ourMovies = ref([]) 
+
+async function testFetch() {
+    const promise = await fetch('http://localhost:8000/movies/all', {
+    });
+    const data = await promise.json();
+    const getData = data;
+    console.log(getData);
+    ourMovies.value = getData;
   
- async function testFetch() {
-  const promise = await fetch('http://localhost:8000/movies/all', {
-  });
-  const data = await promise.json();
-  const getData = data;
-  console.log(getData);
-  ourMovies.value = getData;
-  
- } 
+} 
  
- onMounted(testFetch)
+onMounted(testFetch)
  
 </script>
 <template>

@@ -3,127 +3,115 @@ import { RouterLink } from 'vue-router';
 import { ref, computed, onMounted } from 'vue';
 import MoviesView from '@/views/MoviesView.vue';
 
-
-
+const start_ind = ref(0);
+const props = defineProps({title: {
+        type: String,
+        default: 'Movies',
+    },
+    movies: {
+        type: Array,
+        default: [
+            {
+                title: 'Jack reacher 0',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 1',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 2',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 3',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 4',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 5',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 6',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 7',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 8',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 9',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 10',
+                times: ['22.43', '19.00', '14.00'],
+            },
+            {
+                title: 'Jack reacher 11',
+                times: ['22.43', '19.00', '14.00'],
+            },
+        ],
+    },
+    limit: {
+        type: Number,
+        default: 200,
+    },
+    display: Number,
+    showTimes: {
+        type: Boolean,
+        default: false,
+    }
+});
     
-    const start_ind = ref(0);
+const visibleMovies = computed(() => {
+    if(props.display) {
+        const visible = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
+        return visible;
 
+    } else { 
+        return props.movies;
+    }
 
-    const props = defineProps({
-        title: {
-            type: String,
-            default: 'Movies',
-        },
-        movies: {
-            type: Array,
-            default: [
-                {
-                    title: 'Jack reacher 0',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 1',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 2',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 3',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 4',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 5',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 6',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 7',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 8',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 9',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 10',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-                {
-                    title: 'Jack reacher 11',
-                    times: ['22.43', '19.00', '14.00'],
-                },
-            ],
-        },
-        limit: {
-            type: Number,
-            default: 200,
-        },
-        display: Number,
-        showTimes: {
-            type: Boolean,
-            default: false,
-        }
-    });
+});
     
-    
-;
-    
-    
-    const visibleMovies = computed(() => {
-        if(props.display) {
-            const visible = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
-            return visible;
+const canScrollLeft = () => {
+    if(start_ind.value > 0) {
+    return true;
 
-        } else { 
-            return props.movies;
-        }
+    }
+    return false;
+};
 
-    });
-    
-    const canScrollLeft = () => {
-        if(start_ind.value > 0) {
+const canScrollRight = () => {
+    if((start_ind.value + 1) * props.display < props.movies.length) {
         return true;
+    }
+    return false;
+}
 
-        }
-        return false;
-    };
-
-    const canScrollRight = () => {
-        if((start_ind.value + 1) * props.display < props.movies.length) {
-            return true;
-        }
-        return false;
+const scrollLeft = () => {
+    if(canScrollLeft()) { 
+        start_ind.value--;
     }
 
-    const scrollLeft = () => {
-        if(canScrollLeft()) { 
-            start_ind.value--;
-        }
+};
 
-    };
-
-    const scrollRight = () => {
-        if(canScrollRight()) { 
-            start_ind.value++;
-        }
+const scrollRight = () => {
+    if(canScrollRight()) { 
+        start_ind.value++;
     }
-    
-    
-    console.log(props.movies);
-    
+}
+
+console.log(props.movies);
     
 </script>
 

@@ -1,7 +1,7 @@
 <script setup>
-  import Navbar from '@/components/Navbar.vue'
-  import Footer from '@/components/Footer.vue'
-  import { RouterView } from 'vue-router';
+import Navbar from '@/components/Navbar.vue'
+import Footer from '@/components/Footer.vue'
+import { RouterView } from 'vue-router';
 </script>
 
 
@@ -15,7 +15,7 @@
   <Navbar :isLoggedIn="false"/>
   <RouterView />
   <div class="fix" style="clear: both; width: 100%;"></div>
-  <Footer/>
+  <Footer />
 
 </template>
 

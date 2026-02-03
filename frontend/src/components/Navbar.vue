@@ -1,47 +1,47 @@
 <script setup>
     
-    import { useRoute, RouterLink } from 'vue-router';
-    import { ref, reactive, watch } from 'vue';
-    
-    const props = defineProps(['isLoggedIn'])
-    
-    
-    const dropDownState = ref(false);
-    const route = useRoute();
+import { useRoute, RouterLink } from 'vue-router';
+import { ref, reactive, watch } from 'vue';
 
-    const isActive = (currentRoutePath) => {
-        return route.path === currentRoutePath;
-    }
-    
+const props = defineProps(['isLoggedIn'])
 
-    const toggleDropdown = () => {
-        dropDownState.value = !dropDownState.value;
-        console.log(dropDownState.value);
-        console.log("click");
-    };
-    
 
-    function returnDropDownState() {
-        return dropDownState.value === true;
-    }
-    
-    const userType = "My profile";
-    
-    watch(
-      () => route.fullPath,
-      () => {
-        dropDownState.value = false
-      }
-    );
-    
+const dropDownState = ref(false);
+const route = useRoute();
 
-    const isDesktop = true;
-    const showSideNav = ref(false)
-    
+const isActive = (currentRoutePath) => {
+    return route.path === currentRoutePath;
+}
 
-    const toggleSidenav = () => {
-        showSideNav.value = !showSideNav.value;
-    }
+
+const toggleDropdown = () => {
+    dropDownState.value = !dropDownState.value;
+    console.log(dropDownState.value);
+    console.log("click");
+};
+
+
+function returnDropDownState() {
+    return dropDownState.value === true;
+}
+
+const userType = "My profile";
+
+watch(
+  () => route.fullPath,
+  () => {
+    dropDownState.value = false
+  }
+);
+
+
+const isDesktop = true;
+const showSideNav = ref(false)
+
+
+const toggleSidenav = () => {
+    showSideNav.value = !showSideNav.value;
+}
 
 </script>
 

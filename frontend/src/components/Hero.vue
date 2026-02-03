@@ -1,25 +1,22 @@
 <script setup>
-    import { format, formatDistance, formatRelative, subDays } from 'date-fns';
-    import { RouterLink } from 'vue-router';
-    import { onMounted, ref } from 'vue';
-    import Timeline from 'primevue/timeline';
-    import Carousel from 'primevue/carousel';
-    import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
-    
+import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+import { RouterLink } from 'vue-router';
+import { onMounted, ref } from 'vue';
+import Timeline from 'primevue/timeline';
+import Carousel from 'primevue/carousel';
+import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 
+const goToMovie = () => {
+    window.location.href = "/movie/3";
+}
 
-    const goToMovie = () => {
-        window.location.href = "/movie/3";
-    }
-    
-    const upcomingMovies = ref([]);
-    const fetchComplete = ref(false);
+const upcomingMovies = ref([]);
+const fetchComplete = ref(false);
     
 
     
 onMounted(async function fetchUpcoming(numbers_tried = 1) {
     const num = numbers_tried;
-
     try {
         const upcomingMoviePromise = await fetch("http://localhost:8000/movies/upcoming")
         const upcomingMovieObject = await upcomingMoviePromise.json();
@@ -27,16 +24,6 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
         console.log(upcomingMovies.value);
         fetchComplete.value = true;
         console.log("successful - ", num);
-//        const today = Date.now();
-//        const movie_one = Date.parse(upcomingMovies.value[3].release_date);
-//        if (today > movie_one) {
-//            console.log("movie already out");
-//        } else {
-//            console.log("movie not out");
-//        }
-//        
-//        console.log(upcomingMovies.value.filter((movie) => Date.parse(movie.release_date) > today))
-
     } catch(e) {
         console.log(e);
         setTimeout(() => {fetchUpcoming(1+num)}, 20000);
@@ -44,13 +31,7 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
     } finally {
         console.log("quit");
     }
-
 })
-
-
-
-    
-
 
 </script>
 

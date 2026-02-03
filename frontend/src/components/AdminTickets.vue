@@ -1,11 +1,10 @@
 <script setup>
-    import MoviesList from '@/components/MoviesList.vue';
+import MoviesList from '@/components/MoviesList.vue';
     
 </script>
 
 
 <template>
-    
     <div class="search-movies">
     <h1>Admin - Tickets</h1>
     <form method="POST" @submit.prevent="onSubmit">
@@ -13,10 +12,7 @@
         <input type="search" id="movie-search">
         <input type="submit" value="Sök">
     </form>
-        
     </div>
-    
-
     <div class="added-movies">
     <MoviesList title="Anna Andersson - Biljetter"/>
     </div>

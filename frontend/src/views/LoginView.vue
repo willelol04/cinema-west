@@ -1,6 +1,6 @@
 <script setup>
-    import { RouterLink } from 'vue-router';
-    import { reactive } from 'vue';
+import { RouterLink } from 'vue-router';
+import { reactive } from 'vue';
     
 
     

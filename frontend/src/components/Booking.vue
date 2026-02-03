@@ -1,18 +1,17 @@
 <script setup>
-    import { reactive, defineProps, onMounted} from 'vue'; // probably want to use ref instead
+import { reactive, defineProps, onMounted} from 'vue'; // probably want to use ref instead
     
-    const state = reactive({
-        hideModal: false,
-        selectedSeatsNumber: 0,
+const state = reactive({
+    hideModal: false,
+    selectedSeatsNumber: 0,
 
-    });
-    
-    
-    const toggleModal = () => {
-        state.hideModal = true;
-        console.log("pressed");
-    }
-    
+});
+
+
+const toggleModal = () => {
+    state.hideModal = true;
+    console.log("pressed");
+}
     
 </script>
 

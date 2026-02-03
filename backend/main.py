@@ -54,6 +54,11 @@ class User(BaseModel):
     l_name: str
     email: str
     password: str
+    
+class Screening(BaseModel):
+    movie_id: int
+    theatre_id: int
+    start_time: str
 
 
 
@@ -100,7 +105,6 @@ async def getFromTMDB(path, parameters):
 
 
 # GET REQUESTS
-
 
 @app.get("/movies/upcoming")
 async def getUpcoming():
@@ -170,6 +174,24 @@ async def get_movies_all():
     
             return returnList
 
+@app.get("/theatres/all")
+async def get_theatres_all():
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute('select * from theatre;')
+            r = await cur.fetchall()
+            returnList = []
+            for row in r:
+                currObj = {}
+                for n in range(len(cur.description)):
+                    currObj[str(cur.description[n][0])]=str(row[n])
+                print(currObj)
+                returnList.append(currObj)
+            print(returnList)
+    
+            return returnList
+
+
 
 # POST-REQUESTS
 
@@ -187,10 +209,16 @@ async def delete_movie(movie: Movie):
     return {"returnMessage": movie} 
 
 @app.post("/adduser") 
-async def add_movie(user: User):
+async def add_user(user: User):
     query = 'insert into user(first_name, last_name, email, password) values(%s, %s, %s, %s);'
     values = (user.f_name, user.l_name, user.email, user.password)
     return await post_to_db(user, query, values)
+
+@app.post("/addscreening")
+async def add_screening(screening: Screening):
+    query = 'insert into screening(movie_id, theatre_id, start_time) values(%s, %s, %s);'
+    values = (screening.movie_id, screening.theatre_id, screening.start_time)
+    return await post_to_db(screening, query, values)
 
 
 
