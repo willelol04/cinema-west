@@ -53,6 +53,8 @@
                 <li ><RouterLink :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>
                 <li ><RouterLink :class="[isActive('/movies') ? 'activeNavLink' : '', 'nav-item']" to="/movies">Movies</RouterLink></li>
                 <li ><RouterLink :class="[isActive('/about') ? 'activeNavLink' : '', 'nav-item']" to="/about">About</RouterLink></li>
+                <li ><RouterLink :class="[isActive('/signin') ? 'activeNavLink' : '', 'nav-item']" to="/signin">Sign in</RouterLink></li>
+                <li ><RouterLink :class="[isActive('/login') ? 'activeNavLink' : '', 'nav-item']" to="/login">Log in</RouterLink></li>
             </ul>
         <div class="nav-dropdown">
         <button @click="toggleDropdown()" class="nav-item user-btn">{{ userType }}<i v-if="returnDropDownState()" class="pi pi-chevron-down"></i><i v-else class="pi pi-chevron-right"></i></button>

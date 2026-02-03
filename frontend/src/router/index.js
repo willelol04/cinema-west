@@ -7,6 +7,10 @@ import AdminView from '@/views/AdminView.vue';
 import AboutView from '@/views/AboutView.vue';
 
 import NotFoundView from '@/views/NotFoundView.vue';
+import AboutView from '@/views/AboutView.vue';
+import SigninView from '@/views/SigninView.vue';
+import LoginView from '@/views/LoginView.vue';
+
 
 import AdminMovies from '@/components/AdminMovies.vue';
 import AdminScreenings from '@/components/AdminScreenings.vue';
@@ -20,6 +24,21 @@ const router = createRouter({
             path: '/',
             name: 'home',
             component: HomeView,
+        },
+        {
+            path: '/signin',
+            name: 'signin',
+            component: SigninView,
+        },
+        {
+            path: '/login',
+            name: 'login',
+            component: LoginView,
+        },
+        {
+            path: '/about',
+            name: 'about',
+            component: AboutView,
         },
         {
             path: '/movies',
