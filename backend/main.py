@@ -31,6 +31,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# VALIDATIONS BASEMODELS
+
 class Movie(BaseModel):
     adult: Optional[bool] = None
     backdrop_path: Optional[str] = None
@@ -53,13 +55,11 @@ class User(BaseModel):
     email: str
     password: str
 
-class TestItem(BaseModel):
-    name: str
 
-@app.get("/")
-async def root():
-    return {'message': 'hello world'}
 
+
+
+# HELPER FUNCTIONS
 async def post_to_db(item: BaseModel, query, values):
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
@@ -67,18 +67,19 @@ async def post_to_db(item: BaseModel, query, values):
             try:
                 await cur.execute(query, values)
                 await conn.commit()
-                return "successfully added item" 
+                return "Successfully added item."
             except:
-                return "Error adding item."
+                return "Failed adding item."
 
 async def delete_from_db(item: BaseModel, query, values):
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
-            await cur.execute(query, values)
-            print("movie deleted")
-            await conn.commit()
-    return {"returnMessage": "successfully deleted item"} 
-
+            try:
+                await cur.execute(query, values)
+                await conn.commit()
+                return "Successfully deleted item."
+            except:
+                return "Falied deleting item."
 
 async def get_from_db(query, values):
     async with pool.acquire() as conn:
@@ -97,6 +98,8 @@ async def getFromTMDB(path, parameters):
 
     return response.json()
 
+
+# GET REQUESTS
 
 
 @app.get("/movies/upcoming")
@@ -150,22 +153,6 @@ async def get_movie(id):
                 movie[cur.description[n][0]] = result[n]
             return movie
 
-
-
-
-
-@app.on_event("startup")
-async def startup_create_pool():
-    global pool
-    pool = await aiomysql.create_pool(host='127.0.0.1', port=3306, 
-                                  user='cinema', password='6P3AZdYtUaWb7tBxHQa%', db='cinema')
-
-
-
-
-
-
-
 @app.get("/movies/all")
 async def get_movies_all():
     async with pool.acquire() as conn:
@@ -183,12 +170,14 @@ async def get_movies_all():
     
             return returnList
 
+
+# POST-REQUESTS
+
 @app.post("/addmovie") 
 async def add_movie(movie: Movie):
     query = 'insert into movie(id, title, overview, poster_path, release_date, language) values(%s, %s, %s, %s, %s, %s);'
     values = (movie.id, movie.original_title, movie.overview, movie.poster_path, movie.release_date, movie.original_language)
-    await post_to_db(movie, query, values)
-    return {"returnMessage": movie} 
+    return await post_to_db(movie, query, values) 
 
 @app.post("/delete_movie") 
 async def delete_movie(movie: Movie):
@@ -206,7 +195,16 @@ async def add_movie(user: User):
 
 
 
-        
+
+
+#EVENT FUNCTIONS
+
+@app.on_event("startup")
+async def startup_create_pool():
+    global pool
+    pool = await aiomysql.create_pool(host='127.0.0.1', port=3306, 
+                                  user='cinema', password='6P3AZdYtUaWb7tBxHQa%', db='cinema')
+
 @app.on_event("shutdown")
 async def shutdown():
     print("\n\nclosing tmdb_client\n\n")
