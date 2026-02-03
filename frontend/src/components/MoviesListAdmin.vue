@@ -158,11 +158,11 @@ const deleteMovie = async (movie) => {
     </div>
         <TransitionGroup name="list" tag="div" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
-            <img v-if=movie.poster_path :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
-            <img v-else src="../assets/poster_examples/jack2.jpg">
+            <img class="movie-poster" v-if=movie.poster_path :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
+            <img class="movie-poster" v-else src="../assets/poster_examples/jack2.jpg">
             <div class="movie-details">
             <h2>{{ movie.title }}</h2>
-            <p v-if="movie.overview">{{ movie.overview }}</p>
+            <p v-if="movie.overview">{{ movie.overview.slice(0, 300) }}...</p>
             <ul class="time-list" v-if="showTimes">
                 <li class="time" v-for="time in movie.times">{{ time }}</li>
             </ul>
@@ -260,12 +260,6 @@ section {
 
 }
 
-.movie-card img {
-    height: 300px;
-    border-radius: 10px; 
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
 
 .link {
     background-color: #e50914;
@@ -284,17 +278,7 @@ section {
     color: #e50914;
 }
 
-.movie-card {
-    background-color: #2d2d2d;
-    border-radius: 10px;
-    border: 1px solid #404040;
-    transition: 300ms;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 6fr 1fr;
 
-
-}
 
 
 
@@ -369,5 +353,27 @@ section {
     background-color: rgb(112, 109, 109);
 
     }
+}
+
+.movie-card {
+    background-color: #2d2d2d;
+    border-radius: 10px;
+    border: 1px solid #404040;
+    transition: 300ms;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 7fr 1fr;
+    grid-template-rows: auto;
+
+
+}
+
+.movie-poster {
+    border-radius: 10px; 
+    width: 100%;
+    height: auto;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    display: block;
 }
 </style>

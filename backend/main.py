@@ -203,10 +203,9 @@ async def add_movie(movie: Movie):
 
 @app.post("/delete_movie") 
 async def delete_movie(movie: Movie):
-    query = 'delete from cinema.movie where id=%s;'
-    values = (movie.id)
-    await delete_from_db(movie, query, values)
-    return {"returnMessage": movie} 
+        query = 'delete from cinema.screening where movie_id=%s; delete from cinema.movie where id=%s;'
+        values = (movie.id, movie.id)
+        return await delete_from_db(movie, query, values)
 
 @app.post("/adduser") 
 async def add_user(user: User):
