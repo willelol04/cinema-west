@@ -8,6 +8,7 @@
             <p>Copyright &copy; 2025 cinema west</p>
             <p>This service uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</p>
         </div>
+        <img src="../assets/tmdb-logo-text.svg" width="200">
         <ul>
             <li><a href="#"><i class="pi pi-facebook"></i></a></li>
             <li><a href="#"><i class="pi pi-twitter"></i></a></li>
@@ -30,9 +31,12 @@ footer {
     padding-right: 200px;
     padding-top: 50px;
     padding-bottom: 50px;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
+    border-top: 1px solid #404040;
     font-size: 20px;
+    position: absolute;
+    bottom: 0;
+    margin-top: 20px;
+    height: 200px;
 }
 
 

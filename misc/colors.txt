@@ -1,0 +1,5 @@
+Färger
+- röd: #e50914
+- vit: white
+grå: 
+-rgba(43, 43, 43, 0.753);
