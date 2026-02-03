@@ -25,7 +25,7 @@
         return dropDownState.value === true;
     }
     
-    const userType = "Min profil";
+    const userType = "My profile";
     
     watch(
       () => route.fullPath,
@@ -33,10 +33,21 @@
         dropDownState.value = false
       }
     );
+    
+
+    const isDesktop = true;
+    const showSideNav = ref(false)
+    
+
+    const toggleSidenav = () => {
+        showSideNav.value = !showSideNav.value;
+    }
+
 </script>
 
 <template>
         <nav>
+        <div v-if="isDesktop" class="desktop-nav">
         <h1><RouterLink to="/">cinema west</RouterLink></h1>
             <ul>
                 <li ><RouterLink :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>
@@ -46,19 +57,65 @@
                 <li ><RouterLink :class="[isActive('/login') ? 'activeNavLink' : '', 'nav-item']" to="/login">Log in</RouterLink></li>
             </ul>
         <div class="nav-dropdown">
-        <button @click="toggleDropdown()" class="nav-item user-btn"><i style="color: black; margin-right: 10px;" class="pi pi-user"></i>{{ userType }}<i v-if="returnDropDownState()" style="color: black; margin-left: 10px;" class="pi pi-chevron-down"></i><i v-else style="color: black; margin-left: 10px;" class="pi pi-chevron-right"></i></button>
+        <button @click="toggleDropdown()" class="nav-item user-btn">{{ userType }}<i v-if="returnDropDownState()" class="pi pi-chevron-down"></i><i v-else class="pi pi-chevron-right"></i></button>
         <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
             <li><RouterLink class="nav-item" to="/admin/movies" >My profile</RouterLink></li>
             <li><a class="nav-item" href="#">My tickets</a></li>
             <li><a class="nav-item" href="#">Log out</a></li>
         </ul>
         </div>
+
+        </div>
+        <div v-else class="mobile-nav">
+        <h1><RouterLink to="/">cinema west</RouterLink></h1>
+            <button v-if="!showSideNav" @click="toggleSidenav()"><i class="pi pi-bars sidenav-toggle"></i></button>
+            <button v-else @click="toggleSidenav()"><i class="pi pi-times sidenav-toggle"></i></button>
+        </div>
         </nav>
+        <Transition name="fade">
+        <div v-if="showSideNav" class="side-nav">
+            <ul>
+                <li><RouterLink to="#">Home</RouterLink></li>
+                <li><RouterLink to="#">Movies</RouterLink></li>
+                <li><RouterLink to="#">About</RouterLink></li>
+                <li><RouterLink to="#">My profile</RouterLink></li>
+                <li><RouterLink to="#">Log out</RouterLink></li>
+            </ul>
+        </div>
+        </Transition>
         
 </template>
 
 
 <style scoped>
+
+.sidenav-toggle {
+    z-index: 3;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.side-nav {
+    height: 100vh;
+    width: 400px;
+    position:fixed;
+    top: 0;
+    left: 0;
+    text-align: center;
+    background-color: black;
+    z-index: 1;
+}
+
+.side-nav li {
+    display: block;
+}
 
 .activeNavLink {
     color: #e50914;
@@ -68,7 +125,7 @@
     box-sizing: border-box;
 }
 
-nav {
+.desktop-nav {
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -77,7 +134,7 @@ nav {
     color: white;
     border-bottom: 1px solid #404040;
     padding-bottom: 20px;
-    padding: 20px 200px;
+    padding: 20px 20vw;
 }
 
 header h1 {
@@ -89,12 +146,19 @@ nav ul li {
     font-size: 18px;
 }
 
-.nav-item:not(:last-child) {
-    margin-right: 10px;
+
+.mobile-nav {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20vw;
 }
 
 
-.nav-item {
+
+li .nav-item {
     transition: 300ms;
     margin-right: 20px;
     width: 100%;
@@ -105,21 +169,19 @@ nav ul li {
     color: #e50914;
 }
     
-.user-btn {
-    width: 175px;
-    background-color: white;
-    color: #1a1a1a;
-    padding: 8px 5px;
-    border-radius: 5px;
-    font-size: 18px;
+
+.pi {
+    color: white;
+    margin-left: 15px;
+    
 }
     
 
 .dropdown-list {
     width: 175px;
     position: fixed;
-    background-color: white;
-    color: #1a1a1a;
+    background-color: rgba(43, 43, 43, 0.753);
+    color: white;
     padding: 10px 15px;
     border-radius: 5px;
     display: none;
@@ -135,7 +197,7 @@ nav ul li {
 }
 
 .nav-dropdown ul li a {
-    color: #1a1a1a;
+    color: white;
     padding: 5px;
     display: block;
     
@@ -147,6 +209,16 @@ nav ul li {
 }
     
     
+.user-btn {
+    width: 175px;
+    background-color: rgba(43, 43, 43, 0.753);
+    color: white;
+    padding: 8px 5px;
+    border-radius: 5px;
+    font-size: 18px;
+    border: 1px solid #404040;
+    margin: 0;
+}
 
 
 

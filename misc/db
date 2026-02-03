@@ -1,0 +1,9 @@
+use cinema;
+
+create table movie(id int, title varchar(255), overview varchar(1000), poster_path varchar(255), release_date DATE, language varchar(50))
+
+insert into movie(id, title, overview, release_date, language) values(1352, "Movie 3", "Lorem ipsum dolor sit amet, ipsum dolor sit amet, ipsum dolor sit amet.", '2024-01-01', "en")
+
+insert into test(hej) values("yaaaaaaaaaa");
+insert into test(hej) values("asdfölaksdjfaölsfdj");
+insert into test(hej) values("asdf8asdf9asdf");

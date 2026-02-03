@@ -14,7 +14,7 @@
 <template>
   <Navbar userType="Logga in"/>
   <RouterView />
-
+  <div class="fix" style="clear: both; width: 100%;"></div>
   <Footer/>
 
 </template>

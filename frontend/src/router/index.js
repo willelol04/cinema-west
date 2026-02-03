@@ -4,6 +4,8 @@ import HomeView from '@/views/HomeView.vue';
 import MoviesView from '@/views/MoviesView.vue';
 import MovieView from '@/views/MovieView.vue';
 import AdminView from '@/views/AdminView.vue';
+import AboutView from '@/views/AboutView.vue';
+
 import NotFoundView from '@/views/NotFoundView.vue';
 import AboutView from '@/views/AboutView.vue';
 import SigninView from '@/views/SigninView.vue';
@@ -47,6 +49,11 @@ const router = createRouter({
             path: '/movie/:id',
             name: 'movie',
             component: MovieView,
+        },
+        {
+            path: '/about',
+            name: 'about',
+            component: AboutView,
         },
         {
             path: '/admin',
