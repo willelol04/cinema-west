@@ -1,19 +1,23 @@
 <script setup>
     import { RouterLink } from 'vue-router';
+    import { reactive } from 'vue';
+    
 
+    
 </script>
 
 <template>
     <section>
         <div class="login">
             <div class="login-box">
-                <h1>Sign in</h1>
+                <h1>Log in</h1>
                 <form>
                     <label for="email">Email:</label><br/>
                     <input type="email" id="email" name="email" required/><br/><br/>
                     <label for="password">Password:</label><br/>
                     <input type="password" id="password" name="password" required/><br/><br/>
-                    <a href="/"><button type="submit">Sign in</button></a>
+                    <RouterLink to="/signup">Har du inget konto? Registrera dig nu!</RouterLink>
+                    <button type="submit">Log in</button>
                 </form>
             </div>
             
@@ -61,7 +65,7 @@ h1 {
     font-size: 36px;
 
 }
-a {
+button {
     padding: 5px 10px;
     display: block;
     width: fit-content;

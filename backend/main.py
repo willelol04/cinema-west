@@ -31,6 +31,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class Movie(BaseModel):
+    adult: Optional[bool] = None
+    backdrop_path: Optional[str] = None
+    genre_ids: Optional[list] = None
+    id: Optional[int] = None
+    original_language: Optional[str] = None
+    original_title: Optional[str] = None
+    overview: Optional[str] = None
+    popularity: Optional[float] = None
+    poster_path: Optional[str] = None
+    release_date: Optional[str] = None
+    title: Optional[str] = None
+    video: Optional[bool] = None
+    vote_average: Optional[float] = None
+    vote_count: Optional[int] = None
+
+class User(BaseModel):
+    f_name: str
+    l_name: str
+    email: str
+    password: str
+
+class TestItem(BaseModel):
+    name: str
+
 @app.get("/")
 async def root():
     return {'message': 'hello world'}
@@ -38,10 +63,13 @@ async def root():
 async def post_to_db(item: BaseModel, query, values):
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
-            await cur.execute(query, values)
             print("movie added")
-            await conn.commit()
-    return {"returnMessage": "successfully added item"} 
+            try:
+                await cur.execute(query, values)
+                await conn.commit()
+                return "successfully added item" 
+            except:
+                return "Error adding item."
 
 async def delete_from_db(item: BaseModel, query, values):
     async with pool.acquire() as conn:
@@ -155,27 +183,6 @@ async def get_movies_all():
     
             return returnList
 
-class Movie(BaseModel):
-    adult: Optional[bool] = None
-    backdrop_path: Optional[str] = None
-    genre_ids: Optional[list] = None
-    id: Optional[int] = None
-    original_language: Optional[str] = None
-    original_title: Optional[str] = None
-    overview: Optional[str] = None
-    popularity: Optional[float] = None
-    poster_path: Optional[str] = None
-    release_date: Optional[str] = None
-    title: Optional[str] = None
-    video: Optional[bool] = None
-    vote_average: Optional[float] = None
-    vote_count: Optional[int] = None
-    
-    
-
-class TestItem(BaseModel):
-    name: str
-
 @app.post("/addmovie") 
 async def add_movie(movie: Movie):
     query = 'insert into movie(id, title, overview, poster_path, release_date, language) values(%s, %s, %s, %s, %s, %s);'
@@ -190,6 +197,11 @@ async def delete_movie(movie: Movie):
     await delete_from_db(movie, query, values)
     return {"returnMessage": movie} 
 
+@app.post("/adduser") 
+async def add_movie(user: User):
+    query = 'insert into user(first_name, last_name, email, password) values(%s, %s, %s, %s);'
+    values = (user.f_name, user.l_name, user.email, user.password)
+    return await post_to_db(user, query, values)
 
 
 

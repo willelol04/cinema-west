@@ -3,7 +3,7 @@
     import { useRoute, RouterLink } from 'vue-router';
     import { ref, reactive, watch } from 'vue';
     
-    const props = defineProps(['userType'])
+    const props = defineProps(['isLoggedIn'])
     
     
     const dropDownState = ref(false);
@@ -53,15 +53,14 @@
                 <li ><RouterLink :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>
                 <li ><RouterLink :class="[isActive('/movies') ? 'activeNavLink' : '', 'nav-item']" to="/movies">Movies</RouterLink></li>
                 <li ><RouterLink :class="[isActive('/about') ? 'activeNavLink' : '', 'nav-item']" to="/about">About</RouterLink></li>
-                <li ><RouterLink :class="[isActive('/signin') ? 'activeNavLink' : '', 'nav-item']" to="/signin">Sign in</RouterLink></li>
-                <li ><RouterLink :class="[isActive('/login') ? 'activeNavLink' : '', 'nav-item']" to="/login">Log in</RouterLink></li>
             </ul>
         <div class="nav-dropdown">
         <button @click="toggleDropdown()" class="nav-item user-btn">{{ userType }}<i v-if="returnDropDownState()" class="pi pi-chevron-down"></i><i v-else class="pi pi-chevron-right"></i></button>
         <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
             <li><RouterLink class="nav-item" to="/admin/movies" >My profile</RouterLink></li>
             <li><a class="nav-item" href="#">My tickets</a></li>
-            <li><a class="nav-item" href="#">Log out</a></li>
+            <li v-if="props.isLoggedIn"><a class="nav-item" href="#">Log out</a></li>
+            <li v-else ><RouterLink :class="[isActive('/login') ? 'activeNavLink' : '', 'nav-item']" to="/login">Log in/Sign up</RouterLink></li>
         </ul>
         </div>
 

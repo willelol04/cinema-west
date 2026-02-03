@@ -7,8 +7,7 @@ import AdminView from '@/views/AdminView.vue';
 import AboutView from '@/views/AboutView.vue';
 
 import NotFoundView from '@/views/NotFoundView.vue';
-import AboutView from '@/views/AboutView.vue';
-import SigninView from '@/views/SigninView.vue';
+import SignUpView from '@/views/SignUpView.vue';
 import LoginView from '@/views/LoginView.vue';
 
 
@@ -26,9 +25,9 @@ const router = createRouter({
             component: HomeView,
         },
         {
-            path: '/signin',
-            name: 'signin',
-            component: SigninView,
+            path: '/signup',
+            name: 'signup',
+            component: SignUpView,
         },
         {
             path: '/login',
