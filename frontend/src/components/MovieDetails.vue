@@ -79,7 +79,9 @@ button {
 }
 
 .movie-date-btn:hover {
-    background: #e50914;
+    background: white;
+    color: black;
+
 }
 
 .movie-date-btn {
