@@ -179,6 +179,11 @@ const deleteMovie = async (movie) => {
 </template>
 
 <style scoped>
+
+h1 {
+    font-size: 24px;
+}
+
 .list-enter-active,
 .list-leave-active {
   transition: all 0.5s ease;

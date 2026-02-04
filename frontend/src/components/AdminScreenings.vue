@@ -67,7 +67,7 @@ onMounted(fetchTheatres);
         
     </div>
     <div class="added-movies">
-    <MoviesList title="Upcoming screenings:"/>
+    <MoviesList v-if="false" title="Upcoming screenings:"/>
     </div>
     
 </template>
@@ -98,8 +98,13 @@ input, select, option {
     background-color: #2b2b2b;
 }
 
+input:hover, select:hover, option:hover {
+    cursor: pointer;
+}
+
 input[type="submit"] {
     grid-column: span 2;
 }
+
 
 </style>

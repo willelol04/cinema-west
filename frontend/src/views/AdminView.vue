@@ -44,20 +44,28 @@ i {
 
 
 .dashboard-menu {
-    width: 100%;
+    width: 80%;
+    margin: 0 auto;
     display: block;
     margin-bottom: 50px;
     padding: 20px 10vw;
 }
 
+
+
 .dashboard-menu li {
     display: inline-block;
+    width: 33%;
+}
+
+li a {
+    width: 100%;
+    display: block;
 }
     
 .dashboard-item {
     border-bottom: 2px solid #bbb4b4;
     padding: 20px;
-    width: 100%;
 }
     
 .activeNavLink {

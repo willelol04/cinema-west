@@ -1,6 +1,9 @@
 <script setup>
 import { RouterLink } from 'vue-router';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
+
+
+const post_status = ref('');
 
 const formData = reactive({
     f_name: '',
@@ -9,7 +12,8 @@ const formData = reactive({
     password: '',
 });
 
- const onSubmit = async () => {
+
+const onSubmit = async () => {
     console.log(formData);
     await adduser();
 };
@@ -24,7 +28,7 @@ const adduser = async () => {
 
     });
     const message = await response.text();
-    console.log(message);
+    post_status.value = message;
 };
 
 </script>
@@ -35,19 +39,18 @@ const adduser = async () => {
             <div class="signup-box">
                 <h1>Sign Up</h1>
                 <form @submit.prevent="onSubmit">
-                    <label for="f_name">first name:</label><br/>
+                    <label for="f_name">First name:</label><br/>
                     <input v-model="formData.f_name" type="text" id="f_name" name="f_name" required/><br/><br/>
-                    <label for="l_name">last name:</label><br/>
+                    <label for="l_name">Last name:</label><br/>
                     <input v-model="formData.l_name" type="text" id="l_name" name="l_name" required/><br/><br/>
                     <label for="email">Email:</label><br/>
                     <input v-model="formData.email" type="email" id="email" name="email" required/><br/><br/>
                     <label for="password">Password:</label><br/>
                     <input v-model="formData.password" type="password" id="password" name="password" required/><br/><br/>
                     <button type="submit">Sign Up</button>
+                    <p>{{ post_status }}</p>
                 </form>
             </div>
-            
-            
         </div>
     
     </section>
@@ -62,27 +65,26 @@ section {
     margin: 0 auto;
     text-align: center;
 }
+
 .signup {
   min-height: 73vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-
-
 }
 
 .signup-box {
   max-width: 700px;
   width: 100%;
-
+  margin: 0 auto;
   padding: 24px 28px;
   border-radius: 16px;
 
   background-color: #1a1a1a;
   border: 1px solid rgba(255, 255, 255, 0.12);
 
-  text-align: left;
+  text-align: center;
 
 }
 h1 {
@@ -121,4 +123,6 @@ input {
   background: #111;
   color: white;
 }
+
+
 </style>

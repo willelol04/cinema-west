@@ -209,7 +209,7 @@ async def delete_movie(movie: Movie):
 
 @app.post("/adduser") 
 async def add_user(user: User):
-    query = 'insert into user(first_name, last_name, email, password) values(%s, %s, %s, %s);'
+    query = 'insert into user(f_name, l_name, email, password) values(%s, %s, %s, %s);'
     values = (user.f_name, user.l_name, user.email, user.password)
     return await post_to_db(user, query, values)
 

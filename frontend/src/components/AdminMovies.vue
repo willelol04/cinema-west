@@ -64,7 +64,6 @@ const onSubmit = () => {
     <div class="search-movies">
     <h1>Discover movies</h1>
     <form method="GET" @submit.prevent="onSubmit">
-        <label for="movie-search">Sök efter film på TMDB:</label>
         <input type="search" v-model="search_field" id="movie-search">
         <input type="submit" value="Sök">
     </form>
@@ -102,15 +101,20 @@ input {
     background: white;
     color: black;
     border-bottom: 1px solid #404040;
+    height: 50px;
+    vertical-align: middle;
 
 }
 
 
 
 input[type="search"] {
-    width: 50%;
+    width: 30%;
+    font-size: 16px;
     border-top-left-radius: 50px;
     border-bottom-left-radius: 50px;
+    font-family:sans-serif; 
+    font-weight: 100;
 }
     
 </style>

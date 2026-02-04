@@ -14,7 +14,7 @@ import MoviesList from '@/components/MoviesList.vue';
     </form>
     </div>
     <div class="added-movies">
-    <MoviesList title="Anna Andersson - Biljetter"/>
+    <MoviesList v-if="false" title="Anna Andersson - Biljetter"/>
     </div>
     
 </template>
