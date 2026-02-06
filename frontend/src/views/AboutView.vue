@@ -48,7 +48,7 @@ section {
   justify-content: center;
   padding: 24px;
 
-background-image: url("@/assets/hero.jpg");
+  background-image: url("@/assets/hero.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

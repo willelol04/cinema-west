@@ -25,7 +25,7 @@ onMounted(testFetch)
   <div class="hr"  style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b"></div>
   <MoviesList :display="5" title="Playing Today:"/>
   <div class="hr" style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b" ></div>
-  <MoviesList :display="5" title="Playing Tomorrow:" :showTimes="true" />
+  <MoviesList :display="5" title="Playing Tomorrow:" :showTimes="false" />
 
 </template>
 <style scoped>

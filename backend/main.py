@@ -31,6 +31,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
 # VALIDATIONS BASEMODELS
 
 class Movie(BaseModel):
@@ -59,9 +61,6 @@ class Screening(BaseModel):
     movie_id: int
     theatre_id: int
     start_time: str
-
-
-
 
 
 # HELPER FUNCTIONS
@@ -192,7 +191,6 @@ async def get_theatres_all():
             return returnList
 
 
-
 # POST-REQUESTS
 
 @app.post("/addmovie") 
@@ -231,6 +229,7 @@ async def startup_create_pool():
     global pool
     pool = await aiomysql.create_pool(host='127.0.0.1', port=3306, 
                                   user='cinema', password='6P3AZdYtUaWb7tBxHQa%', db='cinema')
+
 
 @app.on_event("shutdown")
 async def shutdown():

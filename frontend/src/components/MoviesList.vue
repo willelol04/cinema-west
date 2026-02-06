@@ -124,7 +124,7 @@ console.log(props.movies);
         <button class="scroll-right scroll-button"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
     </div>
     </div>
-        <TransitionGroup @enter="onEnter" name="list" tag="div" class="movies-container">
+        <TransitionGroup name="list" tag="div" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
         <RouterLink :to="`/movie/`+ (movie.id ? movie.id : index) ">
             <img v-if="movie.poster_path && movie.poster_path !== 'None'" :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
