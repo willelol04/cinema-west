@@ -57,7 +57,7 @@ const toggleSidenav = () => {
         <div class="nav-dropdown">
         <button @click="toggleDropdown()" class="nav-item user-btn">{{ userType }}<i v-if="returnDropDownState()" class="pi pi-chevron-down"></i><i v-else class="pi pi-chevron-right"></i></button>
         <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
-            <li><RouterLink class="nav-item" to="/admin/movies" >My profile</RouterLink></li>
+            <li><RouterLink class="nav-item" to="/admin/discover" >My profile</RouterLink></li>
             <li><a class="nav-item" href="#">My tickets</a></li>
             <li v-if="props.isLoggedIn"><a class="nav-item" href="#">Log out</a></li>
             <li v-else ><RouterLink :class="[isActive('/login') ? 'activeNavLink' : '', 'nav-item']" to="/login">Log in/Sign up</RouterLink></li>
@@ -219,7 +219,12 @@ li .nav-item {
     margin: 0;
 }
 
-
+nav {
+    position: sticky;
+    top: 0;
+    background: #1a1a1a;
+    z-index: 20;
+}
 
     
 </style>

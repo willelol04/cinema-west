@@ -59,7 +59,7 @@ const router = createRouter({
             component: AdminView,
             children: [
                 {
-                    path: 'movies', 
+                    path: 'discover', 
                     component: AdminMovies,
                 },
                 {

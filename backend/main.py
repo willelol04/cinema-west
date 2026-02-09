@@ -5,10 +5,17 @@ from dotenv import load_dotenv
 import httpx
 import datetime
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 import asyncio
 import aiomysql
 import json
+
+
+import db
+import models
+from fastapi import Depends
+
+
 
 app = FastAPI()
 load_dotenv()
@@ -51,11 +58,7 @@ class Movie(BaseModel):
     vote_average: Optional[float] = None
     vote_count: Optional[int] = None
 
-class User(BaseModel):
-    f_name: str
-    l_name: str
-    email: str
-    password: str
+
     
 class Screening(BaseModel):
     movie_id: int
@@ -135,87 +138,44 @@ async def searchMovie(movie):
 
 
 @app.get("/movie/isadded/{id}")
-async def movie_is_added(id):
-    query = "select id from movie where id=%s;"
-    values = id
-    result = await get_from_db(query, values)
-    print(result)
-    return {"message": True if len(result['result']) != 0 else False}
+def movie_is_added(id):
+    movie = get_movie(id)
+    return {"message": True if movie else False}
 
-@app.get("/movie/{id}")
-async def get_movie(id):
-    query = "select * from movie where id=%s;"
-    values = id
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            await cur.execute(query, values)
-            result = await cur.fetchone()
-            print(result)
-            movie = {}
-            for n in range(len(result)):
-                movie[cur.description[n][0]] = result[n]
-            return movie
+@app.get("/movie/{id}", response_model=models.Movie) 
+def get_movie(id):
+    return db.get_movie(id)
 
-@app.get("/movies/all")
-async def get_movies_all():
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            await cur.execute('select * from movie;')
-            r = await cur.fetchall()
-            returnList = []
-            for row in r:
-                currObj = {}
-                for n in range(len(cur.description)):
-                    currObj[str(cur.description[n][0])]=str(row[n])
-                print(currObj)
-                returnList.append(currObj)
-            print(returnList)
-    
-            return returnList
+
+@app.get("/movies/all", response_model=List[models.Movie])
+def get_movies_all():
+    return db.get_movies_all()
 
 @app.get("/theatres/all")
-async def get_theatres_all():
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            await cur.execute('select * from theatre;')
-            r = await cur.fetchall()
-            returnList = []
-            for row in r:
-                currObj = {}
-                for n in range(len(cur.description)):
-                    currObj[str(cur.description[n][0])]=str(row[n])
-                print(currObj)
-                returnList.append(currObj)
-            print(returnList)
-    
-            return returnList
-
+def get_theatres_all():
+    return db.get_theatres_all()
 
 # POST-REQUESTS
 
 @app.post("/addmovie") 
-async def add_movie(movie: Movie):
-    query = 'insert into movie(id, title, overview, poster_path, release_date, language) values(%s, %s, %s, %s, %s, %s);'
-    values = (movie.id, movie.original_title, movie.overview, movie.poster_path, movie.release_date, movie.original_language)
-    return await post_to_db(movie, query, values) 
+def add_movie(movie: models.Movie):
+    db.add_movie(movie)
+    return movie
 
 @app.post("/delete_movie") 
-async def delete_movie(movie: Movie):
-        query = 'delete from cinema.screening where movie_id=%s; delete from cinema.movie where id=%s;'
-        values = (movie.id, movie.id)
-        return await delete_from_db(movie, query, values)
+def delete_movie(movie: models.Movie):
+    db.delete_movie(movie)
+    return movie
 
-@app.post("/adduser") 
-async def add_user(user: User):
-    query = 'insert into user(f_name, l_name, email, password) values(%s, %s, %s, %s);'
-    values = (user.f_name, user.l_name, user.email, user.password)
-    return await post_to_db(user, query, values)
+@app.post("/adduser", response_model=models.UserResponse) 
+def add_user(user: models.UserCreate):
+    db.add_user(user)
+    return user
 
 @app.post("/addscreening")
-async def add_screening(screening: Screening):
-    query = 'insert into screening(movie_id, theatre_id, start_time) values(%s, %s, %s);'
-    values = (screening.movie_id, screening.theatre_id, screening.start_time)
-    return await post_to_db(screening, query, values)
+def add_screening(screening: Screening):
+    db.add_screening(screening)
+    return screening
 
 
 
@@ -224,19 +184,9 @@ async def add_screening(screening: Screening):
 
 #EVENT FUNCTIONS
 
-@app.on_event("startup")
-async def startup_create_pool():
-    global pool
-    pool = await aiomysql.create_pool(host='127.0.0.1', port=3306, 
-                                  user='cinema', password='6P3AZdYtUaWb7tBxHQa%', db='cinema')
-
 
 @app.on_event("shutdown")
 async def shutdown():
     print("\n\nclosing tmdb_client\n\n")
     await tmdb_client.aclose()
     print("closed tmdb")
-    print("\n\nclosing pool\n\n")
-    pool.close()
-    await pool.wait_closed()
-    print("closed pool")

@@ -29,13 +29,11 @@ footer {
     align-items: center;
     padding-left: 200px;
     padding-right: 200px;
-    padding-top: 50px;
+    padding-top: 20px;
     padding-bottom: 50px;
     border-top: 1px solid #404040;
     font-size: 20px;
-    position: absolute;
     bottom: 0;
-    margin-top: 20px;
     height: 200px;
 }
 

@@ -4,9 +4,11 @@ import { roundToNearestMinutes } from 'date-fns';
 import { Fieldset } from 'primevue';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter, routeLocationKey, useRoute } from 'vue-router';
+import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
+
 
 const search_field = defineModel('Bing');
-const fetchComplete = ref(false);
+const fetchComplete = ref(true);
 const movieResults = ref([]);
 
 const route = useRoute();
@@ -21,6 +23,7 @@ async function movieIsAdded(id) {
 
 async function fetchMovieResults(numbers_tried = 1) { 
     const num = numbers_tried;
+    fetchComplete.value = false;
     try {
     const movieResultsPromise = await fetch(`http://localhost:8000/movies/search/${route.query.q}`)
     const movieResultsObject = await movieResultsPromise.json();
@@ -67,12 +70,13 @@ const onSubmit = () => {
         <input type="search" v-model="search_field" id="movie-search">
         <input type="submit" value="Sök">
     </form>
-
-    </div>
-    
     <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieResults">
     </MoviesListAdmin>
-    <div v-if="movieResults.length === 0 && route.query.q" class="empty">No results were found</div>
+    <BeatLoader v-if="!fetchComplete" class="fetch-loading" :color="'#bdc7bf'"/>
+    <div v-if="fetchComplete && movieResults.length === 0 && route.query.q" class="empty">No results were found</div>
+    </div>
+    
+
     
     <!--
     <MoviesList title="Already added movies:"/>
@@ -83,8 +87,13 @@ const onSubmit = () => {
 
 <style scoped>
 
+.fetch-loading {
+    margin-top: 200px;
+}
+
 h1 {
     display: block;
+    text-align: center;
 }
 
 label {
@@ -93,6 +102,7 @@ label {
 
 form {
     margin-top: 20px;
+    text-align: center;
 }
 
 input {

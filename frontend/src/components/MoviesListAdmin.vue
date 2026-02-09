@@ -5,6 +5,7 @@ import MoviesView from '@/views/MoviesView.vue';
 import MovieDetails from './MovieDetails.vue';
 
 const start_ind = ref(0);
+const fetchComplete = ref(false)
 
 
 const props = defineProps({
@@ -230,7 +231,7 @@ h1 {
 
 
 section {
-    width: 80%;
+    width: 100%;
     text-align: left;
     display: block;
     padding: 20px 10vw;

@@ -8,24 +8,30 @@ const isActive = (currentRoutePath) => {
 </script>
 
 <template>
-    <section>
+    <main>
         <div class="dashboard-menu">
             <ul>
                 <li>
-                    <RouterLink :class="[isActive('/admin/movies') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/movies">Movie Database<i class="pi pi-database"></i></RouterLink>
+                    <RouterLink :class="[isActive('/admin/discover') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/discover">Discover Movies<i class="pi pi-globe"></i></RouterLink>
+                </li>
+                <li>
+                    <RouterLink :class="[isActive('/admin/tickets') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/tickets" >Database<i class="pi pi-database"></i></RouterLink>
                 </li>
                 <li>
                     <RouterLink :class="[isActive('/admin/screenings') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/screenings">Movie Screenings<i class="pi pi-calendar"></i></RouterLink>
                 </li>
                 <li>
-                    <RouterLink :class="[isActive('/admin/tickets') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/tickets" >Tickets<i class="pi pi-ticket"></i></RouterLink>
+                    <RouterLink :class="[isActive('/admin/ticasdfkets') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/tickets" >Customers<i class="pi pi-user"></i></RouterLink>
+                </li>
+                <li>
+                    <RouterLink :class="[isActive('/admin/ticasdfkets') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/tickets" >Tickets<i class="pi pi-ticket"></i></RouterLink>
                 </li>
             </ul>
         </div>
-        <main>
-            <RouterView />
-        </main>
-    </section>
+
+        <RouterView />
+
+    </main>
 
 
 </template>
@@ -33,9 +39,19 @@ const isActive = (currentRoutePath) => {
 <style scoped>
 
 
+main {
+    width: 100%;
+    min-height: 700px;
+    display: grid;
+    grid-template-columns: 1fr 9fr;
+}
+
+
 section {
     width: 100%;
     text-align: center;
+    display: block;
+    margin: 0 auto;
 }
 
 i {
@@ -44,19 +60,21 @@ i {
 
 
 .dashboard-menu {
-    width: 80%;
-    margin: 0 auto;
+    width: 300px;
     display: block;
-    margin-bottom: 50px;
-    padding: 20px 10vw;
+    left: 0;
+    text-align: center;
+    border-right: 1px solid #404040;
+    height: 100%;
+}
+
+
+ul {
+    width: 100%;
 }
 
 
 
-.dashboard-menu li {
-    display: inline-block;
-    width: 33%;
-}
 
 li a {
     width: 100%;
@@ -64,8 +82,14 @@ li a {
 }
     
 .dashboard-item {
+    width: 100%;
     border-bottom: 2px solid #bbb4b4;
     padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
 }
     
 .activeNavLink {
