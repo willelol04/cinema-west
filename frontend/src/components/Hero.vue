@@ -43,13 +43,11 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
     <div class="upcoming-movie">
     <img :src="`https://image.tmdb.org/t/p/original`+item.poster_path" height="326" width="auto">
     <div class="right">
-        {{ item.title }} - {{ item.id }}
+        <h3 class="upcoming-movie-title">{{ item.title }}</h3>
         <br>
+        <h4 class="upcoming-movie-date">{{ format(item.release_date, 'MMMM do yyyy') }}</h4>
         <br>
-        {{ format(item.release_date, 'MMMM do yyyy') }}
-        <br>
-        <br>
-        {{ item.overview }}
+        <p class="upcoming-movie-overview">{{ item.overview.length < 200 ? item.overview : item.overview.slice(0,200)+"..." }} </p>
     </div>
     </div>
     </Slide>
@@ -94,88 +92,11 @@ section {
     padding: 20px;
 }
 
-.carousel {
-}
-
 
  
-
-</style>
-
-<!--
-
-<template>
-    <section>
-    <h1>Kommande filmpremiärer:</h1>
-    <Timeline class="timeline" :value="upcomingPremieres" layout="horizontal" align="middle">
-        <div class="timeline-item">
-            
-        </div>
-        <template #marker="slotProps">
-            <RouterLink to="/movie/3">
-            <div class="timeline-marker">
-            <img :src="slotProps.item.image">
-            <p>{{ slotProps.item.title }}</p>
-            <p class="premiere">Premiär: {{ slotProps.item.date }}</p>
-            </div>
-            </RouterLink>
-        </template>
-        <template #content="slotProps">
-        </template>
-    </Timeline>
-    </section>
-</template>
-
-<style scoped>
-
-section {
-    width: 100%;
-    height: 550px;
-    background-image: url('../assets/space.jpg');
-    background: linear-gradient(circle, rgba(99, 97, 97, 0.63), rgba(0, 0, 0, 0.5)),
-    url('../assets/space.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-
-    text-align: left;
-    padding: 20px 200px;
-    backdrop-filter: blur(10px)
-}
-
-.timeline {
-    width: 100%;
-    color:white;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8)
-
-}
-
-p {
-    display: block;
-    text-align: center;
-}
-
-.timeline img {
-    display: block;
-    width: 250px;
-    left: 0;
-    transition: 300ms;
-}
-
-.premiere {
-    color: #e50914d5;
-}
-.timeline img:hover{
-    box-shadow: 2px 2px 61px 0px rgba(245,239,239,0.75);
-    -webkit-box-shadow: 2px 2px 61px 0px rgba(245,239,239,0.75);
-    -moz-box-shadow: 2px 2px 61px 0px rgba(245,239,239,0.75);
-    cursor:pointer;
-    transform: translateY(-5px);
-
+.upcoming-movie-date {
+    opacity: 80%;
+    font-weight: 200;
 }
 
 </style>
-
-
-
-
--->

@@ -201,6 +201,8 @@ def delete_movie(movie: models.Movie):
     with Session(engine) as session:
         try:
             db_movie = session.get(Movie, movie.id)
+            for screening in db_movie.screenings:
+                session.delete(screening)
             session.delete(db_movie)
             session.commit()
         except Exception as e:

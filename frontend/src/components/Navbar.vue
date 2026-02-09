@@ -178,7 +178,7 @@ li .nav-item {
 
 .dropdown-list {
     width: 175px;
-    position: fixed;
+    position: absolute;
     background-color: rgba(43, 43, 43, 0.753);
     color: white;
     padding: 10px 15px;

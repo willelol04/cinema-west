@@ -1,5 +1,7 @@
 <script setup>
 
+import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+
 defineProps({
         movie: {
             type: Object,
@@ -22,9 +24,9 @@ defineProps({
         </div>
         <div class="movie-description">{{ movie.overview }}</div>
         <div class="movie-screenings">
-            <h3>Book tickets:</h3>
+        <h3>Book tickets:</h3>
             <div v-if="movie.screenings && movie.screenings.length !== 0" class="screenings">
-            <button v-for="(screening, ind) in movie.screenings" :key=screening class="movie-date-btn">{{ screening.start_time }}</button>               
+            <button v-for="(screening, ind) in movie.screenings" :key=screening class="movie-date-btn">{{ format(screening.start_time, "EEEE, MMMM do HH:mm") }}</button>               
             </div>
             <p v-else>No scheduled screenings for this movie.</p>
 
@@ -68,8 +70,8 @@ defineProps({
 button {
     background-color: #2d2d2d;
     color: white;
-    padding: 30px;
-    border: 1px solid #404040;
+    padding: 15px;
+    border: 3px solid #404040;
 }
 
 button {
@@ -78,13 +80,17 @@ button {
 
 .movie-date-btn:hover {
     background: white;
-    color: black;
+    background-color: #404040;
+    border-color: #2d2d2d;
 
 }
 
 .movie-date-btn {
     border-radius: 5px;
     transition: 250ms;
+    width: 100%;
+    padding: 30px;
+
 }
 
 
@@ -94,6 +100,14 @@ button {
 
 .movie-title {
     margin-bottom: 10px;
+}
+
+.screenings {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    width: 100%;
+    gap: 20px;
+    
 }
 
 </style>

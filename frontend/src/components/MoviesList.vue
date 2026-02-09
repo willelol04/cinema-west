@@ -167,7 +167,8 @@ console.log(props.movies);
     justify-content: space-between;
     align-items: center;
     vertical-align: middle;
-    margin-bottom: 50px;
+    margin-bottom: 25px;
+    margin-top: 40px;
 }
 
 
@@ -209,7 +210,7 @@ section {
 
 .movie-card img {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 16px;
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
     
@@ -234,10 +235,10 @@ section {
 
 .movie-card {
     background-color: #2d2d2d;
-    border-radius: 10px;
+    border-radius: 16px;
     border: 1px solid #404040;
-    border-bottom: none;
     transition: 300ms;
+    position: relative;
 
 
 }
@@ -260,7 +261,9 @@ section {
 
 .movie-card h2 {
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
+    bottom: 0;
+    width: 100%;
 }
 
 .list-move, 
@@ -271,8 +274,7 @@ section {
 
 .list-enter-from,
 .list-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
+  transform: translateX(60px);
 }
 
 /* ensure leaving items are taken out of layout flow so that moving
