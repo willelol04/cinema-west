@@ -111,7 +111,7 @@ def movie_is_added(id):
     movie = get_movie(id)
     return {"message": True if movie else False}
 
-@app.get("/movies/{id}", response_model=models.Movie) 
+@app.get("/movies/{id}") 
 def get_movie(id):
     return db.get_movie(id)
 

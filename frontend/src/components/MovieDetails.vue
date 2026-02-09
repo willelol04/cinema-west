@@ -22,14 +22,12 @@ defineProps({
         </div>
         <div class="movie-description">{{ movie.overview }}</div>
         <div class="movie-screenings">
-            <h3>Boka biljetter:</h3>
-            <button class="movie-date-btn">14 januari 14.00</button>
-            <button class="movie-date-btn">31 januari 19.00</button>
-            <button class="movie-date-btn">1 februari 21.00</button>
-            <button class="movie-date-btn">1 februari 21.00</button>
-            <button class="movie-date-btn">1 februari 21.00</button>
-            <button class="movie-date-btn">1 februari 21.00</button>
-            <button class="movie-date-btn">1 februari 21.00</button>
+            <h3>Book tickets:</h3>
+            <div v-if="movie.screenings && movie.screenings.length !== 0" class="screenings">
+            <button v-for="(screening, ind) in movie.screenings" :key=screening class="movie-date-btn">{{ screening.start_time }}</button>               
+            </div>
+            <p v-else>No scheduled screenings for this movie.</p>
+
         </div>
     </div>
     </div>

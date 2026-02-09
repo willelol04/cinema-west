@@ -11,6 +11,7 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import selectinload
 
 
 import models
@@ -31,6 +32,7 @@ class Movie(Base):
     poster_path: Mapped[str] = mapped_column(String(1000))
     release_date: Mapped[str] = mapped_column(Date, default="2024-01-01")
     language: Mapped[str] = mapped_column(String(10))
+    screenings: Mapped[List["Screening"]] = relationship()
 
 
 class User(Base):
@@ -98,6 +100,7 @@ echo = True)
 
 
 
+# -- Users --
 def get_user(id):
     with Session(engine) as session:
         try:
@@ -136,7 +139,7 @@ def add_user(user: models.UserCreate):
             print("--Error--", e)
             session.rollback()
 
-# -- Screenings --
+# -- Theatres --
 def get_theatre(id):
     with Session(engine) as session:
         try:
@@ -177,10 +180,11 @@ def add_screening(theatre: models.Theatre):
 
 
 
+# -- Movies --
 def get_movie(id):
     with Session(engine) as session:
         try:
-            result = session.get(Movie, id)
+            result = session.execute(select(Movie).where(Movie.id==id).options(selectinload(Movie.screenings))).scalars().first()
             return result
         except Exception as e:
             print(e)
@@ -267,19 +271,19 @@ if __name__ == "__main__":
     with Session(engine) as session:
 
         Ticket.__table__.drop(bind=engine, checkfirst=True)
-#        Screening.__table__.drop(bind=engine, checkfirst=True)
-#        Seat.__table__.drop(bind=engine, checkfirst=True)
-#        Theatre.__table__.drop(bind=engine, checkfirst=True)
-#        User.__table__.drop(bind=engine, checkfirst=True)
+        Screening.__table__.drop(bind=engine, checkfirst=True)
+        Seat.__table__.drop(bind=engine, checkfirst=True)
+        Theatre.__table__.drop(bind=engine, checkfirst=True)
+        User.__table__.drop(bind=engine, checkfirst=True)
         Movie.__table__.drop(bind=engine, checkfirst=True)
 #    
 #
         Movie.__table__.create(bind=engine, checkfirst=True)
-#        User.__table__.create(bind=engine, checkfirst=True)
+        User.__table__.create(bind=engine, checkfirst=True)
         Theatre.__table__.create(bind=engine, checkfirst=True)
-#        Seat.__table__.create(bind=engine, checkfirst=True)
-#        Screening.__table__.create(bind=engine, checkfirst=True)
-#        Ticket.__table__.create(bind=engine, checkfirst=True)
+        Seat.__table__.create(bind=engine, checkfirst=True)
+        Screening.__table__.create(bind=engine, checkfirst=True)
+        Ticket.__table__.create(bind=engine, checkfirst=True)
         
         #some_user = session.get(User, 1)
         #session.commit()
