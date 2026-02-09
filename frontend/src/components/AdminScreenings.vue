@@ -12,19 +12,19 @@ const screening = reactive({
 })
 
 const fetchMovies = async () => {
-    const promise = await fetch('http://localhost:8000/movies/all');
+    const promise = await fetch('http://localhost:8000/movies');
     movieResults.value = await promise.json();
     console.log(movieResults.value);
 }
 
 const fetchTheatres = async () => {
-    const promise = await fetch('http://localhost:8000/theatres/all');
+    const promise = await fetch('http://localhost:8000/theatres');
     theatreResults.value = await promise.json();
     console.log(theatreResults.value);
 }
 
 const addScreening = async () => {
-    const response = await fetch("http://localhost:8000/addscreening", {
+    const response = await fetch("http://localhost:8000/screenings", {
         method: "POST",
         body: JSON.stringify(screening),
         headers: {

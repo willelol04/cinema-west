@@ -6,7 +6,7 @@ const movieResults = ref([]);
 const fetchComplete = ref(false);
 
 async function fetchMovies() {
-    const promise = await fetch('http://localhost:8000/movies/all');
+    const promise = await fetch('http://localhost:8000/movies');
     movieResults.value = await promise.json();
     console.log(movieResults.value);
 }

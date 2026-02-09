@@ -66,37 +66,6 @@ class Screening(BaseModel):
     start_time: str
 
 
-# HELPER FUNCTIONS
-async def post_to_db(item: BaseModel, query, values):
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            print("movie added")
-            try:
-                await cur.execute(query, values)
-                await conn.commit()
-                return "Successfully added item."
-            except:
-                return "Failed adding item."
-
-async def delete_from_db(item: BaseModel, query, values):
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            try:
-                await cur.execute(query, values)
-                await conn.commit()
-                return "Successfully deleted item."
-            except:
-                return "Falied deleting item."
-
-async def get_from_db(query, values):
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            await cur.execute(query, values)
-            result = await cur.fetchall()
-            print(result)
-            return {"result": result, "description": cur.description}
-
-
 async def getFromTMDB(path, parameters): 
     response = await tmdb_client.get(url=path, params=parameters)
 
@@ -142,40 +111,47 @@ def movie_is_added(id):
     movie = get_movie(id)
     return {"message": True if movie else False}
 
-@app.get("/movie/{id}", response_model=models.Movie) 
+@app.get("/movies/{id}", response_model=models.Movie) 
 def get_movie(id):
     return db.get_movie(id)
 
-
-@app.get("/movies/all", response_model=List[models.Movie])
+@app.get("/movies", response_model=List[models.Movie])
 def get_movies_all():
     return db.get_movies_all()
 
-@app.get("/theatres/all")
+@app.get("/theatres")
 def get_theatres_all():
     return db.get_theatres_all()
 
 # POST-REQUESTS
 
-@app.post("/addmovie") 
+@app.post("/movies") 
 def add_movie(movie: models.Movie):
     db.add_movie(movie)
     return movie
 
-@app.post("/delete_movie") 
+@app.delete("/movies") 
 def delete_movie(movie: models.Movie):
     db.delete_movie(movie)
     return movie
 
-@app.post("/adduser", response_model=models.UserResponse) 
+@app.post("/users", response_model=models.UserResponse) 
 def add_user(user: models.UserCreate):
     db.add_user(user)
     return user
 
-@app.post("/addscreening")
+@app.post("/screenings")
 def add_screening(screening: Screening):
     db.add_screening(screening)
     return screening
+
+@app.get("/screenings/{id}")
+def get_screening(id):
+    return db.get_screening(id)
+
+@app.get("/screenings")
+def get_screenings_all():
+    return db.get_screenings_all()
 
 
 

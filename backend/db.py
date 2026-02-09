@@ -97,6 +97,35 @@ engine = create_engine(
 echo = True)
 
 
+
+def get_user(id):
+    with Session(engine) as session:
+        try:
+            result = session.get(User, id)
+            return result
+        except Exception as e:
+            print("--Error--", e)
+            session.rollback()
+
+def get_users_all():
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(User)).scalars().all()
+            return result
+        except Exception as e:
+            print("--Error--", e)
+            session.rollback()
+
+def delete_user(user: models.UserResponse):
+    with Session(engine) as session:
+        try:
+            user_obj = session.get(User, user.id) 
+            session.delete(user_obj)
+            session.commit()
+        except Exception as e:
+            print("--Error--", e)
+            session.rollback()
+
 def add_user(user: models.UserCreate):
     with Session(engine) as session:
         try:
@@ -104,14 +133,71 @@ def add_user(user: models.UserCreate):
             session.add(user_obj)
             session.commit()
         except Exception as e:
+            print("--Error--", e)
+            session.rollback()
+
+# -- Screenings --
+def get_theatre(id):
+    with Session(engine) as session:
+        try:
+            result = session.get(Theatre, id)
+            return result
+        except Exception as e:
+            print(e)
+
+def get_theatres_all():
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(Theatre)).scalars().all()
+            return result
+        except Exception as e:
+            print(e)
+
+def delete_theatre(screening: models.Theatre):
+    with Session(engine) as session:
+        try:
+            theatre_obj = session.get(Theatre, screening.id)
+            session.delete(theatre_obj)
+            session.commit()
+        except Exception as e:
             print(e)
             session.rollback()
 
-def add_screening(screening: models.Screening):
+def add_screening(theatre: models.Theatre):
     with Session(engine) as session:
         try:
-            screening_obj = Screening(**screening.dict())
-            session.add(screening_obj)
+            theatre_obj = Screening(**theatre.dict())
+            session.add(theatre_obj)
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
+
+
+
+
+
+def get_movie(id):
+    with Session(engine) as session:
+        try:
+            result = session.get(Movie, id)
+            return result
+        except Exception as e:
+            print(e)
+
+def get_movies_all():
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(Movie)).scalars().all()
+            return result
+        except Exception as e:
+            print(e)
+
+def delete_movie(movie: models.Movie):
+    with Session(engine) as session:
+        try:
+            db_movie = session.get(Movie, movie.id)
+            session.delete(db_movie)
             session.commit()
         except Exception as e:
             print(e)
@@ -132,45 +218,44 @@ def add_movie(movie: models.Movie):
             print(e)
             session.rollback()
 
-def delete_movie(movie: models.Movie):
+
+
+# -- Screenings --
+def get_screening(id):
     with Session(engine) as session:
         try:
-            db_movie = session.get(Movie, movie.id)
-            session.delete(db_movie)
+            result = session.get(Screening, id)
+            return result
+        except Exception as e:
+            print(e)
+
+def get_screenings_all():
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(Screening)).scalars().all()
+            return result
+        except Exception as e:
+            print(e)
+
+def delete_screening(screening: models.Screening):
+    with Session(engine) as session:
+        try:
+            screening_obj = session.get(Screening, screening.id)
+            session.delete(screening_obj)
             session.commit()
         except Exception as e:
             print(e)
             session.rollback()
 
-def get_movie(id):
+def add_screening(screening: models.Screening):
     with Session(engine) as session:
         try:
-            result = session.get(Movie, id)
-            return result
+            screening_obj = Screening(**screening.dict())
+            session.add(screening_obj)
+            session.commit()
         except Exception as e:
             print(e)
-
-def get_movies_all():
-    with Session(engine) as session:
-        try:
-            result = session.execute(select(Movie)).scalars().all()
-            print(result)
-            return result
-        except Exception as e:
-            print(e)
-
-
-def get_theatres_all():
-    with Session(engine) as session:
-        try:
-            result = session.execute(select(Theatre)).scalars().all()
-            print(result)
-            return result
-        except Exception as e:
-            print(e)
-
-
-
+            session.rollback()
 
     
 if __name__ == "__main__":

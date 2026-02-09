@@ -8,7 +8,7 @@ import { ConfirmPopupStyle } from 'primevue';
 const ourMovies = ref([]) 
 
 async function testFetch() {
-    const promise = await fetch('http://localhost:8000/movies/all', {
+    const promise = await fetch('http://localhost:8000/movies', {
     });
     const data = await promise.json();
     const getData = data;

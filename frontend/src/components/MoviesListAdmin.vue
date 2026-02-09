@@ -116,7 +116,7 @@ const scrollRight = () => {
 
 
 const addMovie = async (movie) => {
-    const response = await fetch("http://localhost:8000/addmovie", {
+    const response = await fetch("http://localhost:8000/movies", {
         method: "POST",
         body: JSON.stringify(movie),
         headers: {
@@ -131,8 +131,8 @@ const addMovie = async (movie) => {
 };
 
 const deleteMovie = async (movie) => {
-    const response = await fetch("http://localhost:8000/delete_movie", {
-        method: "POST",
+    const response = await fetch("http://localhost:8000/movies", {
+        method: "DELETE",
         body: JSON.stringify(movie),
         headers: {
             "Content-Type": "application/json"

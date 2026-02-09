@@ -19,7 +19,7 @@ const onSubmit = async () => {
 };
 
 const adduser = async () => {
-    const response = await fetch("http://localhost:8000/adduser", {
+    const response = await fetch("http://localhost:8000/users", {
         method: "POST",
         body: JSON.stringify(formData),
         headers: {

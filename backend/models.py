@@ -37,3 +37,8 @@ class Screening(BaseModel):
     theatre_id: int
     start_time: str
 
+
+class Theatre(BaseModel):
+    id: int
+    name: str
+

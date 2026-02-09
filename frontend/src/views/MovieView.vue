@@ -9,7 +9,7 @@ const movieResults = ref({});
 const route = useRoute();
 
 async function fetchMovie() {
-    const promise = await fetch('http://localhost:8000/movie/'+route.params.id);
+    const promise = await fetch('http://localhost:8000/movies/'+route.params.id);
     movieResults.value = await promise.json();
     console.log(movieResults.value);
 }
