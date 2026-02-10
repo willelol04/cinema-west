@@ -18,7 +18,7 @@ const fetchComplete = ref(false);
 onMounted(async function fetchUpcoming(numbers_tried = 1) {
     const num = numbers_tried;
     try {
-        const upcomingMoviePromise = await fetch("http://localhost:8000/movies/upcoming")
+        const upcomingMoviePromise = await fetch("http://localhost:8000/tmdb/movies/upcoming")
         const upcomingMovieObject = await upcomingMoviePromise.json();
         upcomingMovies.value = upcomingMovieObject.results;
         console.log(upcomingMovies.value);

@@ -14,7 +14,6 @@ import { RouterView } from 'vue-router';
 <template>
   <Navbar :isLoggedIn="false"/>
   <RouterView />
-  <div class="fix" style="clear: both; width: 100%;"></div>
   <Footer />
 
 </template>

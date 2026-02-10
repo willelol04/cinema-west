@@ -4,10 +4,10 @@ import aiomysql
 import pymysql
 from typing import List
 from typing import Optional
-from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select
+from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
@@ -18,10 +18,13 @@ import models
 
 
 
-
 class Base (DeclarativeBase):
     pass
 
+movie_genre = Table("movie_genre", Base.metadata, Column("movie_id", Integer, ForeignKey("movie.id"), primary_key=True), Column("genre_id", Integer, ForeignKey("genre.id"), primary_key=True))
+
+
+    
 
 class Movie(Base):
     __tablename__ = "movie"
@@ -32,7 +35,21 @@ class Movie(Base):
     poster_path: Mapped[str] = mapped_column(String(1000))
     release_date: Mapped[str] = mapped_column(Date, default="2024-01-01")
     language: Mapped[str] = mapped_column(String(10))
+
     screenings: Mapped[List["Screening"]] = relationship()
+    genres: Mapped[List["Genre"]] = relationship(secondary=movie_genre)
+
+class Genre(Base):
+    __tablename__ = "genre"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(30), default="--")
+    
+
+    
+    
+
+    
 
 
 class User(Base):
@@ -184,7 +201,7 @@ def add_screening(theatre: models.Theatre):
 def get_movie(id):
     with Session(engine) as session:
         try:
-            result = session.execute(select(Movie).where(Movie.id==id).options(selectinload(Movie.screenings))).scalars().first()
+            result = session.execute(select(Movie).where(Movie.id==id).options(selectinload(Movie.screenings), selectinload(Movie.genres))).scalars().first()
             return result
         except Exception as e:
             print(e)
@@ -210,6 +227,7 @@ def delete_movie(movie: models.Movie):
             session.rollback()
 
 def add_movie(movie: models.Movie):
+    print(movie)
     with Session(engine) as session:
         try:
             movie_obj = Movie(id=movie.id, 
@@ -223,6 +241,17 @@ def add_movie(movie: models.Movie):
         except Exception as e:
             print(e)
             session.rollback()
+    
+    if movie.genre_ids:
+        with engine.connect() as conn:
+            try:
+                for g_id in movie.genre_ids:
+                    conn.execute(insert(movie_genre).values(genre_id=g_id, movie_id=movie.id))
+                conn.commit()
+            except Exception as e:
+                print(e)
+                conn.rollback()
+    
 
 
 
@@ -262,8 +291,21 @@ def add_screening(screening: models.Screening):
         except Exception as e:
             print(e)
             session.rollback()
-
     
+# -- genres --
+
+def post_genres(genres: List[models.Genre]):
+    with Session(engine) as session:
+        try: 
+            print(genres)
+            session.execute(insert(Genre), genres,)
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
+
+
+
 if __name__ == "__main__":
 
     first_user = User(f_name="yes", l_name="no", email="email", password="password") 
@@ -272,23 +314,28 @@ if __name__ == "__main__":
 
     with Session(engine) as session:
 
-        Ticket.__table__.drop(bind=engine, checkfirst=True)
-        Screening.__table__.drop(bind=engine, checkfirst=True)
-        Seat.__table__.drop(bind=engine, checkfirst=True)
-        Theatre.__table__.drop(bind=engine, checkfirst=True)
-        User.__table__.drop(bind=engine, checkfirst=True)
-        Movie.__table__.drop(bind=engine, checkfirst=True)
-#    
-#
-        Movie.__table__.create(bind=engine, checkfirst=True)
-        User.__table__.create(bind=engine, checkfirst=True)
-        Theatre.__table__.create(bind=engine, checkfirst=True)
-        Seat.__table__.create(bind=engine, checkfirst=True)
-        Screening.__table__.create(bind=engine, checkfirst=True)
-        Ticket.__table__.create(bind=engine, checkfirst=True)
+#        Ticket.__table__.drop(bind=engine, checkfirst=True)
+#        Screening.__table__.drop(bind=engine, checkfirst=True)
+#        Seat.__table__.drop(bind=engine, checkfirst=True)
+#        Theatre.__table__.drop(bind=engine, checkfirst=True)
+#        User.__table__.drop(bind=engine, checkfirst=True)
+#        Movie.__table__.drop(bind=engine, checkfirst=True)
+#        MovieGenre.__table__.drop(bind=engine, checkfirst=True)
+##    
+##
+#        User.__table__.create(bind=engine, checkfirst=True)
+#        Theatre.__table__.create(bind=engine, checkfirst=True)
+#        Seat.__table__.create(bind=engine, checkfirst=True)
+#        Screening.__table__.create(bind=engine, checkfirst=True)
+#        Ticket.__table__.create(bind=engine, checkfirst=True)
         
         #some_user = session.get(User, 1)
-        #session.commit()
+        Movie.__table__.create(bind=engine, checkfirst=True)
+        Genre.__table__.create(bind=engine, checkfirst=True)
+        session.commit()
+    
+    Base.metadata.create_all(engine)
 
 
         
+

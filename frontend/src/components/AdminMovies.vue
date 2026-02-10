@@ -25,7 +25,7 @@ async function fetchMovieResults(numbers_tried = 1) {
     const num = numbers_tried;
     fetchComplete.value = false;
     try {
-    const movieResultsPromise = await fetch(`http://localhost:8000/movies/search/${route.query.q}`)
+    const movieResultsPromise = await fetch(`http://localhost:8000/tmdb/movies/search/${route.query.q}`)
     const movieResultsObject = await movieResultsPromise.json();
     for (const movie of movieResultsObject.results) {
         if (await movieIsAdded(movie.id) == true) {

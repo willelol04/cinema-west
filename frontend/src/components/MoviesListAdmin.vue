@@ -3,10 +3,11 @@ import { RouterLink } from 'vue-router';
 import { ref, computed, onMounted } from 'vue';
 import MoviesView from '@/views/MoviesView.vue';
 import MovieDetails from './MovieDetails.vue';
+import ConfirmDeleteModal from './ConfirmDeleteModal.vue';
 
 const start_ind = ref(0);
-const fetchComplete = ref(false)
-
+const fetchComplete = ref(false);
+const confirmDelete = ref(false)
 
 const props = defineProps({
     title: {
@@ -144,6 +145,7 @@ const deleteMovie = async (movie) => {
     movie.isAdded = false;
 
 };
+
 
 
 </script>

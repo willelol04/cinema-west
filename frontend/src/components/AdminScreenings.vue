@@ -66,9 +66,6 @@ onMounted(fetchTheatres);
     </form>
         
     </div>
-    <div class="added-movies">
-    <MoviesList v-if="false" title="Upcoming screenings:"/>
-    </div>
     
 </template>
 <style scoped>
@@ -76,7 +73,8 @@ onMounted(fetchTheatres);
 form {
     margin: 0 auto;
     width: 800px;
-    text-align: left;
+    text-align: cetner;
+    margin-top: 25px;
 
 }
 
@@ -96,15 +94,20 @@ input, select, option {
     padding: 10px;
     border-radius: 3px;
     background-color: #2b2b2b;
+    transition: 300ms;
 }
 
 input:hover, select:hover, option:hover {
     cursor: pointer;
+    background-color: #494949;
 }
 
 input[type="submit"] {
     grid-column: span 2;
 }
 
+h1, h2 {
+    text-align: center;
+}
 
 </style>

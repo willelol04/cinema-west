@@ -61,7 +61,6 @@ i {
 
 .dashboard-menu {
     width: 300px;
-    display: block;
     left: 0;
     text-align: center;
     border-right: 1px solid #404040;

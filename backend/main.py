@@ -77,7 +77,7 @@ async def getFromTMDB(path, parameters):
 
 # GET REQUESTS
 
-@app.get("/movies/upcoming")
+@app.get("/tmdb/movies/upcoming")
 async def getUpcoming():
     url = "/discover/movie"
     today = datetime.date.today()
@@ -93,16 +93,22 @@ async def getUpcoming():
               }
     return await getFromTMDB(url, params)
 
-@app.get("/movies/search/{movie}")
-async def searchMovie(movie):
-    if movie not in banned_keyword_list:
-        url = "https://api.themoviedb.org/3/search/movie"
+@app.get("/tmdb/movies/search/{query}")
+async def searchMovie(query):
+    if query not in banned_keyword_list:
+        url = "/search/movie"
         params = { 
                   "language": "en-US", 
                   "page": 1, 
-                  "query": movie,
+                  "query": query,
                   "sort_by":"popularity.desc",
                   }
+        return await getFromTMDB(url, params)
+
+@app.get("/tmdb/movies/{id}")
+async def getMovieDetails(id):
+        url = "/movie/"+id
+        params = {}
         return await getFromTMDB(url, params)
 
 
@@ -153,12 +159,27 @@ def get_screening(id):
 def get_screenings_all():
     return db.get_screenings_all()
 
+# Genre
 
+async def get_genres():
+        url = "/genre/movie/list"
+        params = {}
+        result = await getFromTMDB(url, params)
+        return result['genres']
+
+def post_genres(genres):
+    db.post_genres(genres)
+    return genres
 
 
 
 
 #EVENT FUNCTIONS
+@app.on_event("startup")
+async def startup():
+    pass
+
+
 
 
 @app.on_event("shutdown")

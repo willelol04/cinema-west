@@ -42,3 +42,7 @@ class Theatre(BaseModel):
     id: int
     name: str
 
+class Genre(BaseModel):
+    id: int
+    name: str
+
