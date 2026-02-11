@@ -43,7 +43,9 @@ class Genre(Base):
     __tablename__ = "genre"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(30), default="--")
+    name: Mapped[str] = mapped_column(String(30))
+
+    movies: Mapped[List["Movie"]] = relationship(secondary=movie_genre)
     
 
     
@@ -304,6 +306,13 @@ def post_genres(genres: List[models.Genre]):
             print(e)
             session.rollback()
 
+def get_genres_all():
+    with Session(engine) as session:
+        try: 
+            return session.execute(select(Genre).options(selectinload(Genre.movies)),).scalars().all()
+        except Exception as e:
+            print(e)
+
 
 
 if __name__ == "__main__":
@@ -331,7 +340,6 @@ if __name__ == "__main__":
         
         #some_user = session.get(User, 1)
         Movie.__table__.create(bind=engine, checkfirst=True)
-        Genre.__table__.create(bind=engine, checkfirst=True)
         session.commit()
     
     Base.metadata.create_all(engine)

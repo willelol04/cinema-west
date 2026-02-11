@@ -1,7 +1,13 @@
 <script setup>
     
 import { useRoute, RouterLink } from 'vue-router';
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, onMounted } from 'vue';
+
+import { useAuth0, User } from '@auth0/auth0-vue';
+import LoginButton from './LoginButton.vue';
+import LogoutButton from './LogoutButton.vue';
+
+const { user, isAuthenticated, isLoading, error } = useAuth0()
 
 const props = defineProps(['isLoggedIn'])
 
@@ -43,24 +49,29 @@ const toggleSidenav = () => {
     showSideNav.value = !showSideNav.value;
 }
 
+
+console.log(User)
+
 </script>
 
 <template>
         <nav>
         <div v-if="isDesktop" class="desktop-nav">
-        <h1><RouterLink to="/">cinema west</RouterLink></h1>
+        <h1><RouterLink to="/"><img src="../../public/favicon.ico" style="vertical-align: middle; margin-right: 15px;" height="50">cinema west</RouterLink></h1>
+
             <ul>
                 <li ><RouterLink :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>
                 <li ><RouterLink :class="[isActive('/movies') ? 'activeNavLink' : '', 'nav-item']" to="/movies">Movies</RouterLink></li>
                 <li ><RouterLink :class="[isActive('/about') ? 'activeNavLink' : '', 'nav-item']" to="/about">About</RouterLink></li>
             </ul>
         <div class="nav-dropdown">
-        <button @click="toggleDropdown()" class="nav-item user-btn">{{ userType }}<i v-if="returnDropDownState()" class="pi pi-chevron-down"></i><i v-else class="pi pi-chevron-right"></i></button>
+        <button v-if="isAuthenticated" @click="toggleDropdown()" class="nav-item user-btn">Profile<i v-if="returnDropDownState()" class="pi pi-chevron-down"></i><i v-else class="pi pi-chevron-right"></i></button>
+        <LoginButton v-else></LoginButton>
         <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
             <li><RouterLink class="nav-item" to="/admin/discover" >My profile</RouterLink></li>
             <li><a class="nav-item" href="#">My tickets</a></li>
-            <li v-if="props.isLoggedIn"><a class="nav-item" href="#">Log out</a></li>
-            <li v-else ><RouterLink :class="[isActive('/login') ? 'activeNavLink' : '', 'nav-item']" to="/login">Log in/Sign up</RouterLink></li>
+            <li class="nav-item" v-if="!isAuthenticated"><LoginButton /></li>
+            <li class="nav-item" v-else><LogoutButton /></li>
         </ul>
         </div>
 
@@ -166,6 +177,18 @@ li .nav-item {
     
 .nav-item:hover {
     color: #e50914;
+    i {
+        color: #e50914;
+
+    }
+}
+
+.dropdown-list button:hover {
+    color: #e50914;
+}
+.dropdown-list button {
+    color: #e50914;
+    transition: 300ms;
 }
     
 
@@ -195,7 +218,7 @@ li .nav-item {
     
 }
 
-.nav-dropdown ul li a {
+.nav-dropdown ul li a, .nav-dropdown ul button {
     color: white;
     padding: 5px;
     display: block;

@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { authGuard } from '@auth0/auth0-vue';
 
 import HomeView from '@/views/HomeView.vue';
 import MoviesView from '@/views/MoviesView.vue';
 import MovieView from '@/views/MovieView.vue';
 import AdminView from '@/views/AdminView.vue';
 import AboutView from '@/views/AboutView.vue';
+import TestView from '@/views/TestView.vue';
 
 import NotFoundView from '@/views/NotFoundView.vue';
 import SignUpView from '@/views/SignUpView.vue';
@@ -40,6 +42,11 @@ const router = createRouter({
             component: AboutView,
         },
         {
+            path: '/test',
+            name: 'test',
+            component: TestView,
+        },
+        {
             path: '/movies',
             name: 'movies',
             component: MoviesView,
@@ -53,14 +60,17 @@ const router = createRouter({
             path: '/about',
             name: 'about',
             component: AboutView,
+            beforeEnter: authGuard,
         },
         {
             path: '/admin',
             component: AdminView,
+            beforeEnter: authGuard,
             children: [
                 {
                     path: 'discover', 
                     component: AdminMovies,
+            beforeEnter: authGuard,
                 },
                 {
                     path: 'screenings',

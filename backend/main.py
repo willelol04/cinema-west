@@ -171,13 +171,18 @@ def post_genres(genres):
     db.post_genres(genres)
     return genres
 
-
+def get_genres_all():
+    print(db.get_genres_all())
 
 
 #EVENT FUNCTIONS
 @app.on_event("startup")
 async def startup():
-    pass
+    for each in db.get_genres_all():
+        print(each.name, end=": ")
+        for e in each.movies:
+            print(e.title, end=", ")
+        print("\n")
 
 
 

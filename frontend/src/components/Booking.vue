@@ -37,7 +37,6 @@ const toggleModal = () => {
 <style scoped>
 
 .modal-container {
-    position: fixed;
     width: 100%;
     height: 100%;
     top: 0;
@@ -47,7 +46,6 @@ const toggleModal = () => {
     justify-content: center;
     align-items: center;
     filter:blur(50%);
-    display: none;
 
 }
 

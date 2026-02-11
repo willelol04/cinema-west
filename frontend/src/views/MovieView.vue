@@ -21,8 +21,6 @@ onMounted(fetchMovie);
 
 <template>
     <MovieDetails :movie="movieResults" />
-    <Booking />
-
 
 </template>
 

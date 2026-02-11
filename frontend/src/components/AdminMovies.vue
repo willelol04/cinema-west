@@ -1,9 +1,7 @@
 <script setup>
 import MoviesListAdmin from '@/components/MoviesListAdmin.vue';
-import { roundToNearestMinutes } from 'date-fns';
-import { Fieldset } from 'primevue';
-import { onMounted, ref, watch } from 'vue';
-import { useRouter, routeLocationKey, useRoute } from 'vue-router';
+import { ref, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 
 
