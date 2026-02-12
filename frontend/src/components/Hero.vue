@@ -41,7 +41,8 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
  <Carousel3d v-if="fetchComplete" class="carousel" :space="600" :display="3" :autoplay-timeout="10000" :autoplay="true" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="500" :height="326">
     <Slide v-for="(item, ind) in upcomingMovies" class="slide" :index="ind">
     <div class="upcoming-movie">
-    <img :src="`https://image.tmdb.org/t/p/original`+item.poster_path" height="326" width="auto">
+    <img v-if="item.poster_path" :src="`https://image.tmdb.org/t/p/original`+item.poster_path" height="326" width="auto">
+    <img v-else src="../assets/poster_examples/jack1.jpg" height="326" width="auto">
     <div class="right">
         <h3 class="upcoming-movie-title">{{ item.title }}</h3>
         <br>

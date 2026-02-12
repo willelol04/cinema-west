@@ -39,8 +39,8 @@ app.use(PrimeVue, {
 
 app.use(Carousel3dPlugin);
 
-  
 app.mount('#app');
+
   
 
 

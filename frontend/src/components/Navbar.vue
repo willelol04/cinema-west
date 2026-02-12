@@ -49,15 +49,17 @@ const toggleSidenav = () => {
     showSideNav.value = !showSideNav.value;
 }
 
+if(!isLoading && isAuthenticated) {
+    console.log(user.name)
 
-console.log(User)
+}
 
 </script>
 
 <template>
         <nav>
         <div v-if="isDesktop" class="desktop-nav">
-        <h1><RouterLink to="/"><img src="../../public/favicon.ico" style="vertical-align: middle; margin-right: 15px;" height="50">cinema west</RouterLink></h1>
+        <h1><RouterLink to="/"><img src="../public/favicon.ico" style="vertical-align: middle; margin-right: 15px;" height="50">cinema west</RouterLink></h1>
 
             <ul>
                 <li ><RouterLink :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>

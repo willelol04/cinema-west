@@ -141,10 +141,21 @@ def delete_movie(movie: models.Movie):
     db.delete_movie(movie)
     return movie
 
-@app.post("/users", response_model=models.UserResponse) 
-def add_user(user: models.UserCreate):
+@app.post("/users") 
+def add_user(user: models.authUser):
+    print("------")
+    print(user)
+    print("------")
     db.add_user(user)
     return user
+
+@app.get("/users/{id}")
+def get_user(id):
+    return db.get_user_by_id(id)
+
+@app.get("/auth0/users/{auth_id}")
+def get_user(auth_id):
+    return db.get_user_by_auth_id(auth_id)
 
 @app.post("/screenings")
 def add_screening(screening: Screening):
@@ -173,6 +184,9 @@ def post_genres(genres):
 
 def get_genres_all():
     print(db.get_genres_all())
+    
+
+
 
 
 #EVENT FUNCTIONS

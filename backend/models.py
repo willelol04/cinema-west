@@ -46,3 +46,7 @@ class Genre(BaseModel):
     id: int
     name: str
 
+class authUser(BaseModel):
+    sub: str
+    email: str
+

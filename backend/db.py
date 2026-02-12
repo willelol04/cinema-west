@@ -58,11 +58,14 @@ class User(Base):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    auth_id: Mapped[str] = mapped_column(String(50))
     f_name: Mapped[str] = mapped_column(String(50))
     l_name: Mapped[str] = mapped_column(String(50))
     email: Mapped[str] = mapped_column(String(50))
     password: Mapped[str] = mapped_column(String(30))
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    __table_args__ = (UniqueConstraint("auth_id", name="unique_auth0_id"),)
 
 
 class Theatre(Base):
@@ -120,11 +123,19 @@ echo = True)
 
 
 # -- Users --
-def get_user(id):
+def get_user_by_id(id):
     with Session(engine) as session:
         try:
             result = session.get(User, id)
             return result
+        except Exception as e:
+            print("--Error--", e)
+            session.rollback()
+
+def get_user_by_auth_id(auth_id):
+    with Session(engine) as session:
+        try:
+            return session.execute(select(User).where(User.auth_id==auth_id)).scalars().all()
         except Exception as e:
             print("--Error--", e)
             session.rollback()
@@ -138,7 +149,7 @@ def get_users_all():
             print("--Error--", e)
             session.rollback()
 
-def delete_user(user: models.UserResponse):
+def delete_user(user):
     with Session(engine) as session:
         try:
             user_obj = session.get(User, user.id) 
@@ -148,12 +159,15 @@ def delete_user(user: models.UserResponse):
             print("--Error--", e)
             session.rollback()
 
-def add_user(user: models.UserCreate):
+def add_user(usr):
+    print("------")
+    print(usr)
+    print("------")
     with Session(engine) as session:
         try:
-            user_obj = User(**user.dict()) 
-            session.add(user_obj)
+            session.execute(insert(User).values(email=usr.email, auth_id=usr.sub, f_name="test", l_name="test", password="test"))
             session.commit()
+            return usr
         except Exception as e:
             print("--Error--", e)
             session.rollback()
@@ -317,8 +331,6 @@ def get_genres_all():
 
 if __name__ == "__main__":
 
-    first_user = User(f_name="yes", l_name="no", email="email", password="password") 
-    add_user(user=first_user)
 
 
     with Session(engine) as session:
@@ -332,14 +344,15 @@ if __name__ == "__main__":
 #        MovieGenre.__table__.drop(bind=engine, checkfirst=True)
 ##    
 ##
-#        User.__table__.create(bind=engine, checkfirst=True)
+        User.__table__.create(bind=engine, checkfirst=True)
 #        Theatre.__table__.create(bind=engine, checkfirst=True)
 #        Seat.__table__.create(bind=engine, checkfirst=True)
 #        Screening.__table__.create(bind=engine, checkfirst=True)
 #        Ticket.__table__.create(bind=engine, checkfirst=True)
         
         #some_user = session.get(User, 1)
-        Movie.__table__.create(bind=engine, checkfirst=True)
+        #Movie.__table__.create(bind=engine, checkfirst=True)
+
         session.commit()
     
     Base.metadata.create_all(engine)
