@@ -44,9 +44,8 @@ onMounted(fetchTheatres);
 
 <template>
     <div class="add-screening">
-    <h1>Admin - Movie Screenings</h1>
-    <h2>New Screening</h2>
     <form method="POST" @submit.prevent="addScreening">
+    <h1>New Screening</h1>
         <div class="grid">
         <label for="movies">Movie:</label>
         <select v-model="screening.movie_id" id="movies">
@@ -70,11 +69,17 @@ onMounted(fetchTheatres);
 </template>
 <style scoped>
 
-form {
+.add-screening {
+    width: 60%;
+    padding: 20px 10vw;
+    text-align: center;
     margin: 0 auto;
-    width: 800px;
-    text-align: cetner;
-    margin-top: 25px;
+}
+
+form {
+    width: 100%;
+    display: block;
+    text-align: center;
 
 }
 
@@ -106,8 +111,9 @@ input[type="submit"] {
     grid-column: span 2;
 }
 
-h1, h2 {
+h1 {
     text-align: center;
+    margin-bottom: 20px;
 }
 
 </style>

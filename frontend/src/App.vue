@@ -1,21 +1,23 @@
 <script setup>
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
-import { onMounted, watch, ref } from 'vue';
+import { onMounted, watch, ref, reactive } from 'vue';
 import { RouterView } from 'vue-router';
 import { Auth0Plugin, useAuth0, User } from '@auth0/auth0-vue';
 
-const { user, isAuthenticated, isLoading, error } = useAuth0();
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const checkedUser = ref(false);
+
+
 
 const userExists = async (userAuthId) => {
     try {
         const response = await fetch("http://localhost:8000/auth0/users/"+userAuthId);
         const userResponse = await response.json();
-        console.log("user exists: ", userResponse.length > 0 ? true : false);
+        console.log("user exists: ", userResponse ? true : false);
         console.log(userResponse);
-        if(userResponse.length > 0) {
+        if(userResponse) {
           return true;
         } else {
           return false;
@@ -27,14 +29,32 @@ const userExists = async (userAuthId) => {
 
 }
 
-const addUser = async (usr) => {
+const privateApiTest = async (token) => {
+  try {
+    const response = await fetch("http://localhost:8000/api/private", {
+      headers: {
+        "authorization": `Bearer ${token}`,
+      }
+    });
+    console.log(token)
+    const userResponse = await response.json();
+    console.log(userResponse);
+  } catch(e) {
+    console.log(e);
+  }
+
+}
+
+const addUser = async (user) => {
     try {
-    console.log("received obj", usr)
+    console.log("received obj", user)
+    const token = await getAccessTokenSilently();
     const response = await fetch("http://localhost:8000/users", {
         method: "POST",
-        body: JSON.stringify(usr),
+        body: JSON.stringify(user),
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "authorization": `Bearer ${token}`,
         }
 
     });
@@ -42,7 +62,7 @@ const addUser = async (usr) => {
     console.log(await response.json());
       
     } catch(e) {
-      console.log("e");
+      console.log(e);
       console.log("error adding user");
     }
 
@@ -51,15 +71,22 @@ const addUser = async (usr) => {
 
 console.log("authenticated:", isAuthenticated.value)
 
+onMounted(async () => { await privateApiTest();})
+
 watch(
   () => (user.value),
   async (value) => {
     if(value && !checkedUser.value) {
         checkedUser.value = true;
+        const token = await getAccessTokenSilently();
+        console.log(token);
+        console.log(user["http://localhost:8000/roles"]);
         if(! await userExists(value.sub)) {
-          await addUser({sub: value.sub, email: value.email});
+          await addUser({sub: value.sub});
         } else {
-          console.log("user exists, woo!")
+          console.log("user exists, woo!");
+          await privateApiTest(token);
+
         }
     } 
   }
@@ -74,11 +101,9 @@ watch(
 
 
 <template>
-  <div v-if="!isLoading">
   <Navbar />
   <RouterView />
   <Footer />
-  </div>
 
 </template>
 

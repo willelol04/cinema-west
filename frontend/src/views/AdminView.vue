@@ -15,7 +15,7 @@ const isActive = (currentRoutePath) => {
                     <RouterLink :class="[isActive('/admin/discover') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/discover">Discover Movies<i class="pi pi-globe"></i></RouterLink>
                 </li>
                 <li>
-                    <RouterLink :class="[isActive('/admin/tickets') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/tickets" >Database<i class="pi pi-database"></i></RouterLink>
+                    <RouterLink :class="[isActive('/admin/database') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/database" >Database<i class="pi pi-database"></i></RouterLink>
                 </li>
                 <li>
                     <RouterLink :class="[isActive('/admin/screenings') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/screenings">Movie Screenings<i class="pi pi-calendar"></i></RouterLink>
@@ -78,21 +78,31 @@ ul {
 li a {
     width: 100%;
     display: block;
+    border-right: 2px solid transparent;
 }
     
 .dashboard-item {
     width: 100%;
-    border-bottom: 2px solid #bbb4b4;
+    border-bottom: 1px solid #bbb4b4;
     padding: 20px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    transition: 300ms;
+    opacity: 50%;
 
+}
+
+.dashboard-item:hover {
+
+    opacity: 100%;
 }
     
 .activeNavLink {
-    border-bottom: 2px solid #e50914;
+    border-right: 2px solid #e50914;
+    opacity: 100%;
+
 }
     
     

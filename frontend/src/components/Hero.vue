@@ -1,26 +1,30 @@
 <script setup>
 import { format, formatDistance, formatRelative, subDays } from 'date-fns';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
 import Timeline from 'primevue/timeline';
 import Carousel from 'primevue/carousel';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
+import router from '@/router';
 
-const goToMovie = () => {
-    window.location.href = "/movie/3";
-}
+const Router = useRouter();
 
 const upcomingMovies = ref([]);
 const fetchComplete = ref(false);
     
+const goToMovie = (slide) => {
+    const movie_id = upcomingMovies.value[slide.index].id;
+    Router.push("/movies/"+movie_id);
+}
+
 
     
 onMounted(async function fetchUpcoming(numbers_tried = 1) {
     const num = numbers_tried;
     try {
-        const upcomingMoviePromise = await fetch("http://localhost:8000/tmdb/movies/upcoming")
+        const upcomingMoviePromise = await fetch("http://localhost:8000/movies/upcoming")
         const upcomingMovieObject = await upcomingMoviePromise.json();
-        upcomingMovies.value = upcomingMovieObject.results;
+        upcomingMovies.value = upcomingMovieObject;
         console.log(upcomingMovies.value);
         fetchComplete.value = true;
         console.log("successful - ", num);

@@ -4,6 +4,7 @@ import { authGuard } from '@auth0/auth0-vue';
 import HomeView from '@/views/HomeView.vue';
 import MoviesView from '@/views/MoviesView.vue';
 import MovieView from '@/views/MovieView.vue';
+import BookingView from '@/views/BookingView.vue';
 import AdminView from '@/views/AdminView.vue';
 import AboutView from '@/views/AboutView.vue';
 import TestView from '@/views/TestView.vue';
@@ -13,7 +14,8 @@ import SignUpView from '@/views/SignUpView.vue';
 import LoginView from '@/views/LoginView.vue';
 
 
-import AdminMovies from '@/components/AdminMovies.vue';
+import AdminDiscovery from '@/components/AdminDiscovery.vue';
+import AdminMovieDB from '@/components/AdminMovieDB.vue';
 import AdminScreenings from '@/components/AdminScreenings.vue';
 import AdminTickets from '@/components/AdminTickets.vue';
 
@@ -52,9 +54,14 @@ const router = createRouter({
             component: MoviesView,
         },
         {
-            path: '/movie/:id',
+            path: '/movies/:id',
             name: 'movie',
             component: MovieView,
+        },
+        {
+            path: '/booking/:id',
+            name: 'booking',
+            component: BookingView,
         },
         {
             path: '/about',
@@ -69,8 +76,11 @@ const router = createRouter({
             children: [
                 {
                     path: 'discover', 
-                    component: AdminMovies,
-            beforeEnter: authGuard,
+                    component: AdminDiscovery,
+                },
+                {
+                    path: 'database', 
+                    component: AdminMovieDB,
                 },
                 {
                     path: 'screenings',

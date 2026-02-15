@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi_plugin.fast_api_client import Auth0FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
@@ -11,9 +12,10 @@ import aiomysql
 import json
 
 
-import db
-import models
+import crud_operations
+import validation
 from fastapi import Depends
+
 
 
 
@@ -21,7 +23,14 @@ app = FastAPI()
 load_dotenv()
 tmdb_key = os.getenv('TMDBKEY')
 banned_keywords = os.getenv('BANNED_KEYWORDS')
+auth0_domain = os.getenv('AUTH0_DOMAIN')
+auth0_audience = os.getenv('AUTH0_AUDIENCE')
 banned_keyword_list = banned_keywords.split(':')
+
+auth0 = Auth0FastAPI(
+    domain=auth0_domain,
+    audience=auth0_audience,
+)
 
 tmdb_headers = {
     "accept": "application/json",
@@ -39,33 +48,6 @@ app.add_middleware(
 )
 
 
-
-# VALIDATIONS BASEMODELS
-
-class Movie(BaseModel):
-    adult: Optional[bool] = None
-    backdrop_path: Optional[str] = None
-    genre_ids: Optional[list] = None
-    id: Optional[int] = None
-    original_language: Optional[str] = None
-    original_title: Optional[str] = None
-    overview: Optional[str] = None
-    popularity: Optional[float] = None
-    poster_path: Optional[str] = None
-    release_date: Optional[str] = None
-    title: Optional[str] = None
-    video: Optional[bool] = None
-    vote_average: Optional[float] = None
-    vote_count: Optional[int] = None
-
-
-    
-class Screening(BaseModel):
-    movie_id: int
-    theatre_id: int
-    start_time: str
-
-
 async def getFromTMDB(path, parameters): 
     response = await tmdb_client.get(url=path, params=parameters)
 
@@ -73,6 +55,11 @@ async def getFromTMDB(path, parameters):
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
     return response.json()
+
+@app.get("/api/private")
+def private(claims: dict = Depends(auth0.require_auth())):
+   # A valid access token is required to access this route
+       return {"message": "private API call successful.", "claims": claims}
 
 
 # GET REQUESTS
@@ -117,58 +104,64 @@ def movie_is_added(id):
     movie = get_movie(id)
     return {"message": True if movie else False}
 
-@app.get("/movies/{id}") 
-def get_movie(id):
-    return db.get_movie(id)
+@app.get("/movies/id/{id}") 
+def get_movie(id: int):
+    return crud_operations.get_movie(id)
 
-@app.get("/movies", response_model=List[models.Movie])
+@app.get("/movies/upcoming") 
+def get_movies_upcoming():
+    movies = crud_operations.get_movies_upcoming(datetime.datetime.now())
+    print(movies)
+    return movies
+
+@app.get("/movies", response_model=List[validation.Movie])
 def get_movies_all():
-    return db.get_movies_all()
+    return crud_operations.get_movies_all()
 
 @app.get("/theatres")
 def get_theatres_all():
-    return db.get_theatres_all()
+    return crud_operations.get_theatres_all()
 
 # POST-REQUESTS
 
-@app.post("/movies") 
-def add_movie(movie: models.Movie):
-    db.add_movie(movie)
+@app.post("/movies", dependencies=[Depends(auth0.require_auth())])
+def add_movie(movie: validation.Movie):
+    crud_operations.add_movie(movie)
     return movie
 
-@app.delete("/movies") 
-def delete_movie(movie: models.Movie):
-    db.delete_movie(movie)
+@app.delete("/movies", dependencies=[Depends(auth0.require_auth())])
+def delete_movie(movie: validation.Movie):
+    crud_operations.delete_movie(movie)
     return movie
 
-@app.post("/users") 
-def add_user(user: models.authUser):
+@app.post("/users", dependencies=[Depends(auth0.require_auth())])
+def add_user(user: validation.UserAuth):
     print("------")
     print(user)
     print("------")
-    db.add_user(user)
+    crud_operations.add_user(user)
     return user
 
 @app.get("/users/{id}")
 def get_user(id):
-    return db.get_user_by_id(id)
+    return crud_operations.get_user_by_id(id)
 
 @app.get("/auth0/users/{auth_id}")
 def get_user(auth_id):
-    return db.get_user_by_auth_id(auth_id)
+    return crud_operations.get_user_by_auth_id(auth_id)
 
-@app.post("/screenings")
-def add_screening(screening: Screening):
-    db.add_screening(screening)
+@app.post("/screenings", dependencies=[Depends(auth0.require_auth())])
+def add_screening(screening: validation.Screening):
+    crud_operations.add_screening(screening)
     return screening
 
 @app.get("/screenings/{id}")
 def get_screening(id):
-    return db.get_screening(id)
+    return crud_operations.get_screening(id)
 
 @app.get("/screenings")
 def get_screenings_all():
-    return db.get_screenings_all()
+    return crud_operations.get_screenings_all()
 
 # Genre
 
@@ -179,11 +172,11 @@ async def get_genres():
         return result['genres']
 
 def post_genres(genres):
-    db.post_genres(genres)
+    crud_operations.post_genres(genres)
     return genres
 
 def get_genres_all():
-    print(db.get_genres_all())
+    print(crud_operations.get_genres_all())
     
 
 
@@ -192,12 +185,11 @@ def get_genres_all():
 #EVENT FUNCTIONS
 @app.on_event("startup")
 async def startup():
-    for each in db.get_genres_all():
+    for each in crud_operations.get_genres_all():
         print(each.name, end=": ")
         for e in each.movies:
             print(e.title, end=", ")
         print("\n")
-
 
 
 

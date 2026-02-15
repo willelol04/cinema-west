@@ -1,0 +1,269 @@
+import sqlalchemy
+import asyncio
+import aiomysql
+import pymysql
+from typing import List
+from typing import Optional
+from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import selectinload
+
+
+from models import Movie, User, Genre, movie_genre, Theatre, Ticket, Screening, Seat, Base
+import validation
+
+import datetime
+
+
+
+engine = create_engine(
+"mysql+pymysql://cinema:6P3AZdYtUaWb7tBxHQa%@127.0.0.1/cinema?charset=utf8mb4",
+echo = True)
+
+
+
+# -- Users --
+def get_user_by_id(id):
+    with Session(engine) as session:
+        try:
+            result = session.get(User, id)
+            return result
+        except Exception as e:
+            print("--Error--", e)
+            session.rollback()
+
+def get_user_by_auth_id(auth_id):
+    with Session(engine) as session:
+        try:
+            return session.execute(select(User).where(User.auth_id==auth_id)).scalar()
+        except Exception as e:
+            print("--Error--", e)
+            session.rollback()
+
+def get_users_all():
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(User)).scalar()
+            return result
+        except Exception as e:
+            print("--Error--", e)
+            session.rollback()
+
+def delete_user(user):
+    with Session(engine) as session:
+        try:
+            user_obj = session.get(User, user.id) 
+            session.delete(user_obj)
+            session.commit()
+        except Exception as e:
+            print("--Error--", e)
+            session.rollback()
+
+def add_user(user: validation.UserAuth):
+    with Session(engine) as session:
+        try:
+            session.execute(insert(User).values(auth_id=user.sub))
+            session.commit()
+            return user
+        except Exception as e:
+            print("--Error--", e)
+            session.rollback()
+
+# -- Theatres --
+def get_theatre(id):
+    with Session(engine) as session:
+        try:
+            result = session.get(Theatre, id)
+            return result
+        except Exception as e:
+            print(e)
+
+def get_theatres_all():
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(Theatre)).scalars().all()
+            return result
+        except Exception as e:
+            print(e)
+
+def delete_theatre(screening):
+    with Session(engine) as session:
+        try:
+            theatre_obj = session.get(Theatre, screening.id)
+            session.delete(theatre_obj)
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
+
+def add_screening(theatre):
+    with Session(engine) as session:
+        try:
+            theatre_obj = Screening(**theatre.dict())
+            session.add(theatre_obj)
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
+
+
+# -- Movies --
+def get_movie(id):
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(Movie).where(Movie.id==id).options(selectinload(Movie.screenings), selectinload(Movie.genres))).scalars().first()
+            return result
+        except Exception as e:
+            print(e)
+
+def get_movies_all():
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(Movie)).scalars().all()
+            return result
+        except Exception as e:
+            print(e)
+
+def get_movies_upcoming(now):
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(Movie).where(Movie.release_date > now)).scalars().all()
+            return result
+        except Exception as e:
+            print(e)
+
+def delete_movie(movie):
+    with Session(engine) as session:
+        try:
+            db_movie = session.get(Movie, movie.id)
+            for screening in db_movie.screenings:
+                session.delete(screening)
+            session.delete(db_movie)
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
+
+def add_movie(movie):
+    print(movie)
+    with Session(engine) as session:
+        try:
+            movie_obj = Movie(id=movie.id, 
+                             title=movie.title, 
+                             overview=movie.overview, 
+                             poster_path=movie.poster_path, 
+                             language=movie.original_language, 
+                             release_date=movie.release_date)
+            session.add(movie_obj)
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
+    
+    if movie.genre_ids:
+        with engine.connect() as conn:
+            try:
+                for g_id in movie.genre_ids:
+                    conn.execute(insert(movie_genre).values(genre_id=g_id, movie_id=movie.id))
+                conn.commit()
+            except Exception as e:
+                print(e)
+                conn.rollback()
+    
+
+
+
+# -- Screenings --
+def get_screening(id):
+    with Session(engine) as session:
+        try:
+            result = session.get(Screening, id)
+            return result
+        except Exception as e:
+            print(e)
+
+def get_screenings_all():
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(Screening)).scalars().all()
+            return result
+        except Exception as e:
+            print(e)
+
+def delete_screening(screening):
+    with Session(engine) as session:
+        try:
+            screening_obj = session.get(Screening, screening.id)
+            session.delete(screening_obj)
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
+
+def add_screening(screening):
+    with Session(engine) as session:
+        try:
+            screening_obj = Screening(**screening.dict())
+            session.add(screening_obj)
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
+    
+# -- genres --
+
+def post_genres(genres):
+    with Session(engine) as session:
+        try: 
+            print(genres)
+            session.execute(insert(Genre), genres,)
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
+
+def get_genres_all():
+    with Session(engine) as session:
+        try: 
+            return session.execute(select(Genre).options(selectinload(Genre.movies)),).scalars().all()
+        except Exception as e:
+            print(e)
+
+
+
+if __name__ == "__main__":
+
+
+
+    with Session(engine) as session:
+
+#        Ticket.__table__.drop(bind=engine, checkfirst=True)
+#        Screening.__table__.drop(bind=engine, checkfirst=True)
+#        Seat.__table__.drop(bind=engine, checkfirst=True)
+#        Theatre.__table__.drop(bind=engine, checkfirst=True)
+#        User.__table__.drop(bind=engine, checkfirst=True)
+#        Movie.__table__.drop(bind=engine, checkfirst=True)
+#        MovieGenre.__table__.drop(bind=engine, checkfirst=True)
+##    
+##
+        User.__table__.create(bind=engine, checkfirst=True)
+        Ticket.__table__.create(bind=engine, checkfirst=True)
+#        Theatre.__table__.create(bind=engine, checkfirst=True)
+#        Seat.__table__.create(bind=engine, checkfirst=True)
+#        Screening.__table__.create(bind=engine, checkfirst=True)
+
+        #some_user = session.get(User, 1)
+        #Movie.__table__.create(bind=engine, checkfirst=True)
+
+        session.commit()
+    
+    Base.metadata.create_all(engine)
+
+
+        
+

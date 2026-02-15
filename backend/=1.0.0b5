@@ -1,0 +1,73 @@
+Collecting auth0-fastapi-api
+  Downloading auth0_fastapi_api-1.0.0b5-py3-none-any.whl.metadata (12 kB)
+Collecting auth0-api-python>=1.0.0b6 (from auth0-fastapi-api)
+  Downloading auth0_api_python-1.0.0b6-py3-none-any.whl.metadata (13 kB)
+Collecting fastapi<0.116.0,>=0.115.11 (from auth0-fastapi-api)
+  Downloading fastapi-0.115.14-py3-none-any.whl.metadata (27 kB)
+Requirement already satisfied: httpx<0.29.0,>=0.28.1 in ./.venv/lib/python3.12/site-packages (from auth0-fastapi-api) (0.28.1)
+Collecting uvicorn<0.35.0,>=0.34.0 (from auth0-fastapi-api)
+  Downloading uvicorn-0.34.3-py3-none-any.whl.metadata (6.5 kB)
+Collecting ada-url<2.0.0,>=1.27.0 (from auth0-api-python>=1.0.0b6->auth0-fastapi-api)
+  Downloading ada_url-1.29.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (4.8 kB)
+Collecting authlib<2.0,>=1.0 (from auth0-api-python>=1.0.0b6->auth0-fastapi-api)
+  Downloading authlib-1.6.7-py2.py3-none-any.whl.metadata (9.8 kB)
+Collecting requests<3.0.0,>=2.31.0 (from auth0-api-python>=1.0.0b6->auth0-fastapi-api)
+  Downloading requests-2.32.5-py3-none-any.whl.metadata (4.9 kB)
+Collecting starlette<0.47.0,>=0.40.0 (from fastapi<0.116.0,>=0.115.11->auth0-fastapi-api)
+  Downloading starlette-0.46.2-py3-none-any.whl.metadata (6.2 kB)
+Requirement already satisfied: pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4 in ./.venv/lib/python3.12/site-packages (from fastapi<0.116.0,>=0.115.11->auth0-fastapi-api) (2.12.5)
+Requirement already satisfied: typing-extensions>=4.8.0 in ./.venv/lib/python3.12/site-packages (from fastapi<0.116.0,>=0.115.11->auth0-fastapi-api) (4.15.0)
+Requirement already satisfied: anyio in ./.venv/lib/python3.12/site-packages (from httpx<0.29.0,>=0.28.1->auth0-fastapi-api) (4.12.1)
+Requirement already satisfied: certifi in ./.venv/lib/python3.12/site-packages (from httpx<0.29.0,>=0.28.1->auth0-fastapi-api) (2026.1.4)
+Requirement already satisfied: httpcore==1.* in ./.venv/lib/python3.12/site-packages (from httpx<0.29.0,>=0.28.1->auth0-fastapi-api) (1.0.9)
+Requirement already satisfied: idna in ./.venv/lib/python3.12/site-packages (from httpx<0.29.0,>=0.28.1->auth0-fastapi-api) (3.11)
+Requirement already satisfied: h11>=0.16 in ./.venv/lib/python3.12/site-packages (from httpcore==1.*->httpx<0.29.0,>=0.28.1->auth0-fastapi-api) (0.16.0)
+Requirement already satisfied: click>=7.0 in ./.venv/lib/python3.12/site-packages (from uvicorn<0.35.0,>=0.34.0->auth0-fastapi-api) (8.3.1)
+Collecting cffi (from ada-url<2.0.0,>=1.27.0->auth0-api-python>=1.0.0b6->auth0-fastapi-api)
+  Downloading cffi-2.0.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+Collecting cryptography (from authlib<2.0,>=1.0->auth0-api-python>=1.0.0b6->auth0-fastapi-api)
+  Downloading cryptography-46.0.5-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+Requirement already satisfied: annotated-types>=0.6.0 in ./.venv/lib/python3.12/site-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi<0.116.0,>=0.115.11->auth0-fastapi-api) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./.venv/lib/python3.12/site-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi<0.116.0,>=0.115.11->auth0-fastapi-api) (2.41.5)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./.venv/lib/python3.12/site-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi<0.116.0,>=0.115.11->auth0-fastapi-api) (0.4.2)
+Collecting charset_normalizer<4,>=2 (from requests<3.0.0,>=2.31.0->auth0-api-python>=1.0.0b6->auth0-fastapi-api)
+  Downloading charset_normalizer-3.4.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (37 kB)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./.venv/lib/python3.12/site-packages (from requests<3.0.0,>=2.31.0->auth0-api-python>=1.0.0b6->auth0-fastapi-api) (2.6.3)
+Collecting pycparser (from cffi->ada-url<2.0.0,>=1.27.0->auth0-api-python>=1.0.0b6->auth0-fastapi-api)
+  Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Downloading auth0_fastapi_api-1.0.0b5-py3-none-any.whl (9.7 kB)
+Downloading auth0_api_python-1.0.0b6-py3-none-any.whl (23 kB)
+Downloading fastapi-0.115.14-py3-none-any.whl (95 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 95.5/95.5 kB 6.5 MB/s eta 0:00:00
+Downloading uvicorn-0.34.3-py3-none-any.whl (62 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.4/62.4 kB 10.2 MB/s eta 0:00:00
+Downloading ada_url-1.29.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (1.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 13.5 MB/s eta 0:00:00
+Downloading authlib-1.6.7-py2.py3-none-any.whl (244 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 244.1/244.1 kB 34.0 MB/s eta 0:00:00
+Downloading requests-2.32.5-py3-none-any.whl (64 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 64.7/64.7 kB 10.6 MB/s eta 0:00:00
+Downloading starlette-0.46.2-py3-none-any.whl (72 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 72.0/72.0 kB 11.2 MB/s eta 0:00:00
+Downloading charset_normalizer-3.4.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (153 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 153.5/153.5 kB 21.0 MB/s eta 0:00:00
+Downloading cffi-2.0.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (219 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 219.6/219.6 kB 27.7 MB/s eta 0:00:00
+Downloading cryptography-46.0.5-cp311-abi3-manylinux_2_34_x86_64.whl (4.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 73.6 MB/s eta 0:00:00
+Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.2/48.2 kB 7.4 MB/s eta 0:00:00
+Installing collected packages: uvicorn, pycparser, charset_normalizer, starlette, requests, cffi, fastapi, cryptography, ada-url, authlib, auth0-api-python, auth0-fastapi-api
+  Attempting uninstall: uvicorn
+    Found existing installation: uvicorn 0.40.0
+    Uninstalling uvicorn-0.40.0:
+      Successfully uninstalled uvicorn-0.40.0
+  Attempting uninstall: starlette
+    Found existing installation: starlette 0.50.0
+    Uninstalling starlette-0.50.0:
+      Successfully uninstalled starlette-0.50.0
+  Attempting uninstall: fastapi
+    Found existing installation: fastapi 0.128.0
+    Uninstalling fastapi-0.128.0:
+      Successfully uninstalled fastapi-0.128.0
+Successfully installed ada-url-1.29.0 auth0-api-python-1.0.0b6 auth0-fastapi-api-1.0.0b5 authlib-1.6.7 cffi-2.0.0 charset_normalizer-3.4.4 cryptography-46.0.5 fastapi-0.115.14 pycparser-3.0 requests-2.32.5 starlette-0.46.2 uvicorn-0.34.3

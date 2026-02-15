@@ -1,52 +1,107 @@
-from datetime import date, datetime
-from pydantic import BaseModel
+
+import sqlalchemy
+import asyncio
+import aiomysql
+import pymysql
+from typing import List
 from typing import Optional
+from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import selectinload
 
 
-class MovieBase(BaseModel):
-    id: Optional[int] = None
+import validation as validation
 
-class Movie(MovieBase):
-    adult: Optional[bool] = None
-    backdrop_path: Optional[str] = None
-    genre_ids: Optional[list] = None
-    original_language: Optional[str] = None
-    original_title: Optional[str] = None
-    overview: Optional[str] = None
-    popularity: Optional[float] = None
-    poster_path: Optional[str] = None
-    release_date: Optional[date] = None
-    title: Optional[str] = None
-    video: Optional[bool] = None
-    vote_average: Optional[float] = None
-    vote_count: Optional[int] = None
 
-class UserCreate(BaseModel):
-    f_name: str
-    l_name: str
-    email: str
-    password: str
 
-class UserResponse(BaseModel):
-    f_name: str
-    l_name: str
-    email: str
+class Base (DeclarativeBase):
+    pass
+
+movie_genre = Table("movie_genre", Base.metadata, Column("movie_id", Integer, ForeignKey("movie.id"), primary_key=True), Column("genre_id", Integer, ForeignKey("genre.id"), primary_key=True))
+
+
+class Movie(Base):
+    __tablename__ = "movie"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(100))
+    overview: Mapped[str] = mapped_column(String(1000))
+    poster_path: Mapped[str] = mapped_column(String(1000))
+    release_date: Mapped[str] = mapped_column(Date, default="2024-01-01")
+    language: Mapped[str] = mapped_column(String(10))
+
+    screenings: Mapped[List["Screening"]] = relationship()
+    genres: Mapped[List["Genre"]] = relationship(secondary=movie_genre)
+
+class Genre(Base):
+    __tablename__ = "genre"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(30))
+
+    movies: Mapped[List["Movie"]] = relationship(secondary=movie_genre)
+
+
+class User(Base):
+    __tablename__ = "user"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    auth_id: Mapped[str] = mapped_column(String(50))
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    tickets: Mapped[List["Ticket"]] = relationship()
+
+    __table_args__ = (UniqueConstraint("auth_id", name="unique_auth0_id"),)
+
+
+
+class Theatre(Base):
+    __tablename__ = "theatre"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(50))
     
-class Screening(BaseModel):
-    movie_id: int
-    theatre_id: int
-    start_time: str
+class Seat(Base):
+    __tablename__ = "seat"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    number: Mapped[int]
+    theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"))
+
+    __table_args__ = (UniqueConstraint("theatre_id", "number", name="yes"), )
+    
+
+class Screening(Base):
+    __tablename__ = "screening"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    movie_id: Mapped[int] = mapped_column(ForeignKey("movie.id"))
+    theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"))
+    start_time: Mapped[str] = mapped_column(DateTime)
+    is_cancelled: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    __table_args__ = (UniqueConstraint("theatre_id", "start_time", name="yes"), )
+    
+
+class Ticket(Base):
+    __tablename__ = "ticket"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    screening_id: Mapped[int] = mapped_column(ForeignKey("screening.id"))
+    seat_id: Mapped[int] = mapped_column(ForeignKey("seat.id"))
+    created_at: Mapped[str] = mapped_column(DateTime, default="2024-01-01T13:45:30")
+    is_cancelled: Mapped[bool] = mapped_column(default=False)
+    
+    __table_args__ = (UniqueConstraint("screening_id", "seat_id", name="yes"), )
 
 
-class Theatre(BaseModel):
-    id: int
-    name: str
-
-class Genre(BaseModel):
-    id: int
-    name: str
-
-class authUser(BaseModel):
-    sub: str
-    email: str
+engine = create_engine(
+"mysql+pymysql://cinema:6P3AZdYtUaWb7tBxHQa%@127.0.0.1/cinema?charset=utf8mb4",
+echo = True)
 
