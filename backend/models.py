@@ -22,8 +22,8 @@ import validation as validation
 class Base (DeclarativeBase):
     pass
 
-movie_genre = Table("movie_genre", Base.metadata, Column("movie_id", Integer, ForeignKey("movie.id"), primary_key=True), Column("genre_id", Integer, ForeignKey("genre.id"), primary_key=True))
 
+movie_genre = Table("movie_genre", Base.metadata, Column("movie_id", Integer, ForeignKey("movie.id"), primary_key=True), Column("genre_id", Integer, ForeignKey("genre.id"), primary_key=True))
 
 class Movie(Base):
     __tablename__ = "movie"
@@ -36,7 +36,7 @@ class Movie(Base):
     language: Mapped[str] = mapped_column(String(10))
 
     screenings: Mapped[List["Screening"]] = relationship()
-    genres: Mapped[List["Genre"]] = relationship(secondary=movie_genre)
+    genres: Mapped[List["Genre"]] = relationship(secondary=movie_genre, back_populates="movies")
 
 class Genre(Base):
     __tablename__ = "genre"
@@ -44,7 +44,7 @@ class Genre(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(30))
 
-    movies: Mapped[List["Movie"]] = relationship(secondary=movie_genre)
+    movies: Mapped[List["Movie"]] = relationship(secondary=movie_genre, back_populates="genres")
 
 
 class User(Base):
@@ -65,15 +65,21 @@ class Theatre(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(50))
+    seats_per_row: Mapped[int] = mapped_column(Integer)
+    number_of_rows: Mapped[int] = mapped_column(Integer)
+
+    seats: Mapped[List["Seat"]] = relationship(back_populates="theatre")
     
 class Seat(Base):
     __tablename__ = "seat"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    number: Mapped[int]
+    name: Mapped[str] = mapped_column(String(10))
     theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"))
 
-    __table_args__ = (UniqueConstraint("theatre_id", "number", name="yes"), )
+    theatre: Mapped["Theatre"] = relationship(back_populates="seats")
+
+    __table_args__ = (UniqueConstraint("theatre_id", "name", name="per_theatre_unique_seat"), )
     
 
 class Screening(Base):

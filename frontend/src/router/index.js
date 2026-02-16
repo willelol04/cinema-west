@@ -67,7 +67,6 @@ const router = createRouter({
             path: '/about',
             name: 'about',
             component: AboutView,
-            beforeEnter: authGuard,
         },
         {
             path: '/admin',

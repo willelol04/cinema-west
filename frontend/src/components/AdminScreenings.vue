@@ -1,6 +1,9 @@
 <script setup>
 import MoviesList from './MoviesList.vue';
 import { ref, onMounted, reactive } from 'vue';
+import {useAuth0} from "@auth0/auth0-vue";
+
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
     
 const movieResults = ref([]);
 const theatreResults = ref([]);
@@ -24,11 +27,13 @@ const fetchTheatres = async () => {
 }
 
 const addScreening = async () => {
+    const token = await getAccessTokenSilently();
     const response = await fetch("http://localhost:8000/screenings", {
         method: "POST",
         body: JSON.stringify(screening),
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "authorization": `Bearer ${token}`,
         }
 
     });

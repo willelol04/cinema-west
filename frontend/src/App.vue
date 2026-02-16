@@ -74,13 +74,16 @@ console.log("authenticated:", isAuthenticated.value)
 onMounted(async () => { await privateApiTest();})
 
 watch(
-  () => (user.value),
-  async (value) => {
-    if(value && !checkedUser.value) {
+  () => ([user, user.value]),
+  async ([user, value]) => {
+    if(user && value && !checkedUser.value) {
         checkedUser.value = true;
         const token = await getAccessTokenSilently();
         console.log(token);
-        console.log(user["http://localhost:8000/roles"]);
+        console.log("curr user:", user)
+        console.log("curr name:", value.name)
+        console.log("curr roles:", value["http://localhost:8000/roles"])
+        console.log([1,2,2,3,3,])
         if(! await userExists(value.sub)) {
           await addUser({sub: value.sub});
         } else {

@@ -26,7 +26,7 @@ defineProps({
         <div class="movie-screenings">
         <h3>Book tickets:</h3>
             <div v-if="movie.screenings && movie.screenings.length !== 0" class="screenings">
-            <button v-for="(screening, ind) in movie.screenings" :key=screening class="movie-date-btn">{{ format(screening.start_time, "EEEE, MMMM do HH:mm") }}</button>               
+            <RouterLink v-for="(screening, ind) in movie.screenings" :to="`/booking/`+screening.id" :key=screening class="screening">{{ format(screening.start_time, "EEEE, MMMM do HH:mm") }}</RouterLink>               
             </div>
             <p v-else>No scheduled screenings for this movie.</p>
 
@@ -46,7 +46,7 @@ defineProps({
     padding-left: 200px;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: start;
     gap: 20px;
 
 
@@ -67,31 +67,26 @@ defineProps({
 }
 
 
-button {
+.screening {
     background-color: #2d2d2d;
     color: white;
     padding: 15px;
     border: 3px solid #404040;
-}
-
-button {
     margin: 15px;
+    border-radius: 5px;
+    transition: 250ms;
+    width: 100%;
+    padding: 30px;
 }
 
-.movie-date-btn:hover {
+
+.screening:hover {
     background: white;
     background-color: #404040;
     border-color: #2d2d2d;
 
 }
 
-.movie-date-btn {
-    border-radius: 5px;
-    transition: 250ms;
-    width: 100%;
-    padding: 30px;
-
-}
 
 
 .movie-details h3 {

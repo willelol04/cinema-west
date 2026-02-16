@@ -151,7 +151,7 @@ def get_user(auth_id):
     return crud_operations.get_user_by_auth_id(auth_id)
 
 @app.post("/screenings", dependencies=[Depends(auth0.require_auth())])
-def add_screening(screening: validation.Screening):
+def add_screening(screening: validation.ScreeningAdd):
     crud_operations.add_screening(screening)
     return screening
 

@@ -40,6 +40,15 @@ watch(
   }
 );
 
+watch(
+    () => user?.value,
+    (value) => {
+        if(value) {
+            console.log("----", value);
+        }
+    }
+)
+
 
 const isDesktop = true;
 const showSideNav = ref(false)
@@ -49,10 +58,8 @@ const toggleSidenav = () => {
     showSideNav.value = !showSideNav.value;
 }
 
-if(!isLoading && isAuthenticated) {
-    console.log(user.name)
+console.log("without watcher", user["http://localhost:8000/roles"]);
 
-}
 
 </script>
 
@@ -146,7 +153,7 @@ if(!isLoading && isAuthenticated) {
     color: white;
     border-bottom: 1px solid #404040;
     padding-bottom: 20px;
-    padding: 20px 20vw;
+    padding: 20px 200px;
 }
 
 header h1 {
@@ -246,6 +253,7 @@ li .nav-item {
 
 nav {
     position: sticky;
+    width: 100%;
     top: 0;
     background: #1a1a1a;
     z-index: 20;

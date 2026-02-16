@@ -14,16 +14,14 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import selectinload
 
 
-from models import Movie, User, Genre, movie_genre, Theatre, Ticket, Screening, Seat, Base
+from models import engine, Base, movie_genre, Movie, User, Genre, Theatre, Ticket, Screening, Seat
 import validation
 
 import datetime
 
 
 
-engine = create_engine(
-"mysql+pymysql://cinema:6P3AZdYtUaWb7tBxHQa%@127.0.0.1/cinema?charset=utf8mb4",
-echo = True)
+
 
 
 
@@ -101,7 +99,7 @@ def delete_theatre(screening):
             print(e)
             session.rollback()
 
-def add_screening(theatre):
+def add_screening(theatre: validation.ScreeningAdd):
     with Session(engine) as session:
         try:
             theatre_obj = Screening(**theatre.dict())
@@ -234,6 +232,28 @@ def get_genres_all():
         except Exception as e:
             print(e)
 
+def create_theatre(id, name, per_row, rows):
+    alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+    seats = [ {"name": alphabet[a]+str(n), "theatre_id": id} for a in range(rows) for n in range(per_row)]
+    for seat in seats:
+        print(seat["name"], seat["theatre_id"])
+
+    with Session(engine) as session:
+        try: 
+            print(f"inserting theatre with name: {name}, seats_per_row: {per_row}, number of rows: {rows}")
+            session.execute(insert(Theatre).values(id=id, name=name, seats_per_row=per_row, number_of_rows=rows))
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
+
+    with Session(engine) as session:
+        try: 
+            session.execute(insert(Seat), seats)
+            session.commit()
+        except Exception as e:
+            print(e)
+            session.rollback()
 
 
 if __name__ == "__main__":
@@ -251,18 +271,21 @@ if __name__ == "__main__":
 #        MovieGenre.__table__.drop(bind=engine, checkfirst=True)
 ##    
 ##
-        User.__table__.create(bind=engine, checkfirst=True)
-        Ticket.__table__.create(bind=engine, checkfirst=True)
-#        Theatre.__table__.create(bind=engine, checkfirst=True)
-#        Seat.__table__.create(bind=engine, checkfirst=True)
-#        Screening.__table__.create(bind=engine, checkfirst=True)
+#        User.__table__.create(bind=engine, checkfirst=True)
+#        Ticket.__table__.create(bind=engine, checkfirst=True)
+        Theatre.__table__.create(bind=engine, checkfirst=True)
+        Seat.__table__.create(bind=engine, checkfirst=True)
+        Screening.__table__.create(bind=engine, checkfirst=True)
 
         #some_user = session.get(User, 1)
         #Movie.__table__.create(bind=engine, checkfirst=True)
 
         session.commit()
     
-    Base.metadata.create_all(engine)
+    
+    #create_theatre(2, "Salong B", 10, 3)
+    
+    #Base.metadata.create_all(engine)
 
 
         

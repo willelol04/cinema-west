@@ -33,7 +33,7 @@ class UserAuth(BaseModel):
 class ScreeningBase(BaseModel):
     id: int
 
-class Screening(ScreeningBase):
+class ScreeningAdd(BaseModel):
     movie_id: int
     theatre_id: int
     start_time: str

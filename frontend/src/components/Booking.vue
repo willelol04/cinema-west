@@ -14,8 +14,7 @@ import { reactive, defineProps, onMounted} from 'vue'; // probably want to use r
                     <input v-if="n === 'o'" type="checkbox" disabled>
                     <input v-else type="checkbox">
                     <span class="check">
-                        <i v-if="n === 'x'" class="pi pi-circle available"></i>
-                        <i v-else class="pi pi-ban"></i>
+                        <i class="pi pi-stop available"></i>
                     </span>
                 </label>
             </div>
@@ -84,10 +83,11 @@ input[type="checkbox"] {
 }
 
 .check i {
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 0;
     font-size: 48px;
-    border-radius: 50%;
+    transition: 300ms;
+
 }
 
 
@@ -95,20 +95,20 @@ input[type="checkbox"] {
 input[type="checkbox"]:not(:disabled):hover {
     cursor: pointer;
 }
+
 input[type="checkbox"]:disabled + .check {
-    opacity: 70%;
+    opacity: 30%;
 }
 
 
-input[type="checkbox"]:hover + .check> .available {
+input[type="checkbox"]:not(:disabled):hover + .check> .available {
     cursor: pointer;
-    background-color: grey;
-    color: grey;
+    color: green;
 
 }
-input[type="checkbox"]:checked + .check .available {
-    background-color: white;
-    color: white;
+input[type="checkbox"]:checked + .check i {
+    background-color: green;
+    color: green;
 }
 
 
