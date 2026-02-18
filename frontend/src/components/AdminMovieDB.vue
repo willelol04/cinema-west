@@ -1,64 +1,39 @@
 <script setup>
 import MoviesListAdmin from '@/components/MoviesListAdminDiscovery.vue';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
-import {useAuth0} from "@auth0/auth0-vue";
 import MoviesList from './MoviesList.vue';
-const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 
-const search_field = defineModel('Bing');
-const fetchComplete = ref(true);
 const movieResults = ref([]);
 
-const route = useRoute();
-const router = useRouter();
 
 
-async function fetchMovieResults(numbers_tried = 1) { 
-    const num = numbers_tried;
-    fetchComplete.value = false;
+async function fetchMovies() { 
     try {
-    const token = await getAccessTokenSilently();
-    const movieResultsPromise = await fetch(`http://localhost:8000/tmdb/movies/search/${route.query.q}`, {
+    const movieResultsPromise = await fetch("http://localhost:8000/movies", {
       headers: {
         "Content-type": "application/json",
-        "authorization": `Bearer ${token}`,
       }
     })
     const movieResultsObject = await movieResultsPromise.json();
-    for (const movie of movieResultsObject.results) {
-        if (await movieIsAdded(movie.id) == true) {
-            movie.isAdded = true;
-            console.log(movie.id, "is added")
-        }
+    movieResults.value = movieResultsObject;
+    for(const movie of movieResults.value) {
+      movie.isAdded = true;
     }
-    
-    movieResults.value = movieResultsObject.results;
 
     console.log(movieResults.value);
-    fetchComplete.value = true;
-    search_field.value = '';
 
     } catch(e) {
     console.log(e);
-    setTimeout(() => {fetchMovieResults(1+num)}, 20000);
-    console.log("failed - ", num);
+    console.log("failed");
     } finally {
     console.log("quit");
     }
 }
-watch(
-() => route.query.q,    
-() => {if(route.query.q) fetchMovieResults()},
-{immediate: true},
 
-)
-
-const onSubmit = () => {
-  router.push({query: {q: search_field.value}});
-};
+onMounted(fetchMovies)
 
 </script>
 
@@ -67,8 +42,7 @@ const onSubmit = () => {
     
     <div class="movie-database">
     <h1>Movie Database</h1>
-    <MoviesListAdmin/>
-
+    <MoviesListAdmin v-if="movieResults" :movies="movieResults" @update="fetchMovies" title="Added:"/>
     </div>
     
 

@@ -1,27 +1,101 @@
 <script setup>
-import { reactive, defineProps, onMounted} from 'vue'; // probably want to use ref instead
-    
+import { reactive, defineProps, onMounted, ref} from 'vue'; // probably want to use ref instead
+import MovieDetails from '@/components/MovieDetails.vue';
+import Booking from '@/components/Booking.vue';
+import { useRoute, useRouter } from 'vue-router';
+import {useAuth0} from "@auth0/auth0-vue";
+import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
+
+const screeningResult = ref(null);
+const checkedSeats = ref([]);
+
+const route = useRoute();
+const router = useRouter();
+
+async function fetchScreening() {
+    const promise = await fetch('http://localhost:8000/screenings/'+route.params.id);
+    screeningResult.value = await promise.json();
+    console.log(screeningResult.value);
+
+}
+
+const bookTickets = async () => {
+    if(checkedSeats.value.length > 0) {
+        try {
+        const token = await getAccessTokenSilently();
+        const response = await fetch("http://localhost:8000/tickets", {
+            method: "POST",
+            body: JSON.stringify({seats: checkedSeats.value, screening_id: screeningResult.value.id}),
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`,
+            }
+
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            alert(`Error: ${error.detail}`)
+            console.log(error)
+            return null
+        }
+
+        console.log(await response.json());
+        router.push('/booking-confirmation')
+            
+        } catch(e) {
+            alert(`Error: ${e}`)
+            console.log(e)
+            
+            
+        } finally {
+        checkedSeats.value = [];
+        await fetchScreening();
+
+        }
+
+    }
+
+}
+
+onMounted(fetchScreening);
+
+
   
 </script>
 
 <template>
-        <div class="booking">
-        <form method="POST" @submit.prevent="toggleModal()" action="#">
-        <h3>Star Wars: The Last Jedi - 21 Januari 17.00</h3>
-        <div class="screen">Bioduk</div>
-            <div class="row" v-for="n in [0,1,2,3,4]">
-                <label v-for="n in ['x','x','o','x','o','x','o','x','o','x','o','x','o']" class="checkbox-label">
-                    <input v-if="n === 'o'" type="checkbox" disabled>
-                    <input v-else type="checkbox">
+        <div v-if="screeningResult" class="booking">
+        <h3>{{ screeningResult.movie.title }} - {{ format(screeningResult.start_time, "EEEE, MMMM do HH:mm") }}</h3>
+        <form method="POST" @submit.prevent="bookTickets()" action="#">
+        <div class="screen">Movie Screen</div>
+        <!--
+            <div class="row" v-for="row in screeningResult.theatre.number_of_rows">
+                <label v-for="(seat,ind) in screeningResult.theatre.seats_per_row" class="checkbox-label">
+                    <input type="checkbox">
                     <span class="check">
                         <i class="pi pi-stop available"></i>
                     </span>
                 </label>
             </div>
-        <input type="submit" value="Bok xx biljetter">
+        -->
+        <div :style="`grid-template-columns: repeat(${screeningResult.theatre.seats_per_row}, 1fr)`" class="gridding">
+        <label v-for="(seat, ind) in screeningResult.theatre.seats" :key="ind" class="checkbox-label">
+            <div class="seat">
+            <input v-model="checkedSeats" type="checkbox" :value="seat" :disabled="screeningResult.booked_seat_ids.includes(seat.id)">
+            <span class="check">
+                <i  class="pi pi-stop available"></i>
+            </span>
+            </div>
+        </label>
+
+        </div>
+            
+        <input v-if="isAuthenticated"  type="submit" :value="`Book ${checkedSeats.length} seats`">
         </form>
         </div>
-
 </template>
 <!--
             <div class="row"><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span></div>
@@ -32,6 +106,15 @@ import { reactive, defineProps, onMounted} from 'vue'; // probably want to use r
 -->
 
 <style scoped>
+h3 {
+    text-align: center;
+}
+.gridding {
+    display: grid;
+    margin: 0 auto;
+    width: fit-content;
+    gap: 15px 5px;
+}
 
 .booking {
     width: 100%;
@@ -50,11 +133,12 @@ import { reactive, defineProps, onMounted} from 'vue'; // probably want to use r
     text-align: center;
     border-radius: 10px;
     margin-bottom: 45px;
+    padding: 20px 0px;
 }
 
 form {
-    text-align: center;
     display: block;
+    text-align: center;
     margin: 0 auto;
     padding: 20px;
     
@@ -63,13 +147,18 @@ form {
 .checkbox-label {
     font-size: 16px;
     padding: 0;
-    height: 16px;
-    width: 16px;
+    height: 1fr;
+    width: 1fr;
     margin: 10px;
 }
 
 .row {
-    margin-top: 80px;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
 }
 
 input[type="checkbox"] {
@@ -77,16 +166,16 @@ input[type="checkbox"] {
     opacity: 0;
     padding: 0;
     font-size: 16px;
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px
 
 }
 
 .check i {
     border-radius: 10px;
     padding: 0;
-    font-size: 48px;
-    transition: 300ms;
+    font-size: 32px;
+    transition: 150ms;
 
 }
 
@@ -111,7 +200,19 @@ input[type="checkbox"]:checked + .check i {
     color: green;
 }
 
+input[type="submit"] {
+    background-color: #2d2d2d;
+    border: 1px solid #404040;
+    border-radius: 7px;
+    padding: 20px;
+    transition: 300ms;
+}
 
+input[type="submit"]:hover { 
+    cursor: pointer;
+    background-color: #4e4d4d;
+
+}
 
 
 </style>

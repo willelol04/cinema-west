@@ -12,6 +12,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import selectinload
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError, NoResultFound
 
 
 from models import engine, Base, movie_genre, Movie, User, Genre, Theatre, Ticket, Screening, Seat
@@ -19,10 +20,37 @@ import validation
 
 import datetime
 
+class DatabaseConflictError(Exception):
+    pass
+
+class DatabaseError(Exception):
+    pass
 
 
 
-
+def add_tickets(ticket: validation.TicketAdd, auth_id: str):
+    print("--------------------------------")
+    print(ticket, auth_id)
+    print("--------------------------------")
+    with Session(engine) as session:
+        try:
+            id = get_user_by_auth_id(auth_id).id
+            for seat in ticket.seats:
+                print("--------------------------------")
+                print(seat)
+                print("--------------------------------")
+                session.execute(insert(Ticket).values(user_id=id, screening_id=ticket.screening_id, seat_id=seat["id"]))
+            session.commit()
+            return ticket
+        except IntegrityError as e:
+            print("--Error--", e)
+            session.rollback()
+            print(e)
+            raise DatabaseConflictError("Seat already booked") from e
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(e)
+            raise DatabaseError("Database Insertion Failed") from e
 
 
 # -- Users --
@@ -122,7 +150,7 @@ def get_movie(id):
 def get_movies_all():
     with Session(engine) as session:
         try:
-            result = session.execute(select(Movie)).scalars().all()
+            result = session.execute(select(Movie).options(selectinload(Movie.screenings))).scalars().all()
             return result
         except Exception as e:
             print(e)
@@ -180,8 +208,9 @@ def add_movie(movie):
 def get_screening(id):
     with Session(engine) as session:
         try:
-            result = session.get(Screening, id)
-            return result
+            screening = session.execute(select(Screening).where(Screening.id==id).options(selectinload(Screening.movie), selectinload(Screening.theatre).selectinload(Theatre.seats))).scalars().first()
+            screening.booked_seat_ids = session.execute(select(Ticket.seat_id).where(Ticket.screening_id==id, Ticket.is_cancelled==False)).scalars().all()
+            return screening
         except Exception as e:
             print(e)
 
@@ -263,27 +292,27 @@ if __name__ == "__main__":
     with Session(engine) as session:
 
 #        Ticket.__table__.drop(bind=engine, checkfirst=True)
-#        Screening.__table__.drop(bind=engine, checkfirst=True)
+#   Screening.__table__.drop(bind=engine, checkfirst=True)
 #        Seat.__table__.drop(bind=engine, checkfirst=True)
 #        Theatre.__table__.drop(bind=engine, checkfirst=True)
 #        User.__table__.drop(bind=engine, checkfirst=True)
-#        Movie.__table__.drop(bind=engine, checkfirst=True)
+#       Movie.__table__.drop(bind=engine, checkfirst=True)
 #        MovieGenre.__table__.drop(bind=engine, checkfirst=True)
 ##    
 ##
 #        User.__table__.create(bind=engine, checkfirst=True)
+#        Movie.__table__.create(bind=engine, checkfirst=True)
+#        Theatre.__table__.create(bind=engine, checkfirst=True)
+#        Seat.__table__.create(bind=engine, checkfirst=True)
+#        Screening.__table__.create(bind=engine, checkfirst=True)
 #        Ticket.__table__.create(bind=engine, checkfirst=True)
-        Theatre.__table__.create(bind=engine, checkfirst=True)
-        Seat.__table__.create(bind=engine, checkfirst=True)
-        Screening.__table__.create(bind=engine, checkfirst=True)
 
         #some_user = session.get(User, 1)
-        #Movie.__table__.create(bind=engine, checkfirst=True)
 
         session.commit()
     
     
-    #create_theatre(2, "Salong B", 10, 3)
+    create_theatre(3, "Salong C", 30, 8)
     
     #Base.metadata.create_all(engine)
 

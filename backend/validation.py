@@ -46,6 +46,10 @@ class TheatreBase(BaseModel):
 class TicketBase(BaseModel):
     id: int
 
+class TicketAdd(BaseModel):
+    seats: list
+    screening_id: int 
+
 class Theatre(TheatreBase):
     name: str
 

@@ -77,7 +77,7 @@ console.log("without watcher", user["http://localhost:8000/roles"]);
         <button v-if="isAuthenticated" @click="toggleDropdown()" class="nav-item user-btn">Profile<i v-if="returnDropDownState()" class="pi pi-chevron-down"></i><i v-else class="pi pi-chevron-right"></i></button>
         <LoginButton v-else></LoginButton>
         <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
-            <li><RouterLink class="nav-item" to="/admin/discover" >My profile</RouterLink></li>
+            <li v-if="user && user['http://localhost:8000/roles']?.includes('admin')"><RouterLink class="nav-item" to="/admin/discover" >Admin</RouterLink></li>
             <li><a class="nav-item" href="#">My tickets</a></li>
             <li class="nav-item" v-if="!isAuthenticated"><LoginButton /></li>
             <li class="nav-item" v-else><LogoutButton /></li>

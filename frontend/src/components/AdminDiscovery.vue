@@ -82,8 +82,7 @@ const onSubmit = () => {
         <input type="search" v-model="search_field" id="movie-search">
         <input type="submit" value="Sök">
     </form>
-    <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieResults">
-    </MoviesListAdmin>
+    <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieResults"  @update="fetchMovieResults"/>
     <BeatLoader v-if="!fetchComplete" class="fetch-loading" :color="'#bdc7bf'"/>
     <div v-if="fetchComplete && movieResults.length === 0 && route.query.q" class="empty">No results were found</div>
     </div>

@@ -7,17 +7,14 @@ import MovieView from '@/views/MovieView.vue';
 import BookingView from '@/views/BookingView.vue';
 import AdminView from '@/views/AdminView.vue';
 import AboutView from '@/views/AboutView.vue';
-import TestView from '@/views/TestView.vue';
-
 import NotFoundView from '@/views/NotFoundView.vue';
-import SignUpView from '@/views/SignUpView.vue';
-import LoginView from '@/views/LoginView.vue';
 
 
 import AdminDiscovery from '@/components/AdminDiscovery.vue';
 import AdminMovieDB from '@/components/AdminMovieDB.vue';
 import AdminScreenings from '@/components/AdminScreenings.vue';
 import AdminTickets from '@/components/AdminTickets.vue';
+import BookingConfirmationView from '@/views/BookingConfirmationView.vue';
 
 
 const router = createRouter({
@@ -29,24 +26,9 @@ const router = createRouter({
             component: HomeView,
         },
         {
-            path: '/signup',
-            name: 'signup',
-            component: SignUpView,
-        },
-        {
-            path: '/login',
-            name: 'login',
-            component: LoginView,
-        },
-        {
             path: '/about',
             name: 'about',
             component: AboutView,
-        },
-        {
-            path: '/test',
-            name: 'test',
-            component: TestView,
         },
         {
             path: '/movies',
@@ -62,6 +44,11 @@ const router = createRouter({
             path: '/booking/:id',
             name: 'booking',
             component: BookingView,
+        },
+        {
+            path: '/booking-confirmation',
+            name: 'booking confirmation',
+            component: BookingConfirmationView,
         },
         {
             path: '/about',

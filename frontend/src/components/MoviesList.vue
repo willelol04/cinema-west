@@ -235,8 +235,8 @@ section {
 
 .movie-card {
     background-color: #2d2d2d;
-    border-radius: 16px;
     border: 1px solid #404040;
+    border-radius: 16px;
     transition: 300ms;
     position: relative;
 

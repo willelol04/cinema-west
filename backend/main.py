@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, status
 from fastapi_plugin.fast_api_client import Auth0FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -15,6 +15,8 @@ import json
 import crud_operations
 import validation
 from fastapi import Depends
+
+from fastapi.responses import JSONResponse
 
 
 
@@ -45,7 +47,20 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
+
+@app.exception_handler(crud_operations.DatabaseConflictError)
+def integrity_error(request: Request, exc: crud_operations.DatabaseConflictError):
+    return JSONResponse(status_code=status.HTTP_409_CONFLICT,
+    content={"detail": str(exc), "error_type": "conflict"}
+    )
+
+@app.exception_handler(crud_operations.DatabaseError)
+def integrity_error(request: Request, exc: crud_operations.DatabaseError):
+    return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    content={"detail": str(exc), "error_type": "database_error"}
+    )
 
 
 async def getFromTMDB(path, parameters): 
@@ -124,7 +139,7 @@ def get_theatres_all():
 
 # POST-REQUESTS
 
-@app.post("/movies", dependencies=[Depends(auth0.require_auth())])
+@app.post("/movies", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
 def add_movie(movie: validation.Movie):
     crud_operations.add_movie(movie)
     return movie
@@ -134,7 +149,7 @@ def delete_movie(movie: validation.Movie):
     crud_operations.delete_movie(movie)
     return movie
 
-@app.post("/users", dependencies=[Depends(auth0.require_auth())])
+@app.post("/users", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
 def add_user(user: validation.UserAuth):
     print("------")
     print(user)
@@ -150,7 +165,7 @@ def get_user(id):
 def get_user(auth_id):
     return crud_operations.get_user_by_auth_id(auth_id)
 
-@app.post("/screenings", dependencies=[Depends(auth0.require_auth())])
+@app.post("/screenings", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
 def add_screening(screening: validation.ScreeningAdd):
     crud_operations.add_screening(screening)
     return screening
@@ -178,7 +193,11 @@ def post_genres(genres):
 def get_genres_all():
     print(crud_operations.get_genres_all())
     
+# Ticket
 
+@app.post("/tickets", status_code=status.HTTP_201_CREATED)
+def add_tickets(ticket: validation.TicketAdd, claims: dict = Depends(auth0.require_auth())):
+    return crud_operations.add_tickets(ticket, claims.sub)
 
 
 

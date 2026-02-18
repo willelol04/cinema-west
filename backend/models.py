@@ -35,7 +35,8 @@ class Movie(Base):
     release_date: Mapped[str] = mapped_column(Date, default="2024-01-01")
     language: Mapped[str] = mapped_column(String(10))
 
-    screenings: Mapped[List["Screening"]] = relationship()
+    screenings: Mapped[List["Screening"]] = relationship(back_populates="movie")
+
     genres: Mapped[List["Genre"]] = relationship(secondary=movie_genre, back_populates="movies")
 
 class Genre(Base):
@@ -90,6 +91,9 @@ class Screening(Base):
     theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"))
     start_time: Mapped[str] = mapped_column(DateTime)
     is_cancelled: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    movie: Mapped["Movie"] = relationship(back_populates="screenings")
+    theatre: Mapped["Theatre"] = relationship()
 
     __table_args__ = (UniqueConstraint("theatre_id", "start_time", name="yes"), )
     
@@ -103,6 +107,8 @@ class Ticket(Base):
     seat_id: Mapped[int] = mapped_column(ForeignKey("seat.id"))
     created_at: Mapped[str] = mapped_column(DateTime, default="2024-01-01T13:45:30")
     is_cancelled: Mapped[bool] = mapped_column(default=False)
+    
+    seat: Mapped[Seat] = relationship()
     
     __table_args__ = (UniqueConstraint("screening_id", "seat_id", name="yes"), )
 

@@ -11,6 +11,8 @@ const start_ind = ref(0);
 const fetchComplete = ref(false);
 const confirmDelete = ref(false)
 
+const emit = defineEmits("update")
+
 const props = defineProps({
     title: {
         type: String,
@@ -131,7 +133,7 @@ const addMovie = async (movie) => {
     });
 
     console.log(response);
-    movie.isAdded = true;
+    emit('update')
 
 };
 
@@ -148,7 +150,7 @@ const deleteMovie = async (movie) => {
     });
     
     console.log(response);
-    movie.isAdded = false;
+    emit('update');
 
 };
 
