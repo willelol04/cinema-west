@@ -16,7 +16,7 @@ defineProps({
     <img v-if="movie && movie.poster_path" :src="`https://image.tmdb.org/t/p/original`+movie.poster_path" alt="movie-poster">
     <div class="right">
         <div class="movie-details">
-            <h2 class="movie-title">{{ movie.title}} {{ "(" + movie.release_date + ")"}}</h2>
+            <h2 class="movie-title">{{ movie.title}} {{ movie.release_date}}</h2>
             <h3>Length: {{ movie.length }}</h3>
             <h3 v-if="movie.genres && movie.genres.length > 0">Genres: <span v-for="(genre, index) in movie.genres.slice(0, movie.genres.length - 1)">{{ genre.name + ", "}} </span> <span>{{ movie.genres[movie.genres.length - 1].name }}</span></h3>
             <h3>Rating: 7+</h3>

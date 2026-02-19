@@ -18,9 +18,16 @@ from fastapi import Depends
 
 from fastapi.responses import JSONResponse
 
+from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
 
 
 
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(crud_operations.clean_unfinished_tickets, 'interval', seconds=10)
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
 app = FastAPI()
 load_dotenv()
 tmdb_key = os.getenv('TMDBKEY')
@@ -125,7 +132,7 @@ def get_movie(id: int):
 
 @app.get("/movies/upcoming") 
 def get_movies_upcoming():
-    movies = crud_operations.get_movies_upcoming(datetime.datetime.now())
+    movies = crud_operations.get_movies_upcoming()
     print(movies)
     return movies
 
@@ -146,8 +153,7 @@ def add_movie(movie: validation.Movie):
 
 @app.delete("/movies", dependencies=[Depends(auth0.require_auth())])
 def delete_movie(movie: validation.Movie):
-    crud_operations.delete_movie(movie)
-    return movie
+    return crud_operations.delete_movie(movie)
 
 @app.post("/users", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
 def add_user(user: validation.UserAuth):
@@ -191,6 +197,7 @@ def post_genres(genres):
     return genres
 
 def get_genres_all():
+    return
     print(crud_operations.get_genres_all())
     
 # Ticket
@@ -204,6 +211,7 @@ def add_tickets(ticket: validation.TicketAdd, claims: dict = Depends(auth0.requi
 #EVENT FUNCTIONS
 @app.on_event("startup")
 async def startup():
+    return
     for each in crud_operations.get_genres_all():
         print(each.name, end=": ")
         for e in each.movies:
@@ -217,3 +225,8 @@ async def shutdown():
     print("\n\nclosing tmdb_client\n\n")
     await tmdb_client.aclose()
     print("closed tmdb")
+    
+
+    
+
+

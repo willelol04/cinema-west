@@ -138,6 +138,7 @@ const addMovie = async (movie) => {
 };
 
 const deleteMovie = async (movie) => {
+    try {
     const token = await getAccessTokenSilently();
     const response = await fetch("http://localhost:8000/movies", {
         method: "DELETE",
@@ -149,8 +150,19 @@ const deleteMovie = async (movie) => {
 
     });
     
-    console.log(response);
+    if (!response.ok) {
+        const error = await response.json();
+        alert(`Error: ${error.detail}`)
+        console.log(error)
+        return null
+    }
+    
     emit('update');
+    alert("Movie removed");
+
+    } catch(e) {
+        console.log(e)
+    }
 
 };
 

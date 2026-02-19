@@ -4,7 +4,7 @@ import aiomysql
 import pymysql
 from typing import List
 from typing import Optional
-from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table
+from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
@@ -13,7 +13,8 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import selectinload
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError, NoResultFound
-
+from sqlalchemy import func, text
+from datetime import timedelta
 
 from models import engine, Base, movie_genre, Movie, User, Genre, Theatre, Ticket, Screening, Seat
 import validation
@@ -39,7 +40,7 @@ def add_tickets(ticket: validation.TicketAdd, auth_id: str):
                 print("--------------------------------")
                 print(seat)
                 print("--------------------------------")
-                session.execute(insert(Ticket).values(user_id=id, screening_id=ticket.screening_id, seat_id=seat["id"]))
+                session.execute(insert(Ticket).values(user_id=id, screening_id=ticket.screening_id, created_at=func.now(), expires_at=func.adddate(func.now(), text("INTERVAL 5 MINUTE")), seat_id=seat["id"]))
             session.commit()
             return ticket
         except IntegrityError as e:
@@ -155,10 +156,10 @@ def get_movies_all():
         except Exception as e:
             print(e)
 
-def get_movies_upcoming(now):
+def get_movies_upcoming():
     with Session(engine) as session:
         try:
-            result = session.execute(select(Movie).where(Movie.release_date > now)).scalars().all()
+            result = session.execute(select(Movie).where(Movie.release_date > func.now())).scalars().all()
             return result
         except Exception as e:
             print(e)
@@ -167,14 +168,18 @@ def delete_movie(movie):
     with Session(engine) as session:
         try:
             db_movie = session.get(Movie, movie.id)
-            for screening in db_movie.screenings:
-                session.delete(screening)
             session.delete(db_movie)
             session.commit()
-        except Exception as e:
-            print(e)
+            return movie
+        except IntegrityError as e:
+            print("--Error--", e)
             session.rollback()
-
+            print(e)
+            raise DatabaseConflictError("Conflict occured while deleting movie.") from e
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(e)
+            raise DatabaseError("Database query Failed") from e
 def add_movie(movie):
     print(movie)
     with Session(engine) as session:
@@ -209,7 +214,7 @@ def get_screening(id):
     with Session(engine) as session:
         try:
             screening = session.execute(select(Screening).where(Screening.id==id).options(selectinload(Screening.movie), selectinload(Screening.theatre).selectinload(Theatre.seats))).scalars().first()
-            screening.booked_seat_ids = session.execute(select(Ticket.seat_id).where(Ticket.screening_id==id, Ticket.is_cancelled==False)).scalars().all()
+            screening.booked_seat_ids = session.execute(select(Ticket.seat_id).where(Ticket.screening_id==id, Ticket.status!="cancelled")).scalars().all()
             return screening
         except Exception as e:
             print(e)
@@ -285,6 +290,15 @@ def create_theatre(id, name, per_row, rows):
             session.rollback()
 
 
+def clean_unfinished_tickets():
+    with Session(engine) as session:
+        try:
+            session.execute(update(Ticket).where(Ticket.expires_at <= func.now()).values(status="cancelled"))
+            session.commit()
+        except SQLAlchemyError as e:
+            raise DatabaseError from e
+
+
 if __name__ == "__main__":
 
 
@@ -301,20 +315,20 @@ if __name__ == "__main__":
 ##    
 ##
 #        User.__table__.create(bind=engine, checkfirst=True)
-#        Movie.__table__.create(bind=engine, checkfirst=True)
+        Movie.__table__.create(bind=engine, checkfirst=True)
 #        Theatre.__table__.create(bind=engine, checkfirst=True)
 #        Seat.__table__.create(bind=engine, checkfirst=True)
-#        Screening.__table__.create(bind=engine, checkfirst=True)
-#        Ticket.__table__.create(bind=engine, checkfirst=True)
+        Screening.__table__.create(bind=engine, checkfirst=True)
+        Ticket.__table__.create(bind=engine, checkfirst=True)
 
         #some_user = session.get(User, 1)
 
         session.commit()
     
     
-    create_theatre(3, "Salong C", 30, 8)
+    #create_theatre(3, "Salong C", 30, 8)
     
-    #Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
 
 
         

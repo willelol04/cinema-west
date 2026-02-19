@@ -239,10 +239,7 @@ section {
     border-radius: 16px;
     transition: 300ms;
     position: relative;
-
-
 }
-
 
 
 .movie-card:hover {

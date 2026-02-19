@@ -7,6 +7,7 @@ import MovieView from '@/views/MovieView.vue';
 import BookingView from '@/views/BookingView.vue';
 import AdminView from '@/views/AdminView.vue';
 import AboutView from '@/views/AboutView.vue';
+import ProfileView from '@/views/ProfileView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 
 
@@ -14,7 +15,7 @@ import AdminDiscovery from '@/components/AdminDiscovery.vue';
 import AdminMovieDB from '@/components/AdminMovieDB.vue';
 import AdminScreenings from '@/components/AdminScreenings.vue';
 import AdminTickets from '@/components/AdminTickets.vue';
-import BookingConfirmationView from '@/views/BookingConfirmationView.vue';
+import BookingPaymentView from '@/views/BookingPaymentView.vue';
 
 
 const router = createRouter({
@@ -46,14 +47,20 @@ const router = createRouter({
             component: BookingView,
         },
         {
-            path: '/booking-confirmation',
-            name: 'booking confirmation',
-            component: BookingConfirmationView,
+            path: '/payment',
+            name: 'booking payment',
+            component: BookingPaymentView,
         },
         {
             path: '/about',
             name: 'about',
             component: AboutView,
+        },
+        {
+            path: '/profile',
+            name: 'profile',
+            component: ProfileView,
+            beforeEnter: authGuard,
         },
         {
             path: '/admin',

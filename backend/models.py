@@ -13,6 +13,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import selectinload
+from datetime import timedelta
 
 
 import validation as validation
@@ -23,7 +24,7 @@ class Base (DeclarativeBase):
     pass
 
 
-movie_genre = Table("movie_genre", Base.metadata, Column("movie_id", Integer, ForeignKey("movie.id"), primary_key=True), Column("genre_id", Integer, ForeignKey("genre.id"), primary_key=True))
+movie_genre = Table("movie_genre", Base.metadata, Column("movie_id", Integer, ForeignKey("movie.id", ondelete="CASCADE"), primary_key=True), Column("genre_id", Integer, ForeignKey("genre.id"), primary_key=True))
 
 class Movie(Base):
     __tablename__ = "movie"
@@ -35,7 +36,7 @@ class Movie(Base):
     release_date: Mapped[str] = mapped_column(Date, default="2024-01-01")
     language: Mapped[str] = mapped_column(String(10))
 
-    screenings: Mapped[List["Screening"]] = relationship(back_populates="movie")
+    screenings: Mapped[List["Screening"]] = relationship(back_populates="movie", order_by="Screening.start_time", cascade="all, delete-orphan")
 
     genres: Mapped[List["Genre"]] = relationship(secondary=movie_genre, back_populates="movies")
 
@@ -87,12 +88,13 @@ class Screening(Base):
     __tablename__ = "screening"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    movie_id: Mapped[int] = mapped_column(ForeignKey("movie.id"))
+    movie_id: Mapped[int] = mapped_column(ForeignKey("movie.id", ondelete="CASCADE"))
     theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"))
     start_time: Mapped[str] = mapped_column(DateTime)
     is_cancelled: Mapped[bool] = mapped_column(Boolean, default=False)
     
     movie: Mapped["Movie"] = relationship(back_populates="screenings")
+    tickets: Mapped[List["Ticket"]] = relationship(back_populates="screening", cascade="all, delete-orphan")
     theatre: Mapped["Theatre"] = relationship()
 
     __table_args__ = (UniqueConstraint("theatre_id", "start_time", name="yes"), )
@@ -103,12 +105,14 @@ class Ticket(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    screening_id: Mapped[int] = mapped_column(ForeignKey("screening.id"))
+    screening_id: Mapped[int] = mapped_column(ForeignKey("screening.id", ondelete="CASCADE"))
     seat_id: Mapped[int] = mapped_column(ForeignKey("seat.id"))
-    created_at: Mapped[str] = mapped_column(DateTime, default="2024-01-01T13:45:30")
-    is_cancelled: Mapped[bool] = mapped_column(default=False)
+    created_at: Mapped[str] = mapped_column(DateTime)
+    expires_at: Mapped[str] = mapped_column(DateTime)
+    status: Mapped[str] = mapped_column(String(10), default='registered')
     
     seat: Mapped[Seat] = relationship()
+    screening: Mapped[Screening] = relationship(back_populates="tickets")
     
     __table_args__ = (UniqueConstraint("screening_id", "seat_id", name="yes"), )
 

@@ -5,7 +5,6 @@ import Booking from '@/components/Booking.vue'
 
 <template>
     <Booking/>
-    
 </template>
 
 <style scoped>

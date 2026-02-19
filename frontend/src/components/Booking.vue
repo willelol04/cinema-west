@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, defineProps, onMounted, ref} from 'vue'; // probably want to use ref instead
+import { reactive, defineProps, onMounted, ref, onBeforeUnmount} from 'vue'; // probably want to use ref instead
 import MovieDetails from '@/components/MovieDetails.vue';
 import Booking from '@/components/Booking.vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -10,6 +10,7 @@ const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useA
 
 const screeningResult = ref(null);
 const checkedSeats = ref([]);
+const intervalID = ref(null)
 
 const route = useRoute();
 const router = useRouter();
@@ -43,26 +44,30 @@ const bookTickets = async () => {
         }
 
         console.log(await response.json());
-        router.push('/booking-confirmation')
+        router.push('/payment')
             
         } catch(e) {
             alert(`Error: ${e}`)
             console.log(e)
-            
-            
         } finally {
         checkedSeats.value = [];
         await fetchScreening();
-
+            
         }
 
     }
 
 }
 
-onMounted(fetchScreening);
+onMounted(async () => {
+  await fetchScreening()
+  intervalID.value = setInterval(async () => { 
+    await fetchScreening()
+  }, 5000)
+  console.log(intervalID.value)
+})
 
-
+onBeforeUnmount(() => {clearInterval(intervalID.value); intervalID.value = null})
   
 </script>
 
@@ -71,16 +76,6 @@ onMounted(fetchScreening);
         <h3>{{ screeningResult.movie.title }} - {{ format(screeningResult.start_time, "EEEE, MMMM do HH:mm") }}</h3>
         <form method="POST" @submit.prevent="bookTickets()" action="#">
         <div class="screen">Movie Screen</div>
-        <!--
-            <div class="row" v-for="row in screeningResult.theatre.number_of_rows">
-                <label v-for="(seat,ind) in screeningResult.theatre.seats_per_row" class="checkbox-label">
-                    <input type="checkbox">
-                    <span class="check">
-                        <i class="pi pi-stop available"></i>
-                    </span>
-                </label>
-            </div>
-        -->
         <div :style="`grid-template-columns: repeat(${screeningResult.theatre.seats_per_row}, 1fr)`" class="gridding">
         <label v-for="(seat, ind) in screeningResult.theatre.seats" :key="ind" class="checkbox-label">
             <div class="seat">
@@ -110,9 +105,9 @@ h3 {
     text-align: center;
 }
 .gridding {
+    width: 100%;
     display: grid;
     margin: 0 auto;
-    width: fit-content;
     gap: 15px 5px;
 }
 
@@ -121,11 +116,9 @@ h3 {
     background-position: center; 
     background-size: cover;
     position: relative;
-    padding: 20px 10vw;
 }
 
 .screen {
-    width: 45%;
     border: 1px solid white;
     display: block;
     margin: 0 auto;
@@ -141,17 +134,14 @@ form {
     text-align: center;
     margin: 0 auto;
     padding: 20px;
+    width: fit-content;
     
 }
 
 .checkbox-label {
-    font-size: 16px;
+    font-size: 24px;
     padding: 0;
-    height: 1fr;
-    width: 1fr;
-    margin: 10px;
 }
-
 .row {
     margin-top: 40px;
     display: flex;
@@ -165,16 +155,15 @@ input[type="checkbox"] {
     position: absolute;
     opacity: 0;
     padding: 0;
-    font-size: 16px;
-    width: 32px;
-    height: 32px
+    width: 24px;
+    height: 24px;
 
 }
 
 .check i {
     border-radius: 10px;
     padding: 0;
-    font-size: 32px;
+    font-size: 24px;
     transition: 150ms;
 
 }
@@ -212,6 +201,20 @@ input[type="submit"]:hover {
     cursor: pointer;
     background-color: #4e4d4d;
 
+}
+@media only screen and (max-width: 768px) {
+
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px
+
+}
+
+.check i {
+    font-size: 16px;
+
+}
 }
 
 
