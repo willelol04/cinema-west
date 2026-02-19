@@ -5,7 +5,7 @@ import aiomysql
 import pymysql
 from typing import List
 from typing import Optional
-from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table
+from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table, ForeignKeyConstraint
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
@@ -75,13 +75,10 @@ class Theatre(Base):
 class Seat(Base):
     __tablename__ = "seat"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(10))
-    theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"))
+    id: Mapped[str] = mapped_column(String(10), primary_key=True)
+    theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"), primary_key=True)
 
     theatre: Mapped["Theatre"] = relationship(back_populates="seats")
-
-    __table_args__ = (UniqueConstraint("theatre_id", "name", name="per_theatre_unique_seat"), )
     
 
 class Screening(Base):
@@ -106,7 +103,9 @@ class Ticket(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     screening_id: Mapped[int] = mapped_column(ForeignKey("screening.id", ondelete="CASCADE"))
-    seat_id: Mapped[int] = mapped_column(ForeignKey("seat.id"))
+    seat_id: Mapped[str] = mapped_column(String(10))
+    theatre_id: Mapped[int] = mapped_column(Integer)
+
     created_at: Mapped[str] = mapped_column(DateTime)
     expires_at: Mapped[str] = mapped_column(DateTime)
     status: Mapped[str] = mapped_column(String(10), default='registered')
@@ -114,7 +113,12 @@ class Ticket(Base):
     seat: Mapped[Seat] = relationship()
     screening: Mapped[Screening] = relationship(back_populates="tickets")
     
-    __table_args__ = (UniqueConstraint("screening_id", "seat_id", name="yes"), )
+    __table_args__ = (
+        UniqueConstraint("screening_id", "seat_id", name="yes"), 
+        ForeignKeyConstraint(
+            ["seat_id", "theatre_id"], ["seat.id", "seat.theatre_id"]
+        ),
+        )
 
 
 engine = create_engine(

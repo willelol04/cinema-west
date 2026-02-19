@@ -40,7 +40,7 @@ def add_tickets(ticket: validation.TicketAdd, auth_id: str):
                 print("--------------------------------")
                 print(seat)
                 print("--------------------------------")
-                session.execute(insert(Ticket).values(user_id=id, screening_id=ticket.screening_id, created_at=func.now(), expires_at=func.adddate(func.now(), text("INTERVAL 5 MINUTE")), seat_id=seat["id"]))
+                session.execute(insert(Ticket).values(user_id=id, screening_id=ticket.screening_id, created_at=func.now(), expires_at=func.adddate(func.now(), text("INTERVAL 5 MINUTE")), seat_id=seat["id"], theatre_id=seat["theatre_id"]))
             session.commit()
             return ticket
         except IntegrityError as e:
@@ -268,26 +268,20 @@ def get_genres_all():
 
 def create_theatre(id, name, per_row, rows):
     alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-    seats = [ {"name": alphabet[a]+str(n), "theatre_id": id} for a in range(rows) for n in range(per_row)]
+    seats = [ {"id": alphabet[a]+str(n), "theatre_id": id} for a in range(rows) for n in range(1, per_row + 1)]
     for seat in seats:
-        print(seat["name"], seat["theatre_id"])
+        print(seat["id"], seat["theatre_id"])
 
     with Session(engine) as session:
         try: 
             print(f"inserting theatre with name: {name}, seats_per_row: {per_row}, number of rows: {rows}")
             session.execute(insert(Theatre).values(id=id, name=name, seats_per_row=per_row, number_of_rows=rows))
-            session.commit()
-        except Exception as e:
-            print(e)
-            session.rollback()
-
-    with Session(engine) as session:
-        try: 
             session.execute(insert(Seat), seats)
             session.commit()
         except Exception as e:
             print(e)
             session.rollback()
+
 
 
 def clean_unfinished_tickets():
@@ -316,9 +310,10 @@ if __name__ == "__main__":
 ##
 #        User.__table__.create(bind=engine, checkfirst=True)
         Movie.__table__.create(bind=engine, checkfirst=True)
-#        Theatre.__table__.create(bind=engine, checkfirst=True)
-#        Seat.__table__.create(bind=engine, checkfirst=True)
+        Theatre.__table__.create(bind=engine, checkfirst=True)
+        Seat.__table__.create(bind=engine, checkfirst=True)
         Screening.__table__.create(bind=engine, checkfirst=True)
+        create_theatre(2, "Salong B", 30, 8)
         Ticket.__table__.create(bind=engine, checkfirst=True)
 
         #some_user = session.get(User, 1)
@@ -326,7 +321,6 @@ if __name__ == "__main__":
         session.commit()
     
     
-    #create_theatre(3, "Salong C", 30, 8)
     
     Base.metadata.create_all(engine)
 
