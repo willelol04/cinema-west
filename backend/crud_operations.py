@@ -313,7 +313,7 @@ if __name__ == "__main__":
         Theatre.__table__.create(bind=engine, checkfirst=True)
         Seat.__table__.create(bind=engine, checkfirst=True)
         Screening.__table__.create(bind=engine, checkfirst=True)
-        create_theatre(2, "Salong B", 30, 8)
+        create_theatre(1, "Salong A", 10, 3)
         Ticket.__table__.create(bind=engine, checkfirst=True)
 
         #some_user = session.get(User, 1)

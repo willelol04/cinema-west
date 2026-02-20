@@ -25,7 +25,7 @@ import atexit
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(crud_operations.clean_unfinished_tickets, 'interval', seconds=10)
+scheduler.add_job(crud_operations.clean_unfinished_tickets, 'interval', minutes=1)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 app = FastAPI()

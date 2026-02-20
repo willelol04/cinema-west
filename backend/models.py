@@ -5,7 +5,7 @@ import aiomysql
 import pymysql
 from typing import List
 from typing import Optional
-from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table, ForeignKeyConstraint
+from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table, ForeignKeyConstraint, func, cast
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
@@ -14,6 +14,7 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import selectinload
 from datetime import timedelta
+
 
 
 import validation as validation
@@ -70,7 +71,11 @@ class Theatre(Base):
     seats_per_row: Mapped[int] = mapped_column(Integer)
     number_of_rows: Mapped[int] = mapped_column(Integer)
 
-    seats: Mapped[List["Seat"]] = relationship(back_populates="theatre")
+    seats: Mapped[List["Seat"]] = relationship(back_populates="theatre",
+            order_by=lambda: (
+            func.substr(Seat.id, 1, 1),               # letter
+            cast(func.substr(Seat.id, 2), Integer)    # number
+        ))
     
 class Seat(Base):
     __tablename__ = "seat"
@@ -111,7 +116,8 @@ class Ticket(Base):
     status: Mapped[str] = mapped_column(String(10), default='registered')
     
     seat: Mapped[Seat] = relationship()
-    screening: Mapped[Screening] = relationship(back_populates="tickets")
+    screening: Mapped[Screening] = relationship(back_populates="tickets",
+        )
     
     __table_args__ = (
         UniqueConstraint("screening_id", "seat_id", name="yes"), 
