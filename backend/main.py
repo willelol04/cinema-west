@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request, Depends, status
+from fastapi import FastAPI, HTTPException, Request, Depends, status, WebSocket
 from fastapi_plugin.fast_api_client import Auth0FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -14,15 +14,19 @@ import json
 
 import crud_operations
 import validation
+import websocket
+
 from fastapi import Depends
 
 from fastapi.responses import JSONResponse
 
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
 
 
-
+manager = websocket.ConnectionManager()
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(crud_operations.clean_unfinished_tickets, 'interval', minutes=1)
@@ -226,6 +230,20 @@ async def shutdown():
     await tmdb_client.aclose()
     print("closed tmdb")
     
+
+@app.websocket("/ws/{screening_id}")
+async def websocket(websocket: WebSocket, screening_id: int):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_json()
+            print("\n\n\n\n", "Thank you", data, "\n\n\n\n")
+            booked_seats = crud_operations.get_selected_seats(screening_id)
+            await manager.broadcast_json({"msg": "Thank you", "booked_seat_ids": booked_seats})
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        #await manager.broadcast(f"Client {screening_id} has left")
+        
 
     
 

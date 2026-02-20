@@ -10,7 +10,9 @@ const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useA
 
 const screeningResult = ref(null);
 const checkedSeats = ref([]);
-const intervalID = ref(null)
+const fetchIntervalID = ref(null)
+const wsIntervalId = ref(null)
+const booked_seat_ids = ref([])
 
 const route = useRoute();
 const router = useRouter();
@@ -18,6 +20,7 @@ const router = useRouter();
 async function fetchScreening() {
     const promise = await fetch('http://localhost:8000/screenings/'+route.params.id);
     screeningResult.value = await promise.json();
+    booked_seat_ids.value = screeningResult.value.booked_seat_ids;
     console.log(screeningResult.value);
 
 }
@@ -44,6 +47,9 @@ const bookTickets = async () => {
         }
 
         console.log(await response.json());
+        ws.send(JSON.stringify({msg: "user", timestamp: timestamp}))
+        console.log("Sent")
+
         router.push('/payment')
             
         } catch(e) {
@@ -58,17 +64,48 @@ const bookTickets = async () => {
     }
 
 }
-
 onMounted(async () => {
   await fetchScreening()
-  intervalID.value = setInterval(async () => { 
+  /*
+  fetchIntervalID.value = setInterval(async () => { 
     await fetchScreening()
   }, 5000)
-  console.log(intervalID.value)
+  */
+  //console.log(fetchIntervalID.value)
+
+})
+const ws = new WebSocket("ws://localhost:8000/ws/20");
+
+onBeforeUnmount(() => {
+
+    clearInterval(fetchIntervalID.value); 
+    fetchIntervalID.value = null; 
+
+    clearInterval(wsIntervalId.value); 
+    wsIntervalId.value = null; 
+    ws.close()
+
 })
 
-onBeforeUnmount(() => {clearInterval(intervalID.value); intervalID.value = null})
+let timestamp = null;
   
+onMounted(() => {
+        ws.onmessage = (event) => {
+            console.log(JSON.parse(event.data).booked_seat_ids)
+            booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids
+            checkedSeats.value = []
+        };
+        /*
+        wsIntervalId.value = setInterval(() => { 
+            try {
+                timestamp = Date.now()
+                ws.send(JSON.stringify({msg: "user", timestamp: timestamp}))
+            } catch(e) {
+                console.log(e)
+            }
+        }, 2000)
+        */
+});
 </script>
 
 <template>
@@ -79,7 +116,7 @@ onBeforeUnmount(() => {clearInterval(intervalID.value); intervalID.value = null}
         <div :style="`grid-template-columns: repeat(${screeningResult.theatre.seats_per_row}, 1fr)`" class="gridding">
         <label v-for="(seat, ind) in screeningResult.theatre.seats" :key="ind" class="checkbox-label">
             <div class="seat">
-            <input v-model="checkedSeats" type="checkbox" :value="seat" :disabled="screeningResult.booked_seat_ids.includes(seat.id)">
+            <input v-model="checkedSeats" type="checkbox" :value="seat" :disabled="booked_seat_ids?.includes(seat.id)">
             <span class="check">
                 <i  class="pi pi-stop available"></i>
             </span>
@@ -92,13 +129,6 @@ onBeforeUnmount(() => {clearInterval(intervalID.value); intervalID.value = null}
         </form>
         </div>
 </template>
-<!--
-            <div class="row"><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span></div>
-            <div class="row"><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span></div>
-            <div class="row"><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span></div>
-            <div class="row"><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span></div>
-            <div class="row"><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span><span><input type="checkbox" name="" id="">x</span></div>
--->
 
 <style scoped>
 h3 {

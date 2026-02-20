@@ -4,7 +4,7 @@ import aiomysql
 import pymysql
 from typing import List
 from typing import Optional
-from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table, update
+from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table, update, delete
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
@@ -283,19 +283,21 @@ def create_theatre(id, name, per_row, rows):
             session.rollback()
 
 
+# seats
+def get_selected_seats(id):
+    return get_screening(id).booked_seat_ids
+
 
 def clean_unfinished_tickets():
     with Session(engine) as session:
         try:
-            session.execute(update(Ticket).where(Ticket.expires_at <= func.now()).values(status="cancelled"))
+            session.execute(delete(Ticket).where(Ticket.expires_at <= func.now(), Ticket.status=="registered"))
             session.commit()
         except SQLAlchemyError as e:
             raise DatabaseError from e
 
 
 if __name__ == "__main__":
-
-
 
     with Session(engine) as session:
 
