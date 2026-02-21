@@ -17,3 +17,17 @@ const handleLogin = () => {
   loginWithRedirect()
 }
 </script>
+<style scoped>
+
+button {
+  
+    width: 175px;
+    background-color: rgba(43, 43, 43, 0.753);
+    color: white;
+    padding: 8px 5px;
+    border-radius: 5px;
+    font-size: 18px;
+    border: 1px solid #404040;
+    margin: 0;
+}
+</style>

@@ -65,8 +65,7 @@ console.log("without watcher", user["http://localhost:8000/roles"]);
 
 <template>
         <nav>
-        <div v-if="isDesktop" class="desktop-nav">
-        <div class="yepp">
+        <div class="top">
         <h1><RouterLink to="/"><img src="../public/favicon.ico" style="vertical-align: middle; margin-right: 15px;" height="50">cinema west</RouterLink></h1>
         <div class="nav-dropdown first">
         <button v-if="isAuthenticated" @click="toggleDropdown()" class="nav-item user-btn"><i class="pi pi-user"></i>Profile<i v-if="returnDropDownState()" class="pi pi-chevron-up"></i><i v-else class="pi pi-chevron-down"></i></button>
@@ -74,8 +73,8 @@ console.log("without watcher", user["http://localhost:8000/roles"]);
         <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
             <li v-if="user && user['http://localhost:8000/roles']?.includes('admin')"><RouterLink class="nav-item" to="/admin/discover" >Admin</RouterLink></li>
             <li><RouterLink class="nav-item" to="/profile" >My profile</RouterLink></li>
-            <li class="nav-item" v-if="!isAuthenticated"><LoginButton /></li>
-            <li class="nav-item" v-else><LogoutButton /></li>
+            <li class="nav-item" v-if="!isAuthenticated"><LoginButton class="login-btn"/></li>
+            <li class="nav-item" v-else><LogoutButton class="logout-btn"/></li>
         </ul>
         </div>
         </div>
@@ -84,85 +83,26 @@ console.log("without watcher", user["http://localhost:8000/roles"]);
                 <li ><RouterLink :class="[isActive('/movies') ? 'activeNavLink' : '', 'nav-item']" to="/movies">Movies</RouterLink></li>
                 <li ><RouterLink :class="[isActive('/about') ? 'activeNavLink' : '', 'nav-item']" to="/about">About</RouterLink></li>
             </ul>
-        <div class="nav-dropdown last">
-        <button v-if="isAuthenticated" @click="toggleDropdown()" class="nav-item user-btn"><i class="pi pi-user"></i>Profile<i v-if="returnDropDownState()" class="pi pi-chevron-up"></i><i v-else class="pi pi-chevron-down"></i></button>
-        <LoginButton v-else></LoginButton>
-        <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
-            <li v-if="user && user['http://localhost:8000/roles']?.includes('admin')"><RouterLink class="nav-item" to="/admin/discover" >Admin</RouterLink></li>
-            <li><RouterLink class="nav-item" to="/profile" >My profile</RouterLink></li>
-            <li class="nav-item" v-if="!isAuthenticated"><LoginButton /></li>
-            <li class="nav-item" v-else><LogoutButton /></li>
-        </ul>
-        </div>
 
-        </div>
         </nav>
-        <Transition name="fade">
-        <div v-if="showSideNav" class="side-nav">
-            <ul>
-                <li><RouterLink to="#">Home</RouterLink></li>
-                <li><RouterLink to="#">Movies</RouterLink></li>
-                <li><RouterLink to="#">About</RouterLink></li>
-                <li><RouterLink to="#">My profile</RouterLink></li>
-                <li><RouterLink to="#">Log out</RouterLink></li>
-            </ul>
-        </div>
-        </Transition>
         
 </template>
 
-
 <style scoped>
 
-.first {
-    display: none;
-}
-.sidenav-toggle {
-    z-index: 3;
-}
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-.side-nav {
-    height: 50vh;
-    width: 100vw;
-    position:fixed;
-    right: 0;
-    bottom: 0;
-    text-align: center;
-    background-color: black;
-    z-index: 1;
-}
-
-.side-nav li {
-    display: block;
-}
-
-.activeNavLink {
-    color: #e50914;
-}
 
 * {
     box-sizing: border-box;
 }
 
-.desktop-nav {
+nav {
+    position: sticky;
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
-    color: white;
-    border-bottom: 1px solid #404040;
-    padding-bottom: 20px;
-    padding: 20px 200px;
+    top: 0;
+    background: #1a1a1a;
+    z-index: 20;
+    padding-bottom: 0;
 }
 
 header h1 {
@@ -170,52 +110,44 @@ header h1 {
 }
 
 nav ul li {
-    display:inline-block;
     font-size: 18px;
-}
-
-
-.mobile-nav {
     width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 20vw;
 }
 
+.activeNavLink {
+    color: #e50914;
+    border-bottom: 2px solid red;
+    transition: 300ms;
+}
 
-
-li .nav-item {
+.nav-item {
     transition: 300ms;
     margin-right: 20px;
     width: 100%;
-    
-}
-    
-.nav-item:hover {
-    color: #e50914;
-    i {
-        color: #e50914;
-
-    }
 }
 
-.dropdown-list button:hover {
-    color: #e50914;
-}
+.nav-item:hover,
 .dropdown-list button {
     color: #e50914;
-    transition: 300ms;
 }
-    
+
+.nav-item:hover i {
+    color: #e50914;
+}
+
+.sidenav-toggle {
+    z-index: 3;
+}
 
 .pi {
     color: white;
     margin-left: 15px;
-    
+    transition: 300ms;
 }
-    
+
+.pi-user {
+    margin-right: 10px;
+}
 
 .dropdown-list {
     width: 175px;
@@ -231,24 +163,19 @@ li .nav-item {
 
 .dropdown-list li {
     display: block;
-    border-top-right-radius: 0px;
-    border-top-right-radius: 0px;
-    
 }
 
-.nav-dropdown ul li a, .nav-dropdown ul button {
+.nav-dropdown ul li a,
+.nav-dropdown ul button {
     color: white;
     padding: 5px;
     display: block;
-    
 }
-    
 
 .displayDropdown {
     display: block;
 }
-    
-    
+
 .user-btn {
     width: 175px;
     background-color: rgba(43, 43, 43, 0.753);
@@ -260,103 +187,47 @@ li .nav-item {
     margin: 0;
 }
 
-.pi-user {
-    margin-right: 10px;
-}
-
 nav {
-    position: sticky;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    top: 0;
-    background: #1a1a1a;
-    z-index: 20;
+    border-bottom: 1px solid #404040;
+    padding: 20px 200px;
+    padding-bottom: 0;
 }
 
-.nav-item, .pi {
-    transition: 300ms;
-}
-
-
-@media screen and (max-width: 768px) {
-    .desktop-nav {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        padding: 1px;
-        padding-bottom: 0;
-    }
-    
-    nav {
-        padding-bottom: 0;
-    }
-    
-    .desktop-nav > ul {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        vertical-align: middle;
-        
-    }
-    
-    li { 
-        padding-top: 10px;
-        padding-bottom: 10px;
-        width: 100%;
-    }
-    
-    li:has(a.activeNavLink) {
-        border-bottom: 2px solid red;
-    }
-    
-    .nav-item {
-        width: 100%;
-        text-align: center;
-        margin-right: 0;
-        height: 100%;
-    }
-
-    
-    nav ul li a {
-        width: 100%;
-        text-align: center;
-        display: block;
-        flex: 1;
-    }
-nav ul {
+nav > ul {
+    width: 100%;
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    vertical-align: middle;
 }
 
-nav ul li {
-    list-style: none;
+nav > ul li a {
+    text-align: center;
+    display: block;
+    padding-bottom: 10px;
 }
-    
-    .first {
-        display: block;
-    }
-    
-    .last {
-        display: none;
-    }
-    
-    .yepp {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-    }
-    
-    .activeNavLink {
-        margin-right: 0;
-    }
-    
-    li a.nav-item {
-        margin: 0;
-        width: 100%;
+
+.top {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+.login-btn {
+    padding: 8px 5px;
+    border: 1px solid white;
+}
+@media screen and (max-width: 768px) {
+    nav {
+        padding: 0;
+        padding-bottom: 0;
     }
 }
-    
+
 </style>
