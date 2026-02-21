@@ -239,7 +239,7 @@ async def websocket(websocket: WebSocket, screening_id: int):
             data = await websocket.receive_json()
             print("\n\n\n\n", "Thank you", data, "\n\n\n\n")
             booked_seats = crud_operations.get_selected_seats(screening_id)
-            await manager.broadcast_json({"msg": "Thank you", "booked_seat_ids": booked_seats})
+            await manager.broadcast_seats_json(screening_id, {"msg": "Thank you", "booked_seat_ids": booked_seats})
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         #await manager.broadcast(f"Client {screening_id} has left")

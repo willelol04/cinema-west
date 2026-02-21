@@ -20,7 +20,13 @@ class ConnectionManager:
         for connection in self.active_connections:
             await connection.send_text(message)
 
-    async def broadcast_json(self, data: dict):
+    async def broadcast_seats_json(self, screening_id, data: dict):
+        print("\n\n\n\n\n")
+        print(screening_id)
+        print("\n\n\n\n\n")
         for connection in self.active_connections:
-            await connection.send_json(data)
+            if(connection.path_params["screening_id"] == str(screening_id)):
+                print("\n\n\n\n\n", dir(connection), "\n\n\n\n\n")
+                print(connection.path_params["screening_id"])
+                await connection.send_json(data)
         

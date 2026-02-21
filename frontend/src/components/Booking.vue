@@ -76,7 +76,7 @@ onMounted(async () => {
   //console.log(fetchIntervalID.value)
 
 })
-const ws = new WebSocket("ws://localhost:8000/ws/20");
+const ws = new WebSocket("ws://localhost:8000/ws/"+route.params.id);
 
 onBeforeUnmount(() => {
 
