@@ -16,7 +16,7 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError, NoResultFound
 from sqlalchemy import func, text
 from datetime import timedelta
 
-from models import engine, Base, movie_genre, Movie, User, Genre, Theatre, Ticket, Screening, Seat
+from models import engine, Base, movie_genre, Movie, User, Genre, Theatre, Ticket, Screening, Seat, Booking
 import validation
 
 import datetime
@@ -29,20 +29,26 @@ class DatabaseError(Exception):
 
 
 
-def add_tickets(ticket: validation.TicketAdd, auth_id: str):
+def add_booking(booking: validation.BookingAdd, auth_id: str):
     print("--------------------------------")
-    print(ticket, auth_id)
+    print(booking, auth_id)
     print("--------------------------------")
     with Session(engine) as session:
         try:
             id = get_user_by_auth_id(auth_id).id
-            for seat in ticket.seats:
+            created_tickets = []
+            booking_id = session.execute(insert(Booking).values(user_id=id, screening_id=booking.screening_id, total_price=100*len(booking.seats), created_at=func.now(), expires_at=func.adddate(func.now(), text("INTERVAL 5 MINUTE"))).returning(Booking.id)).scalar()
+            for seat in booking.seats:
                 print("--------------------------------")
                 print(seat)
                 print("--------------------------------")
-                session.execute(insert(Ticket).values(user_id=id, screening_id=ticket.screening_id, created_at=func.now(), expires_at=func.adddate(func.now(), text("INTERVAL 5 MINUTE")), seat_id=seat["id"], theatre_id=seat["theatre_id"]))
+                #stmt = (insert(Ticket).values(user_id=id, screening_id=ticket.screening_id, created_at=func.now(), expires_at=func.adddate(func.now(), text("INTERVAL 5 MINUTE")), seat_id=seat["id"], theatre_id=seat["theatre_id"])).returning(Ticket)
+                t = Ticket(user_id=id, booking_id=booking_id, screening_id=booking.screening_id, seat_id=seat["id"], theatre_id=seat["theatre_id"])
+                created_tickets.append(t)
+            session.add_all(created_tickets)
+            session.flush()
             session.commit()
-            return ticket
+            return booking_id
         except IntegrityError as e:
             print("--Error--", e)
             session.rollback()
@@ -287,11 +293,10 @@ def create_theatre(id, name, per_row, rows):
 def get_selected_seats(id):
     return get_screening(id).booked_seat_ids
 
-
-def clean_unfinished_tickets():
+def clean_pending_bookings():
     with Session(engine) as session:
         try:
-            session.execute(delete(Ticket).where(Ticket.expires_at <= func.now(), Ticket.status=="registered"))
+            session.execute(delete(Booking).where(Booking.expires_at <= func.now(), Booking.status=="pending"))
             session.commit()
         except SQLAlchemyError as e:
             raise DatabaseError from e
@@ -316,6 +321,7 @@ if __name__ == "__main__":
         Seat.__table__.create(bind=engine, checkfirst=True)
         Screening.__table__.create(bind=engine, checkfirst=True)
         create_theatre(1, "Salong A", 10, 3)
+        Booking.__table__.create(bind=engine, checkfirst=True)
         Ticket.__table__.create(bind=engine, checkfirst=True)
 
         #some_user = session.get(User, 1)

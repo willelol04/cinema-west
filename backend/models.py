@@ -5,7 +5,7 @@ import aiomysql
 import pymysql
 from typing import List
 from typing import Optional
-from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table, ForeignKeyConstraint, func, cast
+from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table, ForeignKeyConstraint, func, cast, Float
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
@@ -102,22 +102,33 @@ class Screening(Base):
     __table_args__ = (UniqueConstraint("theatre_id", "start_time", name="yes"), )
     
 
-class Ticket(Base):
-    __tablename__ = "ticket"
-
+class Booking(Base):
+    __tablename__ = "booking"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     screening_id: Mapped[int] = mapped_column(ForeignKey("screening.id", ondelete="CASCADE"))
-    seat_id: Mapped[str] = mapped_column(String(10))
-    theatre_id: Mapped[int] = mapped_column(Integer)
+    total_price: Mapped[float] = mapped_column(Float)
+    status: Mapped[str] = mapped_column(String(20), default='pending')
 
     created_at: Mapped[str] = mapped_column(DateTime)
     expires_at: Mapped[str] = mapped_column(DateTime)
-    status: Mapped[str] = mapped_column(String(10), default='registered')
+    
+    tickets: Mapped[List["Ticket"]] = relationship()
+
+
+class Ticket(Base):
+    __tablename__ = "ticket"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    booking_id: Mapped[int] = mapped_column(ForeignKey("booking.id", ondelete="CASCADE"))
+    screening_id: Mapped[int] = mapped_column(ForeignKey("screening.id"))
+    seat_id: Mapped[str] = mapped_column(String(10))
+    theatre_id: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(20), default='pending')
     
     seat: Mapped[Seat] = relationship()
-    screening: Mapped[Screening] = relationship(back_populates="tickets",
-        )
+    screening: Mapped[Screening] = relationship(back_populates="tickets",)
     
     __table_args__ = (
         UniqueConstraint("screening_id", "seat_id", name="yes"), 

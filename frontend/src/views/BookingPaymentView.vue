@@ -17,13 +17,6 @@ onMounted(() => {
 <template>
     <div class="booking-confirmation">
         <h1>Congratulations User! You have successfully booked seat(s)! {{ timer }}</h1>
-        <div class="tickets">
-            <div v-for="(x, n) in [1,1,1,1]" class="ticket">
-                <h2>Movie - Start-time</h2>
-                <p>Theatre room: ()</p>
-                <p>Seat: ()</p>
-            </div>
-        </div>
     </div>
 </template>
 

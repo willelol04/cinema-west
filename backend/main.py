@@ -29,7 +29,7 @@ from fastapi.responses import HTMLResponse
 manager = websocket.ConnectionManager()
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(crud_operations.clean_unfinished_tickets, 'interval', minutes=1)
+scheduler.add_job(crud_operations.clean_pending_bookings, 'interval', seconds=10)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 app = FastAPI()
@@ -206,9 +206,9 @@ def get_genres_all():
     
 # Ticket
 
-@app.post("/tickets", status_code=status.HTTP_201_CREATED)
-def add_tickets(ticket: validation.TicketAdd, claims: dict = Depends(auth0.require_auth())):
-    return crud_operations.add_tickets(ticket, claims.sub)
+@app.post("/booking", status_code=status.HTTP_201_CREATED)
+def add_booking(booking: validation.BookingAdd, claims: dict = Depends(auth0.require_auth())):
+    return crud_operations.add_booking(booking, claims.sub)
 
 
 

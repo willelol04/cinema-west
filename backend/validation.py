@@ -46,9 +46,20 @@ class TheatreBase(BaseModel):
 class TicketBase(BaseModel):
     id: int
 
-class TicketAdd(BaseModel):
+class BookingAdd(BaseModel):
     seats: list
     screening_id: int 
+
+class TicketResponse(TicketBase):
+    user_id: int
+    screening_id: int
+    seat_id: str
+    theatre_id: int
+    created_at: datetime
+    expires_at: datetime
+    status: str
+
+    
 
 class Theatre(TheatreBase):
     name: str

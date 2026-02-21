@@ -47,7 +47,7 @@ const router = createRouter({
             component: BookingView,
         },
         {
-            path: '/payment',
+            path: '/payment/:id',
             name: 'booking payment',
             component: BookingPaymentView,
         },

@@ -22,6 +22,8 @@ app.use(createAuth0({
   authorizationParams: {
     redirect_uri: window.location.origin,
     audience: "http://localhost:8000",
+    useRefreshTokens: true,
+    useRefreshTokensFallback: true
   }
 }))
 

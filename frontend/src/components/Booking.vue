@@ -29,7 +29,7 @@ const bookTickets = async () => {
     if(checkedSeats.value.length > 0) {
         try {
         const token = await getAccessTokenSilently();
-        const response = await fetch("http://localhost:8000/tickets", {
+        const response = await fetch("http://localhost:8000/booking", {
             method: "POST",
             body: JSON.stringify({seats: checkedSeats.value, screening_id: screeningResult.value.id}),
             headers: {
@@ -45,12 +45,14 @@ const bookTickets = async () => {
             console.log(error)
             return null
         }
+        
+        const bookingId = await response.json()
 
-        console.log(await response.json());
+        console.log(bookingId);
         ws.send(JSON.stringify({msg: "user", timestamp: timestamp}))
         console.log("Sent")
 
-        router.push('/payment')
+        router.push(`/payment/${bookingId}`)
             
         } catch(e) {
             alert(`Error: ${e}`)
@@ -93,7 +95,7 @@ onMounted(() => {
         ws.onmessage = (event) => {
             console.log(JSON.parse(event.data).booked_seat_ids)
             booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids
-            checkedSeats.value = []
+            checkedSeats.value = checkedSeats.value.filter((seat) => !booked_seat_ids.value.includes(seat.id)) 
         };
         /*
         wsIntervalId.value = setInterval(() => { 

@@ -33,7 +33,7 @@ const props = defineProps({
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 50px;
+    gap: 20px;
     width: 100%;
     margin-bottom: 20px;
 }
@@ -46,6 +46,11 @@ const props = defineProps({
     padding: 5px;
     border-radius: 8px;
     margin-left: 15px;
+    transition: 300ms;
+}
+
+.delete-acc:hover, .profile-logout:hover {
+    opacity: 60%;
 }
 
 
@@ -53,11 +58,19 @@ const props = defineProps({
     padding: 5px;
     border-radius: 8px;
     border: 1px solid white;
+    transition: 300ms;
 }
 
 .pi-user {
     font-size: 64px;
+    padding: 15px;
+    border-radius: 25%;
+    border: 1px solid white;
 }
 
+
+.user-name {
+    margin-bottom: 10px;
+}
 
 </style>

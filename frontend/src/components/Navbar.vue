@@ -74,7 +74,7 @@ console.log("without watcher", user["http://localhost:8000/roles"]);
                 <li ><RouterLink :class="[isActive('/about') ? 'activeNavLink' : '', 'nav-item']" to="/about">About</RouterLink></li>
             </ul>
         <div class="nav-dropdown">
-        <button v-if="isAuthenticated" @click="toggleDropdown()" class="nav-item user-btn">Profile<i v-if="returnDropDownState()" class="pi pi-chevron-down"></i><i v-else class="pi pi-chevron-right"></i></button>
+        <button v-if="isAuthenticated" @click="toggleDropdown()" class="nav-item user-btn"><i class="pi pi-user"></i>Profile<i v-if="returnDropDownState()" class="pi pi-chevron-up"></i><i v-else class="pi pi-chevron-down"></i></button>
         <LoginButton v-else></LoginButton>
         <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
             <li v-if="user && user['http://localhost:8000/roles']?.includes('admin')"><RouterLink class="nav-item" to="/admin/discover" >Admin</RouterLink></li>
@@ -251,6 +251,10 @@ li .nav-item {
     margin: 0;
 }
 
+.pi-user {
+    margin-right: 10px;
+}
+
 nav {
     position: sticky;
     width: 100%;
@@ -259,5 +263,8 @@ nav {
     z-index: 20;
 }
 
+.nav-item, .pi {
+    transition: 300ms;
+}
     
 </style>
