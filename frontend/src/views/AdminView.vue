@@ -108,6 +108,50 @@ li a {
     
 
 
+@media screen and (max-width: 768px) {
+    main {
+        display: block;
+    }
+    
+    section {
+        padding: 0;
+    }
+    
+    .dashboard-menu {
+        width: 100%;
+        left: auto;
+        margin: 0 auto;
+        text-align:left;
+    }
+    
+    .dashboard-menu ul {
+        width: 100%;
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .dashboard-menu ul li{
+        display: inline-block;
+
+    }
+
+    a {
+        text-overflow: clip;
+    }
+
+    .activeNavLink {
+        border-bottom: 2px solid #e50914;
+        border-right: none;
+        opacity: 100%;
+
+    }
+    
+    
+}
+
 
 
 

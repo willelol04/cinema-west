@@ -25,9 +25,9 @@ const fetchComplete = ref(false)
 <template>
   <Hero/>
   <div class="hr"  style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b"></div>
-  <MoviesList v-if="fetchComplete" :display="5" :movies="ourMovies" title="Playing Today:" :showTimes="false" />
+  <MoviesList v-if="fetchComplete" :display="1" :movies="ourMovies" title="Playing Today:" :showTimes="false" />
   <div class="hr" style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b" ></div>
-  <MoviesList v-if="fetchComplete" :display="5" :movies="ourMovies" title="Playing Tomorrow:" :showTimes="false" />
+  <MoviesList v-if="fetchComplete" :display="1" :movies="ourMovies" title="Playing Tomorrow:" :showTimes="false" />
 
 </template>
 <style scoped>

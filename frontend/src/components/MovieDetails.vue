@@ -26,7 +26,7 @@ defineProps({
         <div class="movie-screenings">
         <h3>Book tickets:</h3>
             <div v-if="movie.screenings && movie.screenings.length !== 0" class="screenings">
-            <RouterLink v-for="(screening, ind) in movie.screenings" :to="`/booking/`+screening.id" :key=screening class="screening">{{ format(screening.start_time, "EEEE, MMMM do HH:mm") }}</RouterLink>               
+            <RouterLink v-for="(screening, ind) in movie.screenings" :to="`/booking/`+screening.id" :key="screening" class="screening">{{ format(screening.start_time, "EEEE, MMMM do HH:mm") }}</RouterLink>               
             </div>
             <p v-else>No scheduled screenings for this movie.</p>
 
@@ -62,8 +62,6 @@ defineProps({
     flex-direction: column;
     justify-content: space-around;
     align-items: start;
-
-
 }
 
 
@@ -88,6 +86,10 @@ defineProps({
 }
 
 
+.movie-screenings {
+    width: 100%;
+}
+
 
 .movie-details h3 {
     opacity: 60%;
@@ -102,6 +104,28 @@ defineProps({
     grid-template-columns: repeat(5, 1fr);
     width: 100%;
     gap: 20px;
+    
+}
+
+@media screen and (max-width: 768px) {
+    .movie-container {
+        padding: 50px;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+    }
+    
+    .movie-container img {
+        width: 100%;
+    }
+    
+    .screenings {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .screening {
+        width: 100%;
+    }
     
 }
 

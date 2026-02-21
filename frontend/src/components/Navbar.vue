@@ -66,14 +66,25 @@ console.log("without watcher", user["http://localhost:8000/roles"]);
 <template>
         <nav>
         <div v-if="isDesktop" class="desktop-nav">
+        <div class="yepp">
         <h1><RouterLink to="/"><img src="../public/favicon.ico" style="vertical-align: middle; margin-right: 15px;" height="50">cinema west</RouterLink></h1>
-
+        <div class="nav-dropdown first">
+        <button v-if="isAuthenticated" @click="toggleDropdown()" class="nav-item user-btn"><i class="pi pi-user"></i>Profile<i v-if="returnDropDownState()" class="pi pi-chevron-up"></i><i v-else class="pi pi-chevron-down"></i></button>
+        <LoginButton v-else></LoginButton>
+        <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
+            <li v-if="user && user['http://localhost:8000/roles']?.includes('admin')"><RouterLink class="nav-item" to="/admin/discover" >Admin</RouterLink></li>
+            <li><RouterLink class="nav-item" to="/profile" >My profile</RouterLink></li>
+            <li class="nav-item" v-if="!isAuthenticated"><LoginButton /></li>
+            <li class="nav-item" v-else><LogoutButton /></li>
+        </ul>
+        </div>
+        </div>
             <ul>
                 <li ><RouterLink :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>
                 <li ><RouterLink :class="[isActive('/movies') ? 'activeNavLink' : '', 'nav-item']" to="/movies">Movies</RouterLink></li>
                 <li ><RouterLink :class="[isActive('/about') ? 'activeNavLink' : '', 'nav-item']" to="/about">About</RouterLink></li>
             </ul>
-        <div class="nav-dropdown">
+        <div class="nav-dropdown last">
         <button v-if="isAuthenticated" @click="toggleDropdown()" class="nav-item user-btn"><i class="pi pi-user"></i>Profile<i v-if="returnDropDownState()" class="pi pi-chevron-up"></i><i v-else class="pi pi-chevron-down"></i></button>
         <LoginButton v-else></LoginButton>
         <ul :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']" >
@@ -84,11 +95,6 @@ console.log("without watcher", user["http://localhost:8000/roles"]);
         </ul>
         </div>
 
-        </div>
-        <div v-else class="mobile-nav">
-        <h1><RouterLink to="/">cinema west</RouterLink></h1>
-            <button v-if="!showSideNav" @click="toggleSidenav()"><i class="pi pi-bars sidenav-toggle"></i></button>
-            <button v-else @click="toggleSidenav()"><i class="pi pi-times sidenav-toggle"></i></button>
         </div>
         </nav>
         <Transition name="fade">
@@ -108,6 +114,9 @@ console.log("without watcher", user["http://localhost:8000/roles"]);
 
 <style scoped>
 
+.first {
+    display: none;
+}
 .sidenav-toggle {
     z-index: 3;
 }
@@ -122,11 +131,11 @@ console.log("without watcher", user["http://localhost:8000/roles"]);
   opacity: 0;
 }
 .side-nav {
-    height: 100vh;
-    width: 400px;
+    height: 50vh;
+    width: 100vw;
     position:fixed;
-    top: 0;
-    left: 0;
+    right: 0;
+    bottom: 0;
     text-align: center;
     background-color: black;
     z-index: 1;
@@ -265,6 +274,89 @@ nav {
 
 .nav-item, .pi {
     transition: 300ms;
+}
+
+
+@media screen and (max-width: 768px) {
+    .desktop-nav {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 1px;
+        padding-bottom: 0;
+    }
+    
+    nav {
+        padding-bottom: 0;
+    }
+    
+    .desktop-nav > ul {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        vertical-align: middle;
+        
+    }
+    
+    li { 
+        padding-top: 10px;
+        padding-bottom: 10px;
+        width: 100%;
+    }
+    
+    li:has(a.activeNavLink) {
+        border-bottom: 2px solid red;
+    }
+    
+    .nav-item {
+        width: 100%;
+        text-align: center;
+        margin-right: 0;
+        height: 100%;
+    }
+
+    
+    nav ul li a {
+        width: 100%;
+        text-align: center;
+        display: block;
+        flex: 1;
+    }
+nav ul {
+    display: flex;
+}
+
+nav ul li {
+    list-style: none;
+}
+    
+    .first {
+        display: block;
+    }
+    
+    .last {
+        display: none;
+    }
+    
+    .yepp {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+    }
+    
+    .activeNavLink {
+        margin-right: 0;
+    }
+    
+    li a.nav-item {
+        margin: 0;
+        width: 100%;
+    }
 }
     
 </style>

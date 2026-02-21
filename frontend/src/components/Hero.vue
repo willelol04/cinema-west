@@ -104,4 +104,11 @@ section {
     font-weight: 200;
 }
 
+
+@media screen and (max-width: 768px) {
+    section {
+        padding: 2px;
+    }
+}
+
 </style>
