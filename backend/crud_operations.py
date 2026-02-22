@@ -27,6 +27,12 @@ class DatabaseConflictError(Exception):
 class DatabaseError(Exception):
     pass
 
+class EntityNotFoundError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+    def __str__(self):
+        return f"{self.message}"
 
 
 def add_booking(booking: validation.BookingAdd, auth_id: str):
@@ -300,6 +306,47 @@ def clean_pending_bookings():
             session.commit()
         except SQLAlchemyError as e:
             raise DatabaseError from e
+
+# booking
+
+def get_booking(id):
+    with Session(engine) as session:
+        try:
+            booking = session.get(Booking, id)
+            if booking:
+                return booking
+            else:
+                raise EntityNotFoundError(f"No booking with id:{id}")
+        except SQLAlchemyError as e:
+            raise DatabaseError from e
+        except Exception as e:
+            print(e)
+
+def confirm_booking(booking_id):
+    with Session(engine) as session:
+        try:
+            booking = session.get(Booking, booking_id)
+            if booking:
+                booking.status='complete'
+                session.commit()
+            else:
+                raise EntityNotFoundError(f"No booking with id:{booking_id}")
+            return {"status": "successful", "booking": booking}
+            
+        except SQLAlchemyError as e:
+            raise DatabaseError from e
+
+
+# tickets
+def get_user_tickets(auth_id):
+    with Session(engine) as session:
+        try:
+            result = session.execute(select(Ticket).where(Ticket.user_id==get_user_by_auth_id(auth_id).id).options(selectinload(Ticket.seat).selectinload(Seat.theatre), selectinload(Ticket.screening).selectinload(Screening.movie))).scalars().all()
+            print(result)
+            return result
+        except Exception as e:
+            print(e)
+
 
 
 if __name__ == "__main__":

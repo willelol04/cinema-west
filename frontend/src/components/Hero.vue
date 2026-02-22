@@ -37,12 +37,57 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
     }
 })
 
+
+
+
+const carousel = ref({
+    space: 600,
+    display: 3,
+    controlsVisible: false,
+    clickable: true,
+    width: 550,
+    height: 326,
+});
+
+
+const columns = ref(6);
+
+const updateColumns = () => {
+  const width = window.innerWidth;
+
+  if (width < 768) {
+    carousel.value = {
+    space: 200,
+    display: 1,
+    controlsVisible: true,
+    clickable: false,
+    width: 500,
+    height: 326,
+    };
+  }
+  else carousel.value = {
+    space: 600,
+    display: 3,
+    controlsVisible: false,
+    clickable: true,
+    width: 500,
+    height: 326,
+    
+  };
+    
+}
+
+onMounted(() => {
+  updateColumns();
+  window.addEventListener("resize", updateColumns);
+});
+
 </script>
 
 <template>
     <section>
     <h1 style="text-align: center;">Coming soon</h1>
- <Carousel3d v-if="fetchComplete" class="carousel" :space="600" :display="3" :autoplay-timeout="10000" :autoplay="true" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="550" :height="326">
+ <Carousel3d v-if="fetchComplete" class="carousel" :space="carousel.space" :display="carousel.display" :autoplay-timeout="10000" :autoplay="true" :controls-visible="carousel.controlsVisible" :onMainSlideClick="goToMovie" :clickable="carousel.clickable" :width="carousel.width" :height="carousel.height">
     <Slide v-for="(item, ind) in upcomingMovies" class="slide" :index="ind">
     <div class="upcoming-movie">
     <img v-if="item.poster_path" :src="`https://image.tmdb.org/t/p/original`+item.poster_path" height="326" width="auto">
@@ -69,6 +114,7 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
 .fetch-loading {
     margin: 0 auto;
     text-align: center;
+    color: #bdc7bf;
     padding: 100px;
 }
 section {
@@ -105,18 +151,12 @@ section {
 }
 
 
-@media screen and (max-width: 1208px) {
+@media screen and (max-width: 768px) {
     section {
-        padding: 2px;
-    }
-    
-    .slide, div.carousel-3d-slider {
-        width: 200px !important;
-        margin: 0 !important;
-    }
-    
-    .right {
+        padding: 0;
     }
 }
+
+
 
 </style>

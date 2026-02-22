@@ -71,10 +71,28 @@ const props = defineProps({title: {
         default: false,
     }
 });
-    
+
+const columns = ref(6);
+
+const updateColumns = () => {
+  const width = window.innerWidth;
+
+  if (width < 400) columns.value = 1;
+  else if (width < 600) columns.value = 2;
+  else if (width < 800) columns.value = 3;
+  else if (width < 1000) columns.value = 4;
+  else if (width < 1500) columns.value = 5;
+  else columns.value = 6;
+
+}
+
+onMounted(() => {
+  updateColumns();
+  window.addEventListener("resize", updateColumns);
+});
 const visibleMovies = computed(() => {
     if(props.display) {
-        const visible = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
+        const visible = props.movies.slice(start_ind.value * columns.value, start_ind.value * columns.value + columns.value);
         return visible;
 
     } else { 
@@ -92,7 +110,7 @@ const canScrollLeft = () => {
 };
 
 const canScrollRight = () => {
-    if((start_ind.value + 1) * props.display < props.movies.length) {
+    if((start_ind.value + 1) * columns.value < props.movies.length) {
         return true;
     }
     return false;
@@ -124,7 +142,7 @@ console.log(props.movies);
         <button class="scroll-right scroll-button"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
     </div>
     </div>
-        <TransitionGroup name="list" tag="div" :style="`grid-template-columns: repeat(${props.display}, minmax(100px, 1fr));`" class="movies-container">
+        <TransitionGroup name="list" tag="div" :style="`grid-template-columns: repeat(${columns}, minmax(100px, 1fr));`" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
         <RouterLink :to="`/movies/`+ (movie.id ? movie.id : index) ">
             <img v-if="movie.poster_path && movie.poster_path !== 'None'" :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
@@ -289,7 +307,7 @@ section {
 @media only screen and (max-width: 1208px) {
     section {
         width: 100%;
-        padding: 5px;
+        padding: 50px;
     }
 
     

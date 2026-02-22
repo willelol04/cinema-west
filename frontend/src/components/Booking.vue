@@ -29,7 +29,7 @@ const bookTickets = async () => {
     if(checkedSeats.value.length > 0) {
         try {
         const token = await getAccessTokenSilently();
-        const response = await fetch("http://localhost:8000/booking", {
+        const response = await fetch("http://localhost:8000/bookings", {
             method: "POST",
             body: JSON.stringify({seats: checkedSeats.value, screening_id: screeningResult.value.id}),
             headers: {

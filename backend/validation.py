@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 
@@ -50,19 +50,25 @@ class BookingAdd(BaseModel):
     seats: list
     screening_id: int 
 
-class TicketResponse(TicketBase):
-    user_id: int
-    screening_id: int
-    seat_id: str
-    theatre_id: int
-    created_at: datetime
-    expires_at: datetime
-    status: str
-
-    
+class ScreeningResponse(TicketBase):
+    id: int
+    start_time: datetime
+    movie: Movie
 
 class Theatre(TheatreBase):
     name: str
+
+class SeatResponse(TicketBase):
+    id: str
+    theatre: Theatre
+
+
+class TicketResponse(TicketBase):
+    id: int
+    screening: ScreeningResponse
+    seat: SeatResponse
+
+    
 
 # -- Seat --
 class SeatBase(BaseModel):
@@ -81,8 +87,28 @@ class Genre(GenreBase):
     name: str
 
     
+    
+#booking 
+
+class BookingBase(BaseModel):
+    id: int
+    user_id: int
+    screening_id: int
+    total_price: float
+    status: str
+    created_at: datetime
+    expires_at: datetime
+    model_config = ConfigDict(from_attributes=True)
 
 
+# payment
+
+class PaymentRequest(BaseModel):
+    booking_id: int
+    username: str
+    password: str
+    from_account: int
+    amount: float
 
 
 

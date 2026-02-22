@@ -73,6 +73,11 @@ def integrity_error(request: Request, exc: crud_operations.DatabaseError):
     content={"detail": str(exc), "error_type": "database_error"}
     )
 
+@app.exception_handler(crud_operations.EntityNotFoundError)
+def integrity_error(request: Request, exc: crud_operations.EntityNotFoundError):
+    return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    content={"detail": str(exc), "error_type": "entity_not_found_error"}
+    )
 
 async def getFromTMDB(path, parameters): 
     response = await tmdb_client.get(url=path, params=parameters)
@@ -204,13 +209,64 @@ def get_genres_all():
     return
     print(crud_operations.get_genres_all())
     
-# Ticket
+# Booking
 
-@app.post("/booking", status_code=status.HTTP_201_CREATED)
+@app.post("/bookings", status_code=status.HTTP_201_CREATED)
 def add_booking(booking: validation.BookingAdd, claims: dict = Depends(auth0.require_auth())):
     return crud_operations.add_booking(booking, claims.sub)
 
+@app.get("/bookings/{id}", response_model=validation.BookingBase)
+def get_booking(id):
+    return crud_operations.get_booking(id)
 
+@app.post("/pay-booking")
+async def pay_booking(data: validation.PaymentRequest):
+    """
+    async with httpx.AsyncClient() as client:
+        token_res = await client.post(
+            f"{DARWIN_BASE}/token",
+            data={"username": data.username, "password": data.password},
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+        print("Token status:", token_res.status_code)
+        print("Token response:", token_res.text)
+        print("Cookies after token:", client.cookies)
+        
+        if token_res.status_code != 200:
+            raise HTTPException(status_code=401, detail="Authentication failed")
+
+        transaction_res = await client.post(
+            f"{DARWIN_BASE}/transaction/new",
+            json={
+                "from_account": data.from_account,
+                "to_account": 63,
+                "amount": data.amount * 100,
+                "transaction_type": "cinema",
+                "message": "Stonks goin up for cinema west frfr",
+                "currency": "SEK",
+            },
+        )
+        
+        print("Transaction status:", transaction_res.status_code)
+        print("Transaction response:", transaction_res.text)
+
+        if transaction_res.status_code != 200:
+            raise HTTPException(status_code=400, detail=transaction_res.json())
+    
+    """
+    
+    return crud_operations.confirm_booking(data.booking_id)
+        
+
+
+
+    return transaction_res.json()
+
+# Tickets
+
+@app.get("/tickets/me", response_model=List[validation.TicketResponse])
+def get_user_tickets(claims: dict = Depends(auth0.require_auth())):
+    return crud_operations.get_user_tickets(claims.sub)
 
 #EVENT FUNCTIONS
 @app.on_event("startup")
@@ -251,46 +307,3 @@ async def websocket(websocket: WebSocket, screening_id: int):
 
 
 DARWIN_BASE = "https://darwinbank.duckdns.org/api"
-
-class PaymentRequest(BaseModel):
-    username: str
-    password: str
-    from_account: int
-    amount: float
-
-@app.post("/pay-booking")
-async def pay_booking(data: PaymentRequest):
-    async with httpx.AsyncClient() as client:
-        # Step 1: Get token (cookie handled automatically by httpx)
-        token_res = await client.post(
-            f"{DARWIN_BASE}/token",
-            data={"username": data.username, "password": data.password},
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-        )
-        print("Token status:", token_res.status_code)
-        print("Token response:", token_res.text)
-        print("Cookies after token:", client.cookies)
-        
-        if token_res.status_code != 200:
-            raise HTTPException(status_code=401, detail="Authentication failed")
-
-        # Step 2: Create transaction (cookie automatically attached)
-        transaction_res = await client.post(
-            f"{DARWIN_BASE}/transaction/new",
-            json={
-                "from_account": data.from_account,
-                "to_account": 63,
-                "amount": data.amount,
-                "transaction_type": "cinema",
-                "message": "Stonks goin up for cinema west frfr",
-                "amount_currency": "SEK",
-            },
-        )
-        
-        print("Transaction status:", transaction_res.status_code)
-        print("Transaction response:", transaction_res.text)
-
-        if transaction_res.status_code != 200:
-            raise HTTPException(status_code=400, detail=transaction_res.json())
-
-        return transaction_res.json()

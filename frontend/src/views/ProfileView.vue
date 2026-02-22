@@ -5,26 +5,30 @@ import TicketCard from '@/components/TicketCard.vue';
 import { onMounted, ref } from 'vue';
 import { useAuth0, User } from '@auth0/auth0-vue';
 
-const { user, isAuthenticated, isLoading, error } = useAuth0();
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
-const movieResults = ref([])
+const tickets = ref([])
 
-async function fetchTickets() { 
+const fetchTickets = async () => { 
     try {
-    const movieResultsPromise = await fetch("httpaaa://localhost:8000/movies", {
+    const token = await getAccessTokenSilently();
+    const ticketsPromise = await fetch("http://localhost:8000/tickets/me", {
       headers: {
         "Content-type": "application/json",
+        "Authorization": `Bearer ${token}`
       }
     })
-    const movieResultsObject = await movieResultsPromise.json();
-    movieResults.value = movieResultsObject;
 
-    console.log(movieResults.value);
+    tickets.value = await ticketsPromise.json();
+
+    console.log(tickets.value);
 
     } catch(e) {
         alert(e);
     }    
 }
+
+onMounted(async () => {await fetchTickets()})
 
 </script>
 
@@ -34,7 +38,7 @@ async function fetchTickets() {
         <Profile v-if="isAuthenticated" :user="{email: user.email}"/>
     <h2>My Tickets</h2>
     <div class="tickets">
-        <TicketCard class="ticket-card" v-for="n in [1,1,1,1]"/>
+        <TicketCard class="ticket-card" v-for="(t,ind) in tickets" :ticket="t"/>
     </div>
     </div>
     
@@ -44,7 +48,7 @@ async function fetchTickets() {
 <style scoped>
 
 .my-profile {
-    width: 60vw;
+    width: 100%;
     padding: 20px 200px;
     margin: 0 auto;
 }
@@ -52,9 +56,14 @@ async function fetchTickets() {
 .tickets {
     margin-top: 50px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    margin: 0 auto;
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 1rem;
+}
+      
+.ticket-card {
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 </style>

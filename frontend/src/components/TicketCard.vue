@@ -1,15 +1,24 @@
 <script setup>
+    
+const props = defineProps({
+    ticket: {
+        id: Number,
+        screening: Object,
+        seat: Object,
+    }
+})
+
 
 </script>
 
 <template>
-    <div class="ticket-card">
-            <img src="../assets/poster_examples/jack1.jpg">
+    <div v-if="ticket.id" class="ticket-card">
+            <img :src="`https://image.tmdb.org/t/p/original`+ticket.screening.movie.poster_path" alt="movie-poster">
             <div class="ticket-details">
-                <h3>Jack reacher</h3>
-                <p>Theatre: Salong A</p>
-                <p>Seat: Seat A1</p>
-                <p>Time: 26 february 14.00, 2026</p>
+                <h3>{{ticket.screening.movie.title}}</h3>
+                <p>Theatre: {{ ticket.seat.theatre.name }}</p>
+                <p>Seat: {{ ticket.seat.id }}</p>
+                <p>Time: {{ ticket.screening.start_time }}</p>
             </div>
             <div class="yes">
                 <button><i class="pi pi-times"></i></button>
@@ -20,18 +29,19 @@
 <style scoped>
 
 .ticket-card {
-    display: grid;
     width: 100%;
-    grid-template-columns: 4fr 4fr auto;
+    display: flex;
+    justify-content: start;
+    align-items: stretch;
     border-radius: 8px;
     border: 1px solid white;
     margin: 0 auto;
+    position: relative;
 ;
 }
 
 .ticket-card img {
-    width: 100%;
-    height: auto;
+    width: 200px;
 }
 
 .ticket-details {
@@ -40,10 +50,14 @@
     justify-content: center;
     padding-left: 20px;
     gap: 10px;
+    width: fit-content;
 }
     
 button {
     padding: 10px;
+    top: 0;
+    right: 0;
+    position: absolute;
 }
     
 button:hover {
