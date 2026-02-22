@@ -124,7 +124,7 @@ console.log(props.movies);
         <button class="scroll-right scroll-button"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
     </div>
     </div>
-        <TransitionGroup name="list" tag="div" class="movies-container">
+        <TransitionGroup name="list" tag="div" :style="`grid-template-columns: repeat(${props.display}, minmax(100px, 1fr));`" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
         <RouterLink :to="`/movies/`+ (movie.id ? movie.id : index) ">
             <img v-if="movie.poster_path && movie.poster_path !== 'None'" :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
@@ -173,11 +173,11 @@ console.log(props.movies);
 
 
 section {
-    width: 80%;
     text-align: left;
     display: block;
-    padding: 20px 10vw;
     margin: 0 auto;
+    width: 100%;
+    padding: 20px 200px;
 }
 
 .pi {
@@ -199,12 +199,12 @@ section {
 }
 
 .movies-container, .movies-grid {
-    width: 100%;
     display: grid;
     grid-template-columns: repeat(5, minmax(100px, 1fr));
     margin: 0 auto;
     gap: 30px;
     padding-top: 10px;
+    width: 100%;
 
 }
 
@@ -286,4 +286,12 @@ section {
     color: white;
 }
 
+@media only screen and (max-width: 1208px) {
+    section {
+        width: 100%;
+        padding: 5px;
+    }
+
+    
+}
 </style>

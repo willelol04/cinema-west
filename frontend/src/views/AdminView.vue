@@ -29,7 +29,7 @@ const isActive = (currentRoutePath) => {
             </ul>
         </div>
 
-        <RouterView />
+        <RouterView class="main-content"/>
 
     </main>
 
@@ -38,6 +38,9 @@ const isActive = (currentRoutePath) => {
 
 <style scoped>
 
+.main-content {
+    padding: 20px 200px;
+}
 
 main {
     width: 100%;
@@ -124,20 +127,6 @@ li a {
         text-align:left;
     }
     
-    .dashboard-menu ul {
-        width: 100%;
-        padding: 0;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .dashboard-menu ul li{
-        display: inline-block;
-
-    }
-
     a {
         text-overflow: clip;
     }
@@ -147,6 +136,10 @@ li a {
         border-right: none;
         opacity: 100%;
 
+    }
+    
+    .main-content {
+        padding: 10px;
     }
     
     

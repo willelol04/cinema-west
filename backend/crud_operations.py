@@ -315,7 +315,7 @@ if __name__ == "__main__":
 #        MovieGenre.__table__.drop(bind=engine, checkfirst=True)
 ##    
 ##
-#        User.__table__.create(bind=engine, checkfirst=True)
+        User.__table__.create(bind=engine, checkfirst=True)
         Movie.__table__.create(bind=engine, checkfirst=True)
         Theatre.__table__.create(bind=engine, checkfirst=True)
         Seat.__table__.create(bind=engine, checkfirst=True)

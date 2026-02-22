@@ -36,12 +36,12 @@ import { RouterLink } from 'vue-router';
 <style scoped>
 
 section {
-    padding: 20px 200px;
     width: 100%;
     margin: 0 auto;
     text-align: center;
 }
 .about {
+  width: 100%;
   min-height: 73vh;
   display: flex;
   align-items: center;

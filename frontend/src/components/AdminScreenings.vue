@@ -76,7 +76,6 @@ onMounted(fetchTheatres);
 
 .add-screening {
     width: 60%;
-    padding: 20px 10vw;
     text-align: center;
     margin: 0 auto;
 }

@@ -77,8 +77,8 @@ const onSubmit = () => {
 <template>
     
     <div class="search-movies">
-    <h1>Discover movies</h1>
     <form method="GET" @submit.prevent="onSubmit">
+    <label for="movie-search"><h1>Discover movies</h1></label>
         <input type="search" v-model="search_field" id="movie-search">
         <input type="submit" value="Sök">
     </form>
@@ -98,9 +98,7 @@ const onSubmit = () => {
 
 <style scoped>
 
-.search-movies {
-  padding: 20px 10vw;
-}
+
 
 .fetch-loading {
     margin-top: 200px;
@@ -109,16 +107,6 @@ const onSubmit = () => {
 
 h1 {
     display: block;
-    text-align: center;
-}
-
-label {
-    display: block;
-}
-
-form {
-    margin-top: 20px;
-    text-align: center;
 }
 
 input {
@@ -132,6 +120,10 @@ input {
 
 }
 
+
+form {
+    margin-bottom: 50px;
+}
 
 
 input[type="search"] {

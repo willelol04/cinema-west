@@ -248,3 +248,49 @@ async def websocket(websocket: WebSocket, screening_id: int):
     
 
 
+
+
+DARWIN_BASE = "https://darwinbank.duckdns.org/api"
+
+class PaymentRequest(BaseModel):
+    username: str
+    password: str
+    from_account: int
+    amount: float
+
+@app.post("/pay-booking")
+async def pay_booking(data: PaymentRequest):
+    async with httpx.AsyncClient() as client:
+        # Step 1: Get token (cookie handled automatically by httpx)
+        token_res = await client.post(
+            f"{DARWIN_BASE}/token",
+            data={"username": data.username, "password": data.password},
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+        print("Token status:", token_res.status_code)
+        print("Token response:", token_res.text)
+        print("Cookies after token:", client.cookies)
+        
+        if token_res.status_code != 200:
+            raise HTTPException(status_code=401, detail="Authentication failed")
+
+        # Step 2: Create transaction (cookie automatically attached)
+        transaction_res = await client.post(
+            f"{DARWIN_BASE}/transaction/new",
+            json={
+                "from_account": data.from_account,
+                "to_account": 63,
+                "amount": data.amount,
+                "transaction_type": "cinema",
+                "message": "Stonks goin up for cinema west frfr",
+                "amount_currency": "SEK",
+            },
+        )
+        
+        print("Transaction status:", transaction_res.status_code)
+        print("Transaction response:", transaction_res.text)
+
+        if transaction_res.status_code != 200:
+            raise HTTPException(status_code=400, detail=transaction_res.json())
+
+        return transaction_res.json()

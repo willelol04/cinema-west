@@ -57,7 +57,6 @@ onMounted(fetchMovies)
 <style scoped>
   .movie-database {
     width: 100%;
-    padding: 20px 10vw;
     text-align: center;
   }
 </style>

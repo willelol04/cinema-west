@@ -26,61 +26,33 @@ onMounted(() => {
 
 const payBooking = async () => {
     try {
-        /*
-        const tokenPromise = await fetch("https://darwinbank.duckdns.org/api/token", {
+        const res = await fetch("http://localhost:8000/pay-booking", {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "application/json",
             },
-            body: `username=${formData.ssn}&password=${formData.password}`,
-            credentials: "include",
+            body: JSON.stringify({
+                username: formData.ssn,
+                password: formData.password,
+                from_account: formData.account,
+                amount: formData.amount,
+            }),
         });
-        
-        const tokenRes = await tokenPromise.json();
-        */            
-        if(true || tokenRes.ok) {
-        //console.log(token.message);
-        //alert(token.message);
-        console.log("ye")
-        try {
-            const transactionPromise = await fetch("https://darwinbank.duckdns.org/api/transaction/new", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    body: JSON.stringify({
-                        from_account: formData.account,
-                        to_account: 63,
-                        amount: formData.price,
-                        transaction_type: "cinema",
-                        message: "Stonks goin up for cinema west frfr",
-                        amount_currency: "SEK",
-                    })
-                },
-                credentials: "include",
-            });
 
-            const transactionRes = await transactionPromise.json();
-            if(transactionRes.ok) {
-            console.log(transactionRes);
-            alert(transactionRes);
-            } else {
-                alert("Bad status transaction", transactionRes.detail)
-            }
-        } catch(e) {
-            console.log(e)
-            alert(e)
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Payment failed: " + err.detail);
+            return;
         }
-    
-    } else {
-        alert("Bad status token: ", tokenRes.detail);
-    }
-    } catch(e) {
-        console.log(e)
-        alert(e)
-    }
-    return
 
-}
+        const result = await res.json();
+        console.log(result);
+        alert("Payment successful!");
+    } catch (e) {
+        console.log(e);
+        alert("Something went wrong: " + e.message);
+    }
+};
 </script>
 
 <template>
@@ -93,8 +65,8 @@ const payBooking = async () => {
             <input type="password" id="password" v-model="formData.password">
             <label for="account">Account ID</label>
             <input type="text" id="account" v-model="formData.account">
-            <label for="price">Price</label>
-            <input type="number" id="price" v-model="formData.price" disabled>
+            <label for="amount">Price</label>
+            <input type="number" id="amount" v-model="formData.amount" disabled>
             <input type="submit">
             {{ formData }}
         </form>

@@ -42,7 +42,7 @@ onMounted(async function fetchUpcoming(numbers_tried = 1) {
 <template>
     <section>
     <h1 style="text-align: center;">Coming soon</h1>
- <Carousel3d v-if="fetchComplete" class="carousel" :space="600" :display="3" :autoplay-timeout="10000" :autoplay="true" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="500" :height="326">
+ <Carousel3d v-if="fetchComplete" class="carousel" :space="600" :display="3" :autoplay-timeout="10000" :autoplay="true" :controls-visible="false" :onMainSlideClick="goToMovie" :clickable="true" :width="550" :height="326">
     <Slide v-for="(item, ind) in upcomingMovies" class="slide" :index="ind">
     <div class="upcoming-movie">
     <img v-if="item.poster_path" :src="`https://image.tmdb.org/t/p/original`+item.poster_path" height="326" width="auto">
@@ -105,9 +105,17 @@ section {
 }
 
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1208px) {
     section {
         padding: 2px;
+    }
+    
+    .slide, div.carousel-3d-slider {
+        width: 200px !important;
+        margin: 0 !important;
+    }
+    
+    .right {
     }
 }
 

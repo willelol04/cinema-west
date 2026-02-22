@@ -24,11 +24,22 @@ const fetchComplete = ref(false)
 </script>
 <template>
   <Hero/>
-  <div class="hr"  style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b"></div>
-  <MoviesList v-if="fetchComplete" :display="1" :movies="ourMovies" title="Playing Today:" :showTimes="false" />
-  <div class="hr" style="width: 100%; margin: 0 auto; border: 1px solid #2b2b2b" ></div>
-  <MoviesList v-if="fetchComplete" :display="1" :movies="ourMovies" title="Playing Tomorrow:" :showTimes="false" />
+  <div class="hr"></div>
+  <MoviesList class="movieslist" v-if="fetchComplete" :display="5" :movies="ourMovies" title="Playing Today:" :showTimes="false" />
+  <div class="hr"></div>
+  <MoviesList class="movieslist" v-if="fetchComplete" :display="5" :movies="ourMovies" title="Playing Tomorrow:" :showTimes="false" />
 
 </template>
 <style scoped>
+
+.hr {
+  width: 100%; 
+  margin: 0 auto; 
+  border: 1px solid #2b2b2b
+}
+    
+    
+    
+@media screen and(max-width: 1600px) {
+}
 </style>
