@@ -19,6 +19,8 @@ const props = defineProps({
                 <p>Theatre: {{ ticket.seat.theatre.name }}</p>
                 <p>Seat: {{ ticket.seat.id }}</p>
                 <p>Time: {{ ticket.screening.start_time }}</p>
+                <p :class="ticket.status == 'pending' ? 'pending' : 'complete'">Payment status: {{ ticket.booking.status }}</p>
+                <p v-if="ticket.booking.status == 'pending'" class="pay"><RouterLink :to="`/payment/${ticket.booking.id}`" >Pay</RouterLink> no later than {{ ticket.booking.expires_at }}</p>
             </div>
             <div class="yes">
                 <button><i class="pi pi-times"></i></button>
@@ -27,6 +29,10 @@ const props = defineProps({
 </template>
 
 <style scoped>
+
+.pay, .pay > * {
+    color: red;
+}
 
 .ticket-card {
     width: 100%;

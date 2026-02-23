@@ -253,7 +253,10 @@ async def pay_booking(data: validation.PaymentRequest):
         if transaction_res.status_code != 200:
             raise HTTPException(status_code=400, detail=transaction_res.json())
     
+    
+    
     """
+    
     
     return crud_operations.confirm_booking(data.booking_id)
         

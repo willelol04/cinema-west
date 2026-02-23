@@ -65,5 +65,12 @@ onMounted(async () => {await fetchTickets()})
     width: 100%;
     margin-bottom: 10px;
 }
+      
+
+@media screen and (max-width: 1200px) {
+    .my-profile {
+        padding: 10px;
+    }
+}
 
 </style>

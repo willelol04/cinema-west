@@ -50,6 +50,7 @@ const router = createRouter({
             path: '/payment/:id',
             name: 'booking payment',
             component: BookingPaymentView,
+            beforeEnter: authGuard,
         },
         {
             path: '/about',

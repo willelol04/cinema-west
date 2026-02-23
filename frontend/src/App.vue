@@ -5,7 +5,7 @@ import { onMounted, watch, ref, reactive } from 'vue';
 import { RouterView } from 'vue-router';
 import { Auth0Plugin, useAuth0, User } from '@auth0/auth0-vue';
 
-const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently, checkSession } = useAuth0();
 
 const checkedUser = ref(false);
 
@@ -69,6 +69,7 @@ const addUser = async (user) => {
 };
 
 
+/*
 console.log("authenticated:", isAuthenticated.value)
 
 onMounted(async () => { await privateApiTest();})
@@ -94,8 +95,12 @@ watch(
     } 
   }
 )
+*/
+
+onMounted( async () => console.log("hej: ", await checkSession()))
 
 </script>
+
 
 
 

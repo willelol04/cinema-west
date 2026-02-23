@@ -46,9 +46,16 @@ class TheatreBase(BaseModel):
 class TicketBase(BaseModel):
     id: int
 
+
+
 class BookingAdd(BaseModel):
     seats: list
     screening_id: int 
+
+class BookingTicketResponse(BaseModel):
+    id: int
+    expires_at: datetime
+    status: str
 
 class ScreeningResponse(TicketBase):
     id: int
@@ -62,9 +69,14 @@ class SeatResponse(TicketBase):
     id: str
     theatre: Theatre
 
+class TicketBooking(BaseModel):
+    id: int
+    seat: SeatResponse
 
 class TicketResponse(TicketBase):
     id: int
+    status: str
+    booking: BookingTicketResponse
     screening: ScreeningResponse
     seat: SeatResponse
 
@@ -98,7 +110,6 @@ class BookingBase(BaseModel):
     status: str
     created_at: datetime
     expires_at: datetime
-    model_config = ConfigDict(from_attributes=True)
 
 
 # payment

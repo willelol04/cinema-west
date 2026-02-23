@@ -312,7 +312,7 @@ def clean_pending_bookings():
 def get_booking(id):
     with Session(engine) as session:
         try:
-            booking = session.get(Booking, id)
+            booking = session.get(Booking, id, options=[selectinload(Booking.tickets)])
             if booking:
                 return booking
             else:
@@ -341,7 +341,7 @@ def confirm_booking(booking_id):
 def get_user_tickets(auth_id):
     with Session(engine) as session:
         try:
-            result = session.execute(select(Ticket).where(Ticket.user_id==get_user_by_auth_id(auth_id).id).options(selectinload(Ticket.seat).selectinload(Seat.theatre), selectinload(Ticket.screening).selectinload(Screening.movie))).scalars().all()
+            result = session.execute(select(Ticket).where(Ticket.user_id==get_user_by_auth_id(auth_id).id).options(selectinload(Ticket.seat).selectinload(Seat.theatre), selectinload(Ticket.screening).selectinload(Screening.movie), selectinload(Ticket.booking))).scalars().all()
             print(result)
             return result
         except Exception as e:

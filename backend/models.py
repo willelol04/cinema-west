@@ -128,6 +128,7 @@ class Ticket(Base):
     status: Mapped[str] = mapped_column(String(20), default='pending')
     
     seat: Mapped[Seat] = relationship()
+    booking: Mapped[Booking] = relationship()
     screening: Mapped[Screening] = relationship(back_populates="tickets",)
     
     __table_args__ = (
