@@ -7,6 +7,15 @@ from typing import Optional
 class MovieBase(BaseModel):
     id: int
 
+class TheatreMovieResponse(BaseModel):
+    id: int
+    name: str
+
+class ScreeningsMovieResponse(BaseModel):
+    id: int
+    start_time: datetime
+    theatre: TheatreMovieResponse
+
 class Movie(MovieBase):
     adult: Optional[bool] = None
     backdrop_path: Optional[str] = None
@@ -21,6 +30,24 @@ class Movie(MovieBase):
     video: Optional[bool] = None
     vote_average: Optional[float] = None
     vote_count: Optional[int] = None
+
+
+class MovieAdmin(MovieBase):
+    adult: Optional[bool] = None
+    backdrop_path: Optional[str] = None
+    genre_ids: Optional[list] = None
+    original_language: Optional[str] = None
+    original_title: Optional[str] = None
+    overview: Optional[str] = None
+    popularity: Optional[float] = None
+    poster_path: Optional[str] = None
+    release_date: Optional[date] = None
+    title: Optional[str] = None
+    video: Optional[bool] = None
+    vote_average: Optional[float] = None
+    vote_count: Optional[int] = None
+
+    screenings: list[ScreeningsMovieResponse] = None
     
 # -- User --
 class UserBase(BaseModel):
@@ -32,11 +59,21 @@ class UserAuth(BaseModel):
 # -- Screening --
 class ScreeningBase(BaseModel):
     id: int
+    
+class ScreeningPatchRequest(BaseModel):
+    id: int
+    start_time: datetime
+    
+class ScreeningPatchResponse(BaseModel):
+    id: int
+    start_time: datetime
+    
 
 class ScreeningAdd(BaseModel):
     movie_id: int
     theatre_id: int
     start_time: str
+
 
 # -- Theatre --
 class TheatreBase(BaseModel):
@@ -57,7 +94,7 @@ class BookingTicketResponse(BaseModel):
     expires_at: datetime
     status: str
 
-class ScreeningResponse(TicketBase):
+class ScreeningResponse(BaseModel):
     id: int
     start_time: datetime
     movie: Movie

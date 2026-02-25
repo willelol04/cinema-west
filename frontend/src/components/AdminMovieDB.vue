@@ -1,5 +1,5 @@
 <script setup>
-import MoviesListAdmin from '@/components/MoviesListAdminDiscovery.vue';
+import MoviesListAdmin from '@/components/MoviesListAdminDB.vue';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
@@ -7,8 +7,13 @@ import MoviesList from './MoviesList.vue';
 
 
 const movieResults = ref([]);
+const theatresResults = ref(null)
 
 
+const fetchTheatres = async () => {
+    const promise = await fetch('http://localhost:8000/theatres');
+    theatresResults.value = await promise.json();
+}
 
 async function fetchMovies() { 
     try {
@@ -21,6 +26,10 @@ async function fetchMovies() {
     movieResults.value = movieResultsObject;
     for(const movie of movieResults.value) {
       movie.isAdded = true;
+      movie.showScreenings = false;
+      for(const screening of movie.screenings) {
+        screening.showEdit = false;
+      }
     }
 
     console.log(movieResults.value);
@@ -33,7 +42,11 @@ async function fetchMovies() {
     }
 }
 
-onMounted(fetchMovies)
+onMounted(async () => {
+  await fetchMovies();
+  await fetchTheatres();
+
+})
 
 </script>
 
@@ -42,7 +55,7 @@ onMounted(fetchMovies)
     
     <div class="movie-database">
     <h1>Movie Database</h1>
-    <MoviesListAdmin v-if="movieResults" :movies="movieResults" @update="fetchMovies" title="Added:"/>
+    <MoviesListAdmin v-if="movieResults" :movies="movieResults" :theatres="theatresResults" @update="fetchMovies" title="Added:"/>
     </div>
     
 

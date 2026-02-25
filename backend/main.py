@@ -145,7 +145,7 @@ def get_movies_upcoming():
     print(movies)
     return movies
 
-@app.get("/movies", response_model=List[validation.Movie])
+@app.get("/movies", response_model=List[validation.MovieAdmin])
 def get_movies_all():
     return crud_operations.get_movies_all()
 
@@ -184,6 +184,10 @@ def get_user(auth_id):
 def add_screening(screening: validation.ScreeningAdd):
     crud_operations.add_screening(screening)
     return screening
+
+@app.delete("/screenings", status_code=status.HTTP_200_OK, dependencies=[Depends(auth0.require_auth())])
+def add_screening(screening: validation.ScreeningBase):
+    return crud_operations.delete_screening(screening)
 
 @app.get("/screenings/{id}")
 def get_screening(id):
@@ -282,6 +286,11 @@ async def startup():
         print("\n")
 
 
+# screenings
+
+@app.patch("/screenings", dependencies=[Depends(auth0.require_auth())])
+def patch_screening(screening: validation.ScreeningPatchRequest):
+    return crud_operations.patch_screening(screening)
 
 @app.on_event("shutdown")
 async def shutdown():

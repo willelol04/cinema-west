@@ -163,7 +163,7 @@ def get_movie(id):
 def get_movies_all():
     with Session(engine) as session:
         try:
-            result = session.execute(select(Movie).options(selectinload(Movie.screenings))).scalars().all()
+            result = session.execute(select(Movie).options(selectinload(Movie.screenings).selectinload(Screening.theatre))).scalars().all()
             return result
         except Exception as e:
             print(e)
@@ -239,12 +239,37 @@ def get_screenings_all():
         except Exception as e:
             print(e)
 
+def patch_screening(screening):
+    with Session(engine) as session:
+        try:
+            screening_obj = session.get(Screening, screening.id)
+            if screening_obj:
+                screening_obj.start_time = screening.start_time
+                session.commit()
+                return "Successful update"
+            else:
+                session.rollback()
+                raise EntityNotFoundError(f"No screening_id with id:{screening.id}")
+        except IntegrityError as e:
+            print("--Error--", e)
+            session.rollback()
+            print(e)
+            raise DatabaseConflictError("Conflict occured while deleting movie.") from e
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(e)
+            raise DatabaseError("Database query Failed") from e
+
 def delete_screening(screening):
     with Session(engine) as session:
         try:
             screening_obj = session.get(Screening, screening.id)
-            session.delete(screening_obj)
-            session.commit()
+            if screening_obj:
+                session.delete(screening_obj)
+                session.commit()
+            else:
+                session.rollback()
+                raise EntityNotFoundError(f"No screening_id with id:{screening.id}")
         except Exception as e:
             print(e)
             session.rollback()
@@ -367,7 +392,7 @@ if __name__ == "__main__":
         Theatre.__table__.create(bind=engine, checkfirst=True)
         Seat.__table__.create(bind=engine, checkfirst=True)
         Screening.__table__.create(bind=engine, checkfirst=True)
-        create_theatre(1, "Salong A", 10, 3)
+        create_theatre(2, "Salong B", 15, 5)
         Booking.__table__.create(bind=engine, checkfirst=True)
         Ticket.__table__.create(bind=engine, checkfirst=True)
 
