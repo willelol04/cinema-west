@@ -277,8 +277,8 @@ def delete_screening(screening):
 def add_screening(screening):
     with Session(engine) as session:
         try:
-            screening_obj = Screening(**screening.dict())
-            session.add(screening_obj)
+            for time in screening.start_times:
+                session.add(Screening(movie_id=screening.movie_id, start_time=time, theatre_id=screening.theatre_id))
             session.commit()
         except Exception as e:
             print(e)

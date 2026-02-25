@@ -72,7 +72,7 @@ class ScreeningPatchResponse(BaseModel):
 class ScreeningAdd(BaseModel):
     movie_id: int
     theatre_id: int
-    start_time: str
+    start_times: list[datetime]
 
 
 # -- Theatre --

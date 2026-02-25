@@ -7,11 +7,13 @@ const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useA
     
 const movieResults = ref([]);
 const theatreResults = ref([]);
+const start_time = ref(null)
 const fetchComplete = ref(false);
 const screening = reactive({
     movie_id: 0,
     theatre_id: 0,
-    start_time: '',
+    start_times: [],
+
 })
 
 const fetchMovies = async () => {
@@ -27,6 +29,7 @@ const fetchTheatres = async () => {
 }
 
 const addScreening = async () => {
+    if (screening.start_times.length > 0) {
     const token = await getAccessTokenSilently();
     const response = await fetch("http://localhost:8000/screenings", {
         method: "POST",
@@ -38,8 +41,20 @@ const addScreening = async () => {
 
     });
     
+    alert("Screening(s) added.")
     console.log(await response.text());
+    }
 
+}
+
+const addTime = () => {
+    if (!screening.start_times.includes(start_time.value)) {
+        screening.start_times.push(start_time.value);
+    }
+}
+
+const deleteTime = (ind) => {
+    screening.start_times.splice(ind, 1);
 }
 
 onMounted(fetchMovies);
@@ -53,15 +68,22 @@ onMounted(fetchTheatres);
     <h1>New Screening</h1>
         <div class="grid">
         <label for="movies">Movie:</label>
-        <select v-model="screening.movie_id" id="movies">
+        <select v-model="screening.movie_id" id="movies" required>
             <option v-for="(movie,ind) in movieResults" :value="movie.id">{{ movie.title }}</option>
         </select>
 
 
         <label for="time">Time:</label>
-        <input type="datetime-local" v-model="screening.start_time" id="time">
+        <span>
+        <input type="datetime-local" v-model="start_time" id="time">
+        <button type="button" @click="addTime()">Add time</button>
+        <div class="screening_times">
+            <div class="time" v-for="(time, ind) in screening.start_times">{{ time }}<button type="button" @click="deleteTime(ind)"><i class="pi pi-times"></i></button></div>
+        </div>
+
+        </span>
         <label for="theatres">Theatre:</label>
-        <select v-model="screening.theatre_id" id="theatres">
+        <select v-model="screening.theatre_id" id="theatres" required>
             <option v-for="theatre in theatreResults" :value="theatre.id">{{ theatre.name }}</option>
         </select>
         
@@ -98,7 +120,7 @@ label {
     padding-left: 0px;
 }
 
-input, select, option {
+input, select, option, button {
     border: 1px solid black;
     padding: 10px;
     border-radius: 3px;
@@ -106,7 +128,7 @@ input, select, option {
     transition: 300ms;
 }
 
-input:hover, select:hover, option:hover {
+input:hover, select:hover, button:hover, option:hover {
     cursor: pointer;
     background-color: #494949;
 }
@@ -119,5 +141,10 @@ h1 {
     text-align: center;
     margin-bottom: 20px;
 }
+
+span > input, span > button {
+    width: 50%;
+}
+
 
 </style>
