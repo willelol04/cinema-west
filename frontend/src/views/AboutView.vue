@@ -23,7 +23,6 @@ import { RouterLink } from 'vue-router';
             <br/>
             <p>
                 Cinema West is a fictional cinema created as part of a university project, but it is designed to reflect how a real, contemporary cinema could look and function.        
-            
             </p>
            </div>
         </div>

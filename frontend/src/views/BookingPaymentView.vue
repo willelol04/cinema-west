@@ -1,7 +1,9 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { routeLocationKey, useRoute, useRouter } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
+import {useAuth0} from "@auth0/auth0-vue";
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const timer = ref(300);
 
@@ -10,6 +12,7 @@ const router = useRouter();
 
 const bookingResult = ref(null);
 const fetchComplete = ref(false);
+const paymentComplete = ref(false);
 
 const decrementTimer = () => {
     timer.value--;
@@ -38,11 +41,48 @@ async function fetchBooking() {
 }
 
 
+const cancelBooking = async (booking_id) => {
+    try {
+        const token = await getAccessTokenSilently();
+        const res = await fetch("http://localhost:8000/bookings", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                id: bookingResult.value.id, 
+                screening_id: bookingResult.value.screening_id
+            }),
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Booking cancellation failed: ", err);
+            return;
+        }
+
+        const result = await res.json();
+        console.log(result);
+        alert("Cancellation successful!");
+    } catch (e) {
+        console.log(e);
+        alert("Something went wrong: " + e.message);
+    }
+};
+
 
 onMounted(async () => {
-    setInterval(decrementTimer, 1000)
-    await fetchBooking()
+    console.log(route.params.id);
+    setInterval(decrementTimer, 1000);
+    await fetchBooking();
 })
+
+onBeforeUnmount(async () => {
+    if(!paymentComplete.value && bookingResult.value) {
+         await cancelBooking(route.params.id);
+    }
+});
 
 
 
@@ -74,6 +114,7 @@ const payBooking = async () => {
         console.log(result);
         fetchComplete.value = true;
         alert("Payment successful!");
+        paymentComplete.value = true;
         router.push("/");
     } catch (e) {
         console.log(e);

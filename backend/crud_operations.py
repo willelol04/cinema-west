@@ -361,6 +361,27 @@ def confirm_booking(booking_id):
         except SQLAlchemyError as e:
             raise DatabaseError from e
 
+def delete_booking(booking):
+    with Session(engine) as session:
+        try:
+            booking_obj = session.get(Booking, booking.id)
+            if booking_obj:
+                for ticket in booking_obj.tickets:
+                    session.delete(ticket)
+                session.delete(booking_obj)
+                session.commit()
+            else:
+                raise EntityNotFoundError(f"No booking with id:{booking.id}")
+        except IntegrityError as e:
+            print("--Error--", e)
+            session.rollback()
+            print(e)
+            raise DatabaseConflictError("Conflict occured while deleting booking.") from e
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(e)
+            raise DatabaseError("Database query Failed") from e
+
 
 # tickets
 def get_user_tickets(auth_id):

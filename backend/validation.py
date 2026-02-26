@@ -89,6 +89,10 @@ class BookingAdd(BaseModel):
     seats: list
     screening_id: int 
 
+class BookingRemove(BaseModel):
+    id: int
+    screening_id: int
+
 class BookingTicketResponse(BaseModel):
     id: int
     expires_at: datetime

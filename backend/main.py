@@ -219,6 +219,14 @@ def get_genres_all():
 def add_booking(booking: validation.BookingAdd, claims: dict = Depends(auth0.require_auth())):
     return crud_operations.add_booking(booking, claims.sub)
 
+@app.delete("/bookings", dependencies=[Depends(auth0.require_auth())])
+async def delete_booking(booking: validation.BookingRemove):
+    ret = crud_operations.delete_booking(booking)
+    booked_seats = crud_operations.get_selected_seats(booking.screening_id)
+    await manager.broadcast_seats_json(booking.screening_id, {"msg": "Thank you", "booked_seat_ids": booked_seats})
+    return ret
+    
+
 @app.get("/bookings/{id}", response_model=validation.BookingBase)
 def get_booking(id):
     return crud_operations.get_booking(id)

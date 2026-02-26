@@ -19,20 +19,33 @@ const props = defineProps({
                 <p>Theatre: {{ ticket.seat.theatre.name }}</p>
                 <p>Seat: {{ ticket.seat.id }}</p>
                 <p>Time: {{ ticket.screening.start_time }}</p>
-                <p :class="ticket.status == 'pending' ? 'pending' : 'complete'">Payment status: {{ ticket.booking.status }}</p>
-                <p v-if="ticket.booking.status == 'pending'" class="pay"><RouterLink :to="`/payment/${ticket.booking.id}`" >Pay</RouterLink> no later than {{ ticket.booking.expires_at }}</p>
+                <p>Payment status: <span :class="ticket.booking.status === 'pending' ? 'pending' : 'complete'">{{ ticket.booking.status }}</span></p>
+                <p v-if="ticket.booking.status == 'pending'" >Payment due at: {{ ticket.booking.expires_at }}<RouterLink class="pay" :to="`/payment/${ticket.booking.id}`">Pay now</RouterLink></p>
             </div>
-            <div class="yes">
+            <!--
+            <div class="topright">
                 <button><i class="pi pi-times"></i></button>
             </div>
+            -->
     </div>
 </template>
 
 <style scoped>
 
-.pay, .pay > * {
+.pay {
+    display: block;
+    color: red;
+    text-decoration: underline;
+}
+
+.pending {
     color: red;
 }
+
+.complete {
+    color: green;
+}
+
 
 .ticket-card {
     width: 100%;
@@ -48,6 +61,7 @@ const props = defineProps({
 
 .ticket-card img {
     width: 200px;
+    border-radius: 8px;
 }
 
 .ticket-details {
