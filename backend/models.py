@@ -55,9 +55,12 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     auth_id: Mapped[str] = mapped_column(String(50))
+    nickname: Mapped[str] = mapped_column(String(50))
+    email: Mapped[str] = mapped_column(String(50))
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    tickets: Mapped[List["Ticket"]] = relationship()
+    tickets: Mapped[List["Ticket"]] = relationship(cascade="all, delete-orphan")
+    bookings: Mapped[List["Booking"]] = relationship(cascade="all, delete-orphan")
 
     __table_args__ = (UniqueConstraint("auth_id", name="unique_auth0_id"),)
 
@@ -105,7 +108,7 @@ class Screening(Base):
 class Booking(Base):
     __tablename__ = "booking"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     screening_id: Mapped[int] = mapped_column(ForeignKey("screening.id", ondelete="CASCADE"))
     total_price: Mapped[float] = mapped_column(Float)
     status: Mapped[str] = mapped_column(String(20), default='pending')
@@ -119,7 +122,7 @@ class Booking(Base):
 class Ticket(Base):
     __tablename__ = "ticket"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     booking_id: Mapped[int] = mapped_column(ForeignKey("booking.id", ondelete="CASCADE"))
     screening_id: Mapped[int] = mapped_column(ForeignKey("screening.id"))

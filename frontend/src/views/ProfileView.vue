@@ -35,7 +35,7 @@ onMounted(async () => {await fetchTickets()})
 <template>
     
     <div class="my-profile">
-        <Profile v-if="isAuthenticated" :user="{email: user.email}"/>
+        <Profile v-if="isAuthenticated" :user="{email: user.email, sub: user.sub}"/>
     <h2>My Tickets</h2>
     <div class="tickets">
         <TicketCard class="ticket-card" v-for="(t,ind) in tickets" :ticket="t"/>

@@ -55,6 +55,8 @@ class UserBase(BaseModel):
 
 class UserAuth(BaseModel):
     sub: str
+    nickname: str
+    email: str
 
 # -- Screening --
 class ScreeningBase(BaseModel):
@@ -165,3 +167,9 @@ class PaymentRequest(BaseModel):
 
 
 
+
+# user
+
+class AuthUserRemove(BaseModel):
+    sub: str
+    email: str

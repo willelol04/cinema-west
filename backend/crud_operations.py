@@ -96,9 +96,22 @@ def get_users_all():
 def delete_user(user):
     with Session(engine) as session:
         try:
-            user_obj = session.get(User, user.id) 
-            session.delete(user_obj)
-            session.commit()
+            user_obj = session.get(User, get_user_by_auth_id(user.sub).id) 
+            if user_obj:
+                session.delete(user_obj)
+                session.commit()
+            else:
+                raise EntityNotFoundError(f"user with user_id:{user_obj.id} not found")
+            return {"id": user.sub}
+        except IntegrityError as e:
+            print("--Error--", e)
+            session.rollback()
+            print(e)
+            raise DatabaseConflictError("Conflict occured while deleting movie.") from e
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(e)
+            raise DatabaseError("Database query Failed") from e
         except Exception as e:
             print("--Error--", e)
             session.rollback()
@@ -106,7 +119,7 @@ def delete_user(user):
 def add_user(user: validation.UserAuth):
     with Session(engine) as session:
         try:
-            session.execute(insert(User).values(auth_id=user.sub))
+            session.execute(insert(User).values(auth_id=user.sub, nickname=user.nickname, email=user.email))
             session.commit()
             return user
         except Exception as e:

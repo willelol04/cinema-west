@@ -38,6 +38,8 @@ tmdb_key = os.getenv('TMDBKEY')
 banned_keywords = os.getenv('BANNED_KEYWORDS')
 auth0_domain = os.getenv('AUTH0_DOMAIN')
 auth0_audience = os.getenv('AUTH0_AUDIENCE')
+auth0_client_id = os.getenv('AUTH0_CLIENT_ID')
+auth0_client_secret = os.getenv('AUTH0_CLIENT_SECRET')
 banned_keyword_list = banned_keywords.split(':')
 
 auth0 = Auth0FastAPI(
@@ -264,9 +266,6 @@ async def pay_booking(data: validation.PaymentRequest):
 
         if transaction_res.status_code != 200:
             raise HTTPException(status_code=400, detail=transaction_res.json())
-    
-    
-    
     """
     
     
@@ -327,3 +326,42 @@ async def websocket(websocket: WebSocket, screening_id: int):
 
 
 DARWIN_BASE = "https://darwinbank.duckdns.org/api"
+
+
+
+# auth0
+
+async def get_management_token():
+    url = f"https://{auth0_domain}/oauth/token"
+
+    payload = {
+        "client_id": auth0_client_id,
+        "client_secret": auth0_client_secret,
+        "audience": f"https://{auth0_domain}/api/v2/",
+        "grant_type": "client_credentials",
+    }
+    headers = {
+        'content-type': 'application/x-www-form-urlencoded'
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, data=payload, headers=headers)
+        response.raise_for_status()
+        return response.json()["access_token"]
+
+
+@app.delete("/auth0/users", dependencies=[Depends(auth0.require_auth())])
+async def delete_user(user: validation.AuthUserRemove):
+    async with httpx.AsyncClient() as client:
+        token = await get_management_token()
+        print("\n\n\n\n\n\n\n")
+        print(token)
+        print("\n\n\n\n\n\n\n")
+        delete_res = await client.delete(
+            f"https://{auth0_domain}/api/v2/users/{user.sub}",
+            headers={
+                "Authorization": f"Bearer {token}"
+            }
+        )
+    
+    return crud_operations.delete_user(user)

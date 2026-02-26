@@ -69,7 +69,6 @@ const addUser = async (user) => {
 };
 
 
-/*
 console.log("authenticated:", isAuthenticated.value)
 
 onMounted(async () => { await privateApiTest();})
@@ -86,7 +85,7 @@ watch(
         console.log("curr roles:", value["http://localhost:8000/roles"])
         console.log([1,2,2,3,3,])
         if(! await userExists(value.sub)) {
-          await addUser({sub: value.sub});
+          await addUser({sub: value.sub, nickname: value.nickname, email: value.email});
         } else {
           console.log("user exists, woo!");
           await privateApiTest(token);
@@ -95,7 +94,6 @@ watch(
     } 
   }
 )
-*/
 
 onMounted( async () => console.log("hej: ", await checkSession()))
 

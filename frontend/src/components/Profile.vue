@@ -1,14 +1,55 @@
 
 <script setup>
+import { onMounted } from 'vue';
 import LogoutButton from './LogoutButton.vue';
 
+import { useAuth0, User } from '@auth0/auth0-vue';
+
+const { user, isAuthenticated, isLoading, logout, error, getAccessTokenSilently } = useAuth0();
 
 const props = defineProps({
     user: {
         Type: Object,
-        default: {email: 'hej'},
+        default: {email: 'hej', sub: 'yes'},
     }
 })
+
+
+const deleteUser = async () => {
+        try {
+        const token = await getAccessTokenSilently()
+        const response = await fetch("http://localhost:8000/auth0/users/", {
+            method: "DELETE",
+            body: JSON.stringify(props.user),
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`,
+            }
+
+        });
+        
+        
+        if (!response.ok) {
+            const error = await response.json();
+            alert(`Error: ${error.detail}`)
+            console.log(error)
+            return null
+        }
+        
+
+        logout();
+            
+        } catch(e) {
+            alert(`Error: ${e}`)
+            console.log(e)
+        } finally {
+            
+        }
+
+}
+
+
+
 </script>
 
 <template>
@@ -19,7 +60,7 @@ const props = defineProps({
     <div class="right">
         <h2 class="user-name">{{ props.user.email }}</h2>
         <LogoutButton class="profile-logout" />
-        <button class="delete-acc" value="Delete account">Delete Account</button>
+        <button class="delete-acc" @click="deleteUser()" value="Delete account">Delete Account</button>
     </div>
     </div>
 
