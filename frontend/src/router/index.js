@@ -14,7 +14,7 @@ import NotFoundView from '@/views/NotFoundView.vue';
 import AdminDiscovery from '@/components/AdminDiscovery.vue';
 import AdminMovieDB from '@/components/AdminMovieDB.vue';
 import AdminScreenings from '@/components/AdminScreenings.vue';
-import AdminTickets from '@/components/AdminTickets.vue';
+import AdminCustomers from '@/components/AdminCustomers.vue';
 import BookingPaymentView from '@/views/BookingPaymentView.vue';
 
 
@@ -81,8 +81,8 @@ const router = createRouter({
                     component: AdminScreenings,
                 },
                 {
-                    path: 'tickets',
-                    component: AdminTickets,
+                    path: 'customers',
+                    component: AdminCustomers,
                 },
             ],
         },

@@ -21,10 +21,7 @@ const isActive = (currentRoutePath) => {
                     <RouterLink :class="[isActive('/admin/screenings') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/screenings">Movie Screenings<i class="pi pi-calendar"></i></RouterLink>
                 </li>
                 <li>
-                    <RouterLink :class="[isActive('/admin/ticasdfkets') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/tickets" >Customers<i class="pi pi-user"></i></RouterLink>
-                </li>
-                <li>
-                    <RouterLink :class="[isActive('/admin/ticasdfkets') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/tickets" >Tickets<i class="pi pi-ticket"></i></RouterLink>
+                    <RouterLink :class="[isActive('/admin/customers') ? 'activeNavLink' : '', 'dashboard-item']" to="/admin/customers" >Customers<i class="pi pi-user"></i></RouterLink>
                 </li>
             </ul>
         </div>
