@@ -207,19 +207,25 @@ def delete_movie(movie):
             raise DatabaseError("Database query Failed") from e
 def add_movie(movie):
     print("\n\n\n\n-----new movie ---")
-    print(movie)
     print("\n\n\n\n--------------")
+    
     with Session(engine) as session:
         try:
+            rating = None
+            for country in movie['releases']['countries']:
+                if country["iso_3166_1"] == "US" and country["certification"] != '':
+                    rating = country["certification"]
             movie_obj = Movie(id=movie["id"], 
                              title=movie["title"], 
                              overview=movie["overview"], 
                              runtime=movie["runtime"],
                              poster_path=movie["poster_path"], 
+                             rating=rating,
                              language=movie["original_language"], 
                              release_date=movie["release_date"])
             session.add(movie_obj)
             session.commit()
+
             for genre in movie["genres"]:
                 print("\n\n\n\n--------------", genre, "\n\n\n\n\n")
                 print(genre)

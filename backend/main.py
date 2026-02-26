@@ -127,8 +127,8 @@ async def searchMovie(query):
 
 @app.get("/tmdb/movies/{id}")
 async def getMovieDetails(id):
-        url = f"/movie/{id}?append_to_response=releases"
-        params = {}
+        url = f"/movie/{id}"
+        params = {"append_to_response": "releases"}
         return await getFromTMDB(url, params)
 
 
@@ -159,8 +159,8 @@ def get_theatres_all():
 
 @app.post("/movies", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
 async def add_movie(movie: validation.MovieBase):
-    url = f"/movie/{movie.id}?append_to_response=releases"
-    params = {}
+    url = f"/movie/{movie.id}?append_to_response=release_dates"
+    params = {"append_to_response": "releases"}
     movie_res = await getFromTMDB(url, params)
     print(movie_res)
     return crud_operations.add_movie(movie_res)
