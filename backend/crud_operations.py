@@ -206,30 +206,30 @@ def delete_movie(movie):
             print(e)
             raise DatabaseError("Database query Failed") from e
 def add_movie(movie):
+    print("\n\n\n\n-----new movie ---")
     print(movie)
+    print("\n\n\n\n--------------")
     with Session(engine) as session:
         try:
-            movie_obj = Movie(id=movie.id, 
-                             title=movie.title, 
-                             overview=movie.overview, 
-                             poster_path=movie.poster_path, 
-                             language=movie.original_language, 
-                             release_date=movie.release_date)
+            movie_obj = Movie(id=movie["id"], 
+                             title=movie["title"], 
+                             overview=movie["overview"], 
+                             runtime=movie["runtime"],
+                             poster_path=movie["poster_path"], 
+                             language=movie["original_language"], 
+                             release_date=movie["release_date"])
             session.add(movie_obj)
+            session.commit()
+            for genre in movie["genres"]:
+                print("\n\n\n\n--------------", genre, "\n\n\n\n\n")
+                print(genre)
+                session.execute(insert(movie_genre).values(genre_id=genre["id"], movie_id=movie["id"]))
             session.commit()
         except Exception as e:
             print(e)
             session.rollback()
     
-    if movie.genre_ids:
-        with engine.connect() as conn:
-            try:
-                for g_id in movie.genre_ids:
-                    conn.execute(insert(movie_genre).values(genre_id=g_id, movie_id=movie.id))
-                conn.commit()
-            except Exception as e:
-                print(e)
-                conn.rollback()
+    
     
 
 
@@ -421,6 +421,8 @@ if __name__ == "__main__":
 #        MovieGenre.__table__.drop(bind=engine, checkfirst=True)
 ##    
 ##
+
+        #Genre.__table__.create(bind=engine, checkfirst=True)
         User.__table__.create(bind=engine, checkfirst=True)
         Movie.__table__.create(bind=engine, checkfirst=True)
         Theatre.__table__.create(bind=engine, checkfirst=True)

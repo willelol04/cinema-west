@@ -8,6 +8,8 @@ defineProps({
             default: {"id": "234", "title": "this is a title", "overview": "this is an overview"},
         },
     });
+
+
     
 </script>
 
@@ -17,7 +19,7 @@ defineProps({
     <div class="right">
         <div class="movie-details">
             <h2 class="movie-title">{{ movie.title}} {{ movie.release_date}}</h2>
-            <h3>Length: {{ movie.length }}</h3>
+            <h3>Length: {{ Math.floor(movie.runtime / 60) }}h {{ movie.runtime - Math.floor(movie.runtime / 60)*60 }}min</h3>
             <h3 v-if="movie.genres && movie.genres.length > 0">Genres: <span v-for="(genre, index) in movie.genres.slice(0, movie.genres.length - 1)">{{ genre.name + ", "}} </span> <span>{{ movie.genres[movie.genres.length - 1].name }}</span></h3>
             <h3>Rating: 7+</h3>
             <h3>Language: {{ movie.language }}</h3>

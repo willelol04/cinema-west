@@ -124,7 +124,7 @@ const addMovie = async (movie) => {
     const token = await getAccessTokenSilently();
     const response = await fetch("http://localhost:8000/movies", {
         method: "POST",
-        body: JSON.stringify(movie),
+        body: JSON.stringify({id: movie.id}),
         headers: {
             "Content-Type": "application/json",
             "authorization": `Bearer ${token}`,

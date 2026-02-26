@@ -35,6 +35,8 @@ class Movie(Base):
     overview: Mapped[str] = mapped_column(String(1000))
     poster_path: Mapped[str] = mapped_column(String(1000))
     release_date: Mapped[str] = mapped_column(Date, default="2024-01-01")
+    runtime: Mapped[int]= mapped_column(Integer)
+    rating: Mapped[str] = mapped_column(String(20), nullable=True)
     language: Mapped[str] = mapped_column(String(10))
 
     screenings: Mapped[List["Screening"]] = relationship(back_populates="movie", order_by="Screening.start_time", cascade="all, delete-orphan")

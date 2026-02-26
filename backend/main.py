@@ -127,7 +127,7 @@ async def searchMovie(query):
 
 @app.get("/tmdb/movies/{id}")
 async def getMovieDetails(id):
-        url = "/movie/"+id
+        url = f"/movie/{id}?append_to_response=releases"
         params = {}
         return await getFromTMDB(url, params)
 
@@ -158,9 +158,12 @@ def get_theatres_all():
 # POST-REQUESTS
 
 @app.post("/movies", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
-def add_movie(movie: validation.Movie):
-    crud_operations.add_movie(movie)
-    return movie
+async def add_movie(movie: validation.MovieBase):
+    url = f"/movie/{movie.id}?append_to_response=releases"
+    params = {}
+    movie_res = await getFromTMDB(url, params)
+    print(movie_res)
+    return crud_operations.add_movie(movie_res)
 
 @app.delete("/movies", dependencies=[Depends(auth0.require_auth())])
 def delete_movie(movie: validation.Movie):
@@ -286,11 +289,9 @@ def get_user_tickets(claims: dict = Depends(auth0.require_auth())):
 @app.on_event("startup")
 async def startup():
     return
-    for each in crud_operations.get_genres_all():
-        print(each.name, end=": ")
-        for e in each.movies:
-            print(e.title, end=", ")
-        print("\n")
+    genres = await get_genres()
+    post_genres(genres)
+
 
 
 # screenings
