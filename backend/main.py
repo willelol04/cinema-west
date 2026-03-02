@@ -21,9 +21,11 @@ from fastapi import Depends
 from fastapi.responses import JSONResponse
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from sqlalchemy.orm import Session
 import atexit
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
+from models import engine
 
 
 manager = websocket.ConnectionManager()
@@ -35,12 +37,10 @@ atexit.register(lambda: scheduler.shutdown())
 app = FastAPI()
 load_dotenv()
 tmdb_key = os.getenv('TMDBKEY')
-banned_keywords = os.getenv('BANNED_KEYWORDS')
 auth0_domain = os.getenv('AUTH0_DOMAIN')
 auth0_audience = os.getenv('AUTH0_AUDIENCE')
 auth0_client_id = os.getenv('AUTH0_CLIENT_ID')
 auth0_client_secret = os.getenv('AUTH0_CLIENT_SECRET')
-banned_keyword_list = banned_keywords.split(':')
 
 auth0 = Auth0FastAPI(
     domain=auth0_domain,
@@ -49,7 +49,7 @@ auth0 = Auth0FastAPI(
 
 tmdb_headers = {
     "accept": "application/json",
-    "Authorization": "Bearer"+tmdb_key
+    "Authorization": f"Bearer {tmdb_key}"
 }
 
 tmdb_client = httpx.AsyncClient(headers=tmdb_headers, base_url="https://api.themoviedb.org/3")
@@ -89,11 +89,6 @@ async def getFromTMDB(path, parameters):
 
     return response.json()
 
-@app.get("/api/private")
-def private(claims: dict = Depends(auth0.require_auth())):
-   # A valid access token is required to access this route
-       return {"message": "private API call successful.", "claims": claims}
-
 
 # GET REQUESTS
 
@@ -115,15 +110,14 @@ async def getUpcoming():
 
 @app.get("/tmdb/movies/search/{query}")
 async def searchMovie(query):
-    if query not in banned_keyword_list:
-        url = "/search/movie"
-        params = { 
-                  "language": "en-US", 
-                  "page": 1, 
-                  "query": query,
-                  "sort_by":"popularity.desc",
-                  }
-        return await getFromTMDB(url, params)
+    url = "/search/movie"
+    params = { 
+              "language": "en-US", 
+              "page": 1, 
+              "query": query,
+              "sort_by":"popularity.desc",
+              }
+    return await getFromTMDB(url, params)
 
 @app.get("/tmdb/movies/{id}")
 async def getMovieDetails(id):
@@ -132,75 +126,80 @@ async def getMovieDetails(id):
         return await getFromTMDB(url, params)
 
 
-@app.get("/movie/isadded/{id}")
-def movie_is_added(id):
-    movie = get_movie(id)
-    return {"message": True if movie else False}
 
 @app.get("/movies/id/{id}") 
-def get_movie(id: int):
-    return crud_operations.get_movie(id)
+def get_movie(id: int, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_movie(id, session)
+
+@app.get("/movie/isadded/{id}")
+def movie_is_added(id, session: Session = Depends(crud_operations.create_session)):
+    movie = get_movie(id, session)
+    return {"message": True if movie else False}
 
 @app.get("/movies/upcoming") 
-def get_movies_upcoming():
-    movies = crud_operations.get_movies_upcoming()
+def get_movies_upcoming(session: Session = Depends(crud_operations.create_session)):
+    movies = crud_operations.get_movies_upcoming(session)
     print(movies)
     return movies
 
-@app.get("/movies", response_model=List[validation.MovieAdmin])
-def get_movies_all():
-    return crud_operations.get_movies_all()
+@app.get("/movies/", response_model=List[validation.MovieAdmin])
+def get_movies_all(session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_movies_all(session)
+
+@app.get("/movies/schedule", response_model=validation.MovieSchedule)
+def get_movies_schedule(session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_movies_schedule(session)
 
 @app.get("/theatres")
-def get_theatres_all():
-    return crud_operations.get_theatres_all()
+def get_theatres_all(session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_theatres_all(session)
 
 # POST-REQUESTS
 
-@app.post("/movies", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
-async def add_movie(movie: validation.MovieBase):
+@app.post("/movies/", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
+async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud_operations.create_session)):
     url = f"/movie/{movie.id}?append_to_response=release_dates"
     params = {"append_to_response": "releases"}
     movie_res = await getFromTMDB(url, params)
     print(movie_res)
-    return crud_operations.add_movie(movie_res)
+    return crud_operations.add_movie(movie_res, session)
 
-@app.delete("/movies", dependencies=[Depends(auth0.require_auth())])
-def delete_movie(movie: validation.Movie):
-    return crud_operations.delete_movie(movie)
+@app.delete("/movies/", dependencies=[Depends(auth0.require_auth())])
+def delete_movie(movie: validation.Movie,session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.delete_movie(movie, session)
 
 @app.post("/users", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
-def add_user(user: validation.UserAuth):
+def add_user(user: validation.UserAuth,session: Session = Depends(crud_operations.create_session) ):
     print("------")
     print(user)
     print("------")
-    crud_operations.add_user(user)
+    crud_operations.add_user(user, session)
     return user
 
 @app.get("/users/{id}")
-def get_user(id):
-    return crud_operations.get_user_by_id(id)
+def get_user(id,session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_user_by_id(id, session)
 
 @app.get("/auth0/users/{auth_id}")
-def get_user(auth_id):
-    return crud_operations.get_user_by_auth_id(auth_id)
+def get_auth_user(auth_id, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_user_by_auth_id(auth_id, session)
 
 @app.post("/screenings", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
-def add_screening(screening: validation.ScreeningAdd):
-    crud_operations.add_screening(screening)
+def add_screening(screening: validation.ScreeningAdd, session: Session = Depends(crud_operations.create_session)):
+    crud_operations.add_screening(screening, session)
     return screening
 
 @app.delete("/screenings", status_code=status.HTTP_200_OK, dependencies=[Depends(auth0.require_auth())])
-def add_screening(screening: validation.ScreeningBase):
-    return crud_operations.delete_screening(screening)
+def delete_screening(screening: validation.ScreeningBase, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.delete_screening(screening, session)
 
 @app.get("/screenings/{id}")
-def get_screening(id):
-    return crud_operations.get_screening(id)
+def get_screening(id, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_screening(id, session)
 
 @app.get("/screenings")
-def get_screenings_all():
-    return crud_operations.get_screenings_all()
+def get_screenings_all(session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_screenings_all(session)
 
 # Genre
 
@@ -210,34 +209,33 @@ async def get_genres():
         result = await getFromTMDB(url, params)
         return result['genres']
 
-def post_genres(genres):
-    crud_operations.post_genres(genres)
+def post_genres(genres, session: Session = Depends(crud_operations.create_session)):
+    crud_operations.post_genres(genres, session)
     return genres
 
-def get_genres_all():
-    return
-    print(crud_operations.get_genres_all())
+def get_genres_all(session: Session = Depends(crud_operations.create_session)):
+    print(crud_operations.get_genres_all(session))
     
 # Booking
 
 @app.post("/bookings", status_code=status.HTTP_201_CREATED)
-def add_booking(booking: validation.BookingAdd, claims: dict = Depends(auth0.require_auth())):
-    return crud_operations.add_booking(booking, claims.sub)
+def add_booking(booking: validation.BookingAdd, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    return crud_operations.add_booking(booking, session, claims.sub)
 
 @app.delete("/bookings", dependencies=[Depends(auth0.require_auth())])
-async def delete_booking(booking: validation.BookingRemove):
-    ret = crud_operations.delete_booking(booking)
-    booked_seats = crud_operations.get_selected_seats(booking.screening_id)
+async def delete_booking(booking: validation.BookingRemove, session: Session = Depends(crud_operations.create_session)):
+    ret = crud_operations.delete_booking(booking, session)
+    booked_seats = crud_operations.get_selected_seats(booking.screening_id, session)
     await manager.broadcast_seats_json(booking.screening_id, {"msg": "Thank you", "booked_seat_ids": booked_seats})
     return ret
     
 
 @app.get("/bookings/{id}", response_model=validation.BookingBase)
-def get_booking(id):
-    return crud_operations.get_booking(id)
+def get_booking(id, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_booking(id, session)
 
 @app.post("/pay-booking")
-async def pay_booking(data: validation.PaymentRequest):
+async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session)):
     """
     async with httpx.AsyncClient() as client:
         token_res = await client.post(
@@ -272,7 +270,7 @@ async def pay_booking(data: validation.PaymentRequest):
     """
     
     
-    return crud_operations.confirm_booking(data.booking_id)
+    return crud_operations.confirm_booking(data.booking_id, session)
         
 
 
@@ -282,8 +280,8 @@ async def pay_booking(data: validation.PaymentRequest):
 # Tickets
 
 @app.get("/tickets/me", response_model=List[validation.TicketResponse])
-def get_user_tickets(claims: dict = Depends(auth0.require_auth())):
-    return crud_operations.get_user_tickets(claims.sub)
+def get_user_tickets(session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    return crud_operations.get_user_tickets(session, claims.sub)
 
 #EVENT FUNCTIONS
 @app.on_event("startup")
@@ -297,8 +295,8 @@ async def startup():
 # screenings
 
 @app.patch("/screenings", dependencies=[Depends(auth0.require_auth())])
-def patch_screening(screening: validation.ScreeningPatchRequest):
-    return crud_operations.patch_screening(screening)
+def patch_screening(screening: validation.ScreeningPatchRequest, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.patch_screening(screening, session)
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -308,13 +306,13 @@ async def shutdown():
     
 
 @app.websocket("/ws/{screening_id}")
-async def websocket(websocket: WebSocket, screening_id: int):
+async def websocket(websocket: WebSocket, screening_id: int, session: Session = Depends(crud_operations.create_session)):
     await manager.connect(websocket)
     try:
         while True:
             data = await websocket.receive_json()
             print("\n\n\n\n", "Thank you", data, "\n\n\n\n")
-            booked_seats = crud_operations.get_selected_seats(screening_id)
+            booked_seats = crud_operations.get_selected_seats(screening_id, session)
             await manager.broadcast_seats_json(screening_id, {"msg": "Thank you", "booked_seat_ids": booked_seats})
     except WebSocketDisconnect:
         manager.disconnect(websocket)
@@ -352,7 +350,7 @@ async def get_management_token():
 
 
 @app.delete("/auth0/users", dependencies=[Depends(auth0.require_auth())])
-async def delete_user(user: validation.AuthUserRemove):
+async def delete_user(user: validation.AuthUserRemove, session: Session = Depends(crud_operations.create_session)):
     async with httpx.AsyncClient() as client:
         token = await get_management_token()
         print("\n\n\n\n\n\n\n")
@@ -365,4 +363,4 @@ async def delete_user(user: validation.AuthUserRemove):
             }
         )
     
-    return crud_operations.delete_user(user)
+    return crud_operations.delete_user(user, session)

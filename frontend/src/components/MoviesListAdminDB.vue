@@ -123,7 +123,7 @@ const scrollRight = () => {
 
 const addMovie = async (movie) => {
     const token = await getAccessTokenSilently();
-    const response = await fetch("http://localhost:8000/movies", {
+    const response = await fetch("http://localhost:8000/movies/", {
         method: "POST",
         body: JSON.stringify(movie),
         headers: {
@@ -141,7 +141,7 @@ const addMovie = async (movie) => {
 const deleteMovie = async (movie) => {
     try {
     const token = await getAccessTokenSilently();
-    const response = await fetch("http://localhost:8000/movies", {
+    const response = await fetch("http://localhost:8000/movies/", {
         method: "DELETE",
         body: JSON.stringify(movie),
         headers: {
@@ -247,7 +247,7 @@ const deleteScreening = async (screening_id) => {
             <div class="movie-details">
             <h2>{{ movie.title }}</h2>
             <p v-if="movie.overview">{{ movie.overview }}...</p>
-            <button v-if="movie.screenings.length > 0" @click="movie.showScreenings = !movie.showScreenings">show Screenings <i v-if="!movie.showScreenings" class="pi pi-chevron-down"></i> <i v-else class="pi pi-chevron-up"></i></button>
+            <button v-if="movie.screenings && movie.screenings.length > 0" @click="movie.showScreenings = !movie.showScreenings">show Screenings <i v-if="!movie.showScreenings" class="pi pi-chevron-down"></i> <i v-else class="pi pi-chevron-up"></i></button>
             <ul class="screenings-list" v-if="movie.showScreenings && movie.screenings">
                 <li  class="screening" v-for="(screening, ind) in movie.screenings">
                     <span v-if="!screening.showEdit">

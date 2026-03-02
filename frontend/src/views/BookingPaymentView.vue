@@ -64,7 +64,6 @@ const cancelBooking = async (booking_id) => {
 
         const result = await res.json();
         console.log(result);
-        alert("Cancellation successful!");
     } catch (e) {
         console.log(e);
         alert("Something went wrong: " + e.message);
@@ -115,7 +114,7 @@ const payBooking = async () => {
         fetchComplete.value = true;
         alert("Payment successful!");
         paymentComplete.value = true;
-        router.push("/");
+        router.push("/profile");
     } catch (e) {
         console.log(e);
         alert("Something went wrong: " + e.message);

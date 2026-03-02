@@ -17,7 +17,7 @@ const fetchTheatres = async () => {
 
 async function fetchMovies() { 
     try {
-    const movieResultsPromise = await fetch("http://localhost:8000/movies", {
+    const movieResultsPromise = await fetch("http://localhost:8000/movies/", {
       headers: {
         "Content-type": "application/json",
       }

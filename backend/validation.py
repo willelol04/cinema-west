@@ -21,6 +21,7 @@ class Movie(MovieBase):
     backdrop_path: Optional[str] = None
     genre_ids: Optional[list] = None
     original_language: Optional[str] = None
+    language: Optional[str] = None
     original_title: Optional[str] = None
     overview: Optional[str] = None
     popularity: Optional[float] = None
@@ -30,6 +31,19 @@ class Movie(MovieBase):
     video: Optional[bool] = None
     vote_average: Optional[float] = None
     vote_count: Optional[int] = None
+    runtime: Optional[int] = None
+    rating: Optional[str] = None
+
+class MovieYes(BaseModel):
+    id: int
+    title: str
+    overview: str
+    poster_path: str
+    release_date: date
+    runtime: int
+    rating: str
+    language: str
+
 
 
 class MovieAdmin(MovieBase):
@@ -40,6 +54,8 @@ class MovieAdmin(MovieBase):
     original_title: Optional[str] = None
     overview: Optional[str] = None
     popularity: Optional[float] = None
+    runtime: Optional[int] = None
+    rating: Optional[str] = None
     poster_path: Optional[str] = None
     release_date: Optional[date] = None
     title: Optional[str] = None
@@ -48,6 +64,10 @@ class MovieAdmin(MovieBase):
     vote_count: Optional[int] = None
 
     screenings: list[ScreeningsMovieResponse] = None
+
+class MovieSchedule(BaseModel):
+    today: list[MovieAdmin]
+    tomorrow: list[MovieAdmin]
     
 # -- User --
 class UserBase(BaseModel):
@@ -103,7 +123,7 @@ class BookingTicketResponse(BaseModel):
 class ScreeningResponse(BaseModel):
     id: int
     start_time: datetime
-    movie: Movie
+    movie: MovieYes
 
 class Theatre(TheatreBase):
     name: str

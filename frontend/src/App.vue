@@ -29,22 +29,6 @@ const userExists = async (userAuthId) => {
 
 }
 
-const privateApiTest = async (token) => {
-  try {
-    const response = await fetch("http://localhost:8000/api/private", {
-      headers: {
-        "authorization": `Bearer ${token}`,
-      }
-    });
-    console.log(token)
-    const userResponse = await response.json();
-    console.log(userResponse);
-  } catch(e) {
-    console.log(e);
-  }
-
-}
-
 const addUser = async (user) => {
     try {
     console.log("received obj", user)
@@ -71,7 +55,6 @@ const addUser = async (user) => {
 
 console.log("authenticated:", isAuthenticated.value)
 
-onMounted(async () => { await privateApiTest();})
 
 watch(
   () => ([user, user.value]),
@@ -88,7 +71,6 @@ watch(
           await addUser({sub: value.sub, nickname: value.nickname, email: value.email});
         } else {
           console.log("user exists, woo!");
-          await privateApiTest(token);
 
         }
     } 
