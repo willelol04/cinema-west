@@ -3,63 +3,20 @@ import { RouterLink } from 'vue-router';
 import { ref, computed, onMounted } from 'vue';
 import MoviesView from '@/views/MoviesView.vue';
 
+import Sort from '@/components/Sort.vue';
+
+const emit = defineEmits(['update'])
+
 const start_ind = ref(0);
+
 const props = defineProps({title: {
         type: String,
         default: 'Movies',
     },
-    movies: {
-        type: Array,
-        default: [
-            {
-                title: 'Jack reacher 0',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 1',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 2',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 3',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 4',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 5',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 6',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 7',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 8',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 9',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 10',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 11',
-                times: ['22.43', '19.00', '14.00'],
-            },
-        ],
+    movies: Array,
+    filter: {
+        type: Boolean,
+        default: false,
     },
     limit: {
         type: Number,
@@ -129,6 +86,11 @@ const scrollRight = () => {
     }
 }
 
+
+const emitUpdate = (sortData) => {
+    emit('update', sortData)
+}
+
 console.log(props.movies);
     
 </script>
@@ -142,6 +104,7 @@ console.log(props.movies);
         <button class="scroll-right scroll-button"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
     </div>
     </div>
+    <Sort v-if="props.filter" @update="emitUpdate"/>
         <TransitionGroup name="list" tag="div" :style="`grid-template-columns: repeat(${columns}, minmax(100px, 1fr));`" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
         <RouterLink :to="`/movies/`+ (movie.id ? movie.id : index) ">

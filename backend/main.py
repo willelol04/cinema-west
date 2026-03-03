@@ -143,8 +143,8 @@ def get_movies_upcoming(session: Session = Depends(crud_operations.create_sessio
     return movies
 
 @app.get("/movies/", response_model=List[validation.MovieAdmin])
-def get_movies_all(session: Session = Depends(crud_operations.create_session)):
-    return crud_operations.get_movies_all(session)
+def get_movies_all(title: str | None = None, genre: int | None = None, rating: str | None = None, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_movies_all(title, genre, rating, session)
 
 @app.get("/movies/schedule", response_model=validation.MovieSchedule)
 def get_movies_schedule(session: Session = Depends(crud_operations.create_session)):
@@ -368,3 +368,9 @@ async def delete_user(user: validation.AuthUserRemove, session: Session = Depend
         )
     
     return crud_operations.delete_user(user, session)
+
+
+
+@app.get("/filters", response_model=validation.Filters)
+def get_filters(session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_filters(session)

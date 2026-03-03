@@ -11,7 +11,7 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError, NoResultFound
 from sqlalchemy import func, text
 from datetime import timedelta
@@ -166,9 +166,18 @@ def get_movie(id, session):
         print(e)
         raise
 
-def get_movies_all(session):
+def get_movies_all(title, genre, rating, session):
     try:
-        result = session.execute(select(Movie).options(selectinload(Movie.screenings).selectinload(Screening.theatre))).scalars().all()
+        stmt = select(Movie)        
+        if title:
+            stmt = stmt.where(Movie.title.contains(title))
+        if rating:
+            stmt = stmt.where(Movie.rating!=None).where(Movie.rating==rating)
+        if genre:
+            stmt = stmt.join(Movie.genres).where(Genre.id == genre)
+
+        result = session.execute(stmt.options(selectinload(Movie.screenings).selectinload(Screening.theatre))).scalars().all()
+
         return result
     except Exception as e:
         print(e)
@@ -406,6 +415,18 @@ def get_user_bookings(auth_id, session):
                                     )).scalars().all()
         print(result)
         return result
+    except Exception as e:
+        print(e)
+        raise
+    
+
+def get_filters(session):
+    try: 
+        genres = session.execute(select(Genre).where(Genre.movies.any()).order_by(Genre.name)).scalars().all()
+        ratings = session.execute(select(Movie.rating).where(Movie.rating != None).distinct()).scalars().all()
+        print(ratings)
+        print(genres)
+        return {"genres": genres, "ratings": ratings}
     except Exception as e:
         print(e)
         raise

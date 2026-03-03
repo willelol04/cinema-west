@@ -224,3 +224,13 @@ class UserAdmin(BaseModel):
     nickname: str
     email: str
     bookings: list[BookingResponseTwo]
+
+
+
+class Genre(BaseModel):
+    id: int
+    name: str
+
+class Filters(BaseModel):
+    genres: list[Genre]
+    ratings: list[str]

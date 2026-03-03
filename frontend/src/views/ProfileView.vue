@@ -36,7 +36,7 @@ onMounted(async () => {await fetchBookings()})
 <template>
     
     <div class="my-profile">
-        <Profile v-if="isAuthenticated" :isMyProfile="false" :user="{email: user.email, sub: user.sub}"/>
+        <Profile v-if="isAuthenticated" :isMyProfile="true" :user="{email: user.email, sub: user.sub}"/>
     <h2 class="bookings-header">My Bookings</h2>
         <div class="booking" v-for="(booking, ind) in bookings">
         <h2>Booking - {{ ind }}</h2>
