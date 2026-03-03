@@ -14,6 +14,12 @@ const sortData = reactive({
 });
 
 
+const resetSortData = () => {
+    sortData.title = null;
+    sortData.genre = null;
+    sortData.rating = null;
+}
+
 async function fetchFilters() {
     try {
     fetchComplete.value = false;
@@ -41,10 +47,9 @@ onMounted(async () => await fetchFilters())
 
 </script>
 <template>
-    {{  sortData }}
   <div v-if="fetchComplete" class="sort-container">
     <input
-      type="text"
+      type="search"
       class="search-input"
       placeholder="Search movies..."
       v-model="sortData.title"
@@ -59,6 +64,7 @@ onMounted(async () => await fetchFilters())
       <option :value="null">All ratings</option>
       <option v-for="(rating, ind) in filters.ratings" :value="rating">{{ rating }}</option>
     </select>
+    <input class="reset-button" type="button" value="Reset" @click="resetSortData">
   </div>
 </template>
 
@@ -71,8 +77,8 @@ onMounted(async () => await fetchFilters())
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  align-items: center;
-  max-width: 500px; 
+  align-items:center;
+  max-width: 800px;
   justify-content: center; 
 }
 
@@ -96,5 +102,18 @@ select {
 select option {
   background-color: white;
   color: black;
+}
+    
+.reset-button {
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #ccc;
+  border: 1px solid black;
+  color: black;
+}
+
+.reset-button:hover {
+    cursor: pointer;
+    
 }
 </style>
