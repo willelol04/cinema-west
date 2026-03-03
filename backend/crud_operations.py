@@ -89,6 +89,14 @@ def get_users_all(session):
     except Exception as e:
         raise
 
+def search_user(query, session):
+    try:
+        results = session.execute(select(User).where(User.nickname.contains(query)).options(selectinload(User.bookings).selectinload(Booking.tickets), selectinload(User.bookings).selectinload(Booking.screening).selectinload(Screening.movie))).scalars().all()
+        print(results)
+        return results
+    except Exception as e:
+        raise
+
 def delete_user(user, session):
     try:
         user_obj = session.get(User, get_user_by_auth_id(user.sub, session).id) 
@@ -387,9 +395,15 @@ def delete_booking(booking, session):
 
 
 # tickets
-def get_user_tickets(session, auth_id):
+def get_user_bookings(auth_id, session):
+    print(auth_id)
     try:
-        result = session.execute(select(Ticket).where(Ticket.user_id==get_user_by_auth_id(auth_id, session).id).options(selectinload(Ticket.seat).selectinload(Seat.theatre), selectinload(Ticket.screening).selectinload(Screening.movie), selectinload(Ticket.booking))).scalars().all()
+        result = session.execute(select(Booking)
+                                 .where(Booking.user_id==get_user_by_auth_id(auth_id, session).id)
+                                 .options(
+                                     selectinload(Booking.tickets).selectinload(Ticket.seat).selectinload(Seat.theatre), 
+                                     selectinload(Booking.tickets).selectinload(Ticket.screening).selectinload(Screening.movie) 
+                                    )).scalars().all()
         print(result)
         return result
     except Exception as e:

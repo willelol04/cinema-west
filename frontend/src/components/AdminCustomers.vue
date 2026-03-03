@@ -1,80 +1,199 @@
 <script setup>
-import MoviesList from '@/components/MoviesList.vue';
-import { ref } from 'vue';
+import MoviesListAdmin from '@/components/MoviesListAdminDiscovery.vue';
+import Profile from '@/components/Profile.vue';
+import { ref, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
+import {useAuth0} from "@auth0/auth0-vue";
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
+
+const search_field = defineModel('Bing');
 const fetchComplete = ref(true);
-    
+const customerResults = ref([]);
 
-async function fetchCustomers() { 
+const route = useRoute();
+const router = useRouter();
+
+
+async function fetchCustomerResults(numbers_tried = 1) { 
+    const num = numbers_tried;
     fetchComplete.value = false;
     try {
     const token = await getAccessTokenSilently();
-    const movieResultsPromise = await fetch(`http://localhost:8000/tmdb/movies/search/${route.query.q}`, {
+    const customerResultsPromise = await fetch(`http://localhost:8000/users/search/${route.query.q}`, {
       headers: {
         "Content-type": "application/json",
         "authorization": `Bearer ${token}`,
       }
     })
-    const movieResultsObject = await movieResultsPromise.json();
-    for (const movie of movieResultsObject.results) {
-        if (await movieIsAdded(movie.id) == true) {
-            movie.isAdded = true;
-            console.log(movie.id, "is added")
-        }
-    }
-    
-    movieResults.value = movieResultsObject.results;
+    const customerResultsObject = await customerResultsPromise.json();
 
-    console.log(movieResults.value);
+    customerResults.value = customerResultsObject;
+
+    console.log(customerResults.value);
     fetchComplete.value = true;
+    console.log(fetchComplete.value)
     search_field.value = '';
 
     } catch(e) {
     console.log(e);
-    setTimeout(() => {fetchMovieResults(1+num)}, 20000);
+    setTimeout(() => {fetchCustomerResults(1+num)}, 20000);
     console.log("failed - ", num);
     } finally {
     console.log("quit");
     }
 }
+watch(
+() => route.query.q,    
+() => {if(route.query.q) fetchCustomerResults()},
+{immediate: true},
+
+)
+
+const onSubmit = () => {
+  router.push({query: {q: search_field.value}});
+};
+
 </script>
 
 
 <template>
-    <div class="search-movies">
-    <h1>Admin - Tickets</h1>
-    <form method="POST" @submit.prevent="onSubmit">
-        <label for="movie-search">Sök efter kund:</label>
-        <input type="search" id="movie-search">
+    
+    <div class="search-customers">
+    <form method="GET" @submit.prevent="onSubmit">
+    <label for="customer-search"><h1>Search customers:</h1></label>
+        <input type="search" v-model="search_field" id="customer-search">
         <input type="submit" value="Sök">
     </form>
+   <!--
+   <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :customers="customerResults"  @update="fetchCustomerResults"/> 
+   --> 
+   
+   <div class="customer-results" v-if="fetchComplete">
+    <div class="customer" v-for="customer in customerResults">
+    <Profile class="profile" v-if="fetchComplete"  :user="{email: customer.email, sub: customer.auth_id}"/>
+    <h3>Bookings:</h3>
+    <ul class="bookings">
+        <li class="booking" v-for="booking in customer.bookings"><span class="booking-name"> {{ booking.tickets.length}} tickets to {{ booking.screening.movie.title }}, Booking ID:{{ booking.id }}</span><button class="delete-booking"><i class="pi pi-times"></i>Cancel</button></li>
+    </ul>
     </div>
-    <div class="added-movies">
-    <MoviesList v-if="false" title="Anna Andersson - Biljetter"/>
+   </div>
+
+   
+    <BeatLoader v-if="!fetchComplete" class="fetch-loading" :color="'#bdc7bf'"/>
+    <div v-if="fetchComplete && customerResults.length === 0 && route.query.q" class="empty">No results were found</div>
     </div>
     
+
+    
+    <!--
+    <MoviesList title="Already added movies:"/>
+    -->
+
 </template>
 
 
 <style scoped>
 
-label {
+.booking {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.booking {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid white;
+}
+
+.booking > button {
+    background-color: rgb(65, 63, 63);
+    padding: 5px;
+}
+
+.customer-results {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: start;
+    gap: 50px;
+    
+}
+
+.customer {
+    width: 350px;
+}
+
+.profile {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: fit-content;
+}
+
+.fetch-loading {
+    margin-top: 200px;
+    text-align: center;
+}
+
+h1 {
     display: block;
 }
 
-form {
-    margin-top: 20px;
+input {
+    padding: 10px;
+    background: white;
+    color: black;
+    height: 50px;
+    vertical-align: middle;
+    border-radius: 7px;
+    margin: 0;
+
 }
 
-input {
-    border: 1px solid black;
-    padding: 10px;
 
+form {
+    margin-bottom: 50px;
 }
 
 
 input[type="search"] {
-    width: 50%;
+    width: 400px;
+    font-size: 16px;
+    font-family:sans-serif;
+    border-radius: 7px;
+    font-weight: 100;
+
+}
+      
+.booking-name {
+    width: 100%;
+}
+      
+@media screen and (max-width: 1200px) {
+    .customer-results {
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+    }
+
+    input[type="search"] { 
+        width: 90%;
+    }
+    
+    input[type="submit"] {
+        width: 10%;
+    }
+    
 }
     
 </style>

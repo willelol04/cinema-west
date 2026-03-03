@@ -119,6 +119,7 @@ class Booking(Base):
     expires_at: Mapped[str] = mapped_column(DateTime)
     
     tickets: Mapped[List["Ticket"]] = relationship()
+    screening: Mapped["Screening"] = relationship()
 
 
 class Ticket(Base):

@@ -135,4 +135,13 @@ input[type="search"] {
 
 }
     
+@media screen and (max-width: 1200px) {
+    input[type="search"] { 
+        width: 90%;
+    }
+    
+    input[type="submit"] {
+        width: 10%;
+    }
+}
 </style>

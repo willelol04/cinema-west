@@ -7,45 +7,54 @@ import { useAuth0, User } from '@auth0/auth0-vue';
 
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
-const tickets = ref([])
+const bookings = ref([])
 
-const fetchTickets = async () => { 
+const fetchBookings = async () => { 
     try {
     const token = await getAccessTokenSilently();
-    const ticketsPromise = await fetch("http://localhost:8000/tickets/me", {
+    const bookingsPromise = await fetch("http://localhost:8000/my-bookings/", {
       headers: {
         "Content-type": "application/json",
         "Authorization": `Bearer ${token}`
       }
     })
 
-    tickets.value = await ticketsPromise.json();
+    bookings.value = await bookingsPromise.json();
 
-    console.log(tickets.value);
+    console.log(bookings.value);
 
     } catch(e) {
         alert(e);
     }    
 }
 
-onMounted(async () => {await fetchTickets()})
+onMounted(async () => {await fetchBookings()})
+
 
 </script>
 
 <template>
     
     <div class="my-profile">
-        <Profile v-if="isAuthenticated" :user="{email: user.email, sub: user.sub}"/>
-    <h2>My Tickets</h2>
+        <Profile v-if="isAuthenticated" :isMyProfile="false" :user="{email: user.email, sub: user.sub}"/>
+    <h2 class="bookings-header">My Bookings</h2>
+        <div class="booking" v-for="(booking, ind) in bookings">
+        <h2>Booking - {{ ind }}</h2>
     <div class="tickets">
-        <TicketCard class="ticket-card" v-for="(t,ind) in tickets" :ticket="t"/>
+        <TicketCard class="ticket-card" v-for="(t,ind) in booking.tickets" :ticket="t"/>
     </div>
+        </div>
     </div>
     
 
 </template>
 
 <style scoped>
+
+.bookings-header {
+    margin-bottom: 50px;
+
+}
 
 .my-profile {
     width: 100%;
@@ -66,6 +75,15 @@ onMounted(async () => {await fetchTickets()})
     margin-bottom: 10px;
 }
       
+.booking {
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.booking:not(:last-child) {
+    margin-bottom: 20px;
+}
 
 @media screen and (max-width: 1200px) {
     .my-profile {

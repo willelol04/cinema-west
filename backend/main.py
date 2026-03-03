@@ -109,7 +109,7 @@ async def getUpcoming():
     return await getFromTMDB(url, params)
 
 @app.get("/tmdb/movies/search/{query}")
-async def searchMovie(query):
+async def search_movie(query):
     url = "/search/movie"
     params = { 
               "language": "en-US", 
@@ -179,6 +179,10 @@ def add_user(user: validation.UserAuth,session: Session = Depends(crud_operation
 @app.get("/users/{id}")
 def get_user(id,session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_user_by_id(id, session)
+
+@app.get("/users/search/{query}", dependencies=[Depends(auth0.require_auth())], response_model=List[validation.UserAdmin])
+def search_user(query, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.search_user(query, session)
 
 @app.get("/auth0/users/{auth_id}")
 def get_auth_user(auth_id, session: Session = Depends(crud_operations.create_session)):
@@ -279,9 +283,9 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
 
 # Tickets
 
-@app.get("/tickets/me", response_model=List[validation.TicketResponse])
-def get_user_tickets(session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    return crud_operations.get_user_tickets(session, claims.sub)
+@app.get("/my-bookings/", response_model=List[validation.BookingResponse])
+def get_user_bookings(session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    return crud_operations.get_user_bookings(claims.sub, session)
 
 #EVENT FUNCTIONS
 @app.on_event("startup")

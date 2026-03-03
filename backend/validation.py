@@ -123,7 +123,7 @@ class BookingTicketResponse(BaseModel):
 class ScreeningResponse(BaseModel):
     id: int
     start_time: datetime
-    movie: MovieYes
+    movie: Movie
 
 class Theatre(TheatreBase):
     name: str
@@ -174,6 +174,17 @@ class BookingBase(BaseModel):
     created_at: datetime
     expires_at: datetime
 
+class BookingResponse(BaseModel):
+    id: int
+    user_id: int
+    screening_id: int
+    total_price: float
+    status: str
+    created_at: datetime
+    expires_at: datetime
+    
+    tickets: list[TicketResponse]
+
 
 # payment
 
@@ -193,3 +204,23 @@ class PaymentRequest(BaseModel):
 class AuthUserRemove(BaseModel):
     sub: str
     email: str
+
+class BookingResponseTwo(BaseModel):
+    id: int
+    user_id: int
+    screening_id: int
+    total_price: float
+    status: str
+    created_at: datetime
+    expires_at: datetime
+    
+    tickets: list[TicketResponse]
+    screening: ScreeningResponse
+    
+
+class UserAdmin(BaseModel):
+    auth_id: str
+    id: int
+    nickname: str
+    email: str
+    bookings: list[BookingResponseTwo]

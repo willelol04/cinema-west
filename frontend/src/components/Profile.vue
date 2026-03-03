@@ -11,6 +11,10 @@ const props = defineProps({
     user: {
         Type: Object,
         default: {email: 'hej', sub: 'yes'},
+    },
+    isMyProfile: {
+        Type: Boolean,
+        default: false,
     }
 })
 
@@ -36,8 +40,10 @@ const deleteUser = async () => {
             return null
         }
         
+        if(props.isMyProfile === true) {
+            logout();
+        }
 
-        logout();
             
         } catch(e) {
             alert(`Error: ${e}`)
@@ -59,7 +65,7 @@ const deleteUser = async () => {
     </div>
     <div class="right">
         <h2 class="user-name">{{ props.user.email }}</h2>
-        <LogoutButton class="profile-logout" />
+        <LogoutButton v-if="props.isMyProfile" class="profile-logout" />
         <button class="delete-acc" @click="deleteUser()" value="Delete account">Delete Account</button>
     </div>
     </div>
