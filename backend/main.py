@@ -320,7 +320,6 @@ async def websocket(websocket: WebSocket, screening_id: int, session: Session = 
             await manager.broadcast_seats_json(screening_id, {"msg": "Thank you", "booked_seat_ids": booked_seats})
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        #await manager.broadcast(f"Client {screening_id} has left")
         
 
     

@@ -2,6 +2,7 @@
 
 import { eachMinuteOfInterval } from 'date-fns';
 import {ref, onMounted, reactive, watch} from 'vue';
+import {debounce} from 'lodash';
 
 const filters = ref(null)
 const fetchComplete = ref(false)
@@ -34,16 +35,18 @@ async function fetchFilters() {
 }
 
 
-watch(sortData, (newValue) => {
-    console.log(newValue)
-    emit('update', sortData)
-    
-}, {deep: true})
 
 
 
 onMounted(async () => await fetchFilters())
 
+const debounceUpdateData = debounce((newValue) => {
+    console.log(newValue)
+    emit('update', sortData)
+  
+}, 300)
+
+watch(sortData, debounceUpdateData, {deep: true})
 
 </script>
 <template>
@@ -78,8 +81,8 @@ onMounted(async () => await fetchFilters())
   gap: 1rem;
   flex-wrap: wrap;
   align-items:center;
-  max-width: 800px;
-  justify-content: center; 
+  max-width: 600px;
+  justify-content: start; 
 }
 
 .search-input {
@@ -107,13 +110,31 @@ select option {
 .reset-button {
   padding: 0.5rem;
   border-radius: 4px;
-  background-color: #ccc;
+  background-color: white;
   border: 1px solid black;
   color: black;
 }
 
 .reset-button:hover {
     cursor: pointer;
+    background-color: #ccc;
     
 }
+
+option {
+    border-radius: 0;
+}
+
+
+@media screen and (max-width:768px) {
+  .sort-container {
+    justify-content: space-between;
+  }
+
+  input[type="search"] {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
+
 </style>

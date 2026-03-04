@@ -211,6 +211,7 @@ nav > ul li a {
     padding-bottom: 10px;
 }
 
+
 .top {
     width: 100%;
     display: flex;
@@ -223,9 +224,10 @@ nav > ul li a {
     padding: 8px 5px;
     border: 1px solid white;
 }
-@media screen and (max-width: 768px) {
+
+@media screen and (max-width: 1200px) {
     nav {
-        padding: 0;
+        padding: 50px;
         padding-bottom: 0;
     }
 }

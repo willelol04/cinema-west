@@ -1,7 +1,7 @@
 <script setup>
     
 import Profile from '@/components/Profile.vue';
-import TicketCard from '@/components/TicketCard.vue';
+import BookingCard from '@/components/BookingCard.vue';
 import { onMounted, ref } from 'vue';
 import { useAuth0, User } from '@auth0/auth0-vue';
 
@@ -31,18 +31,43 @@ const fetchBookings = async () => {
 onMounted(async () => {await fetchBookings()})
 
 
+const cancelBooking = async (booking) => {
+    try {
+        const token = await getAccessTokenSilently();
+        const res = await fetch("http://localhost:8000/bookings", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                id: booking.id, 
+                screening_id: booking.screening.id
+            }),
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Booking cancellation failed: ", err);
+            return;
+        }
+
+        const result = await res.json();
+        console.log(result);
+        fetchBookings();
+    } catch (e) {
+        console.log(e);
+        alert("Something went wrong: " + e.message);
+    }
+};
 </script>
 
 <template>
     
     <div class="my-profile">
         <Profile v-if="isAuthenticated" :isMyProfile="true" :user="{email: user.email, sub: user.sub}"/>
-    <h2 class="bookings-header">My Bookings</h2>
-        <div class="booking" v-for="(booking, ind) in bookings">
-        <h2>Booking - {{ ind }}</h2>
-    <div class="tickets">
-        <TicketCard class="ticket-card" v-for="(t,ind) in booking.tickets" :ticket="t"/>
-    </div>
+        <div class="bookings">
+        <BookingCard class="booking" v-for="(booking, ind) in bookings" @delete="cancelBooking(booking)" :booking="booking"/>
         </div>
     </div>
     
@@ -50,41 +75,32 @@ onMounted(async () => {await fetchBookings()})
 </template>
 
 <style scoped>
-
-.bookings-header {
-    margin-bottom: 50px;
-
-}
-
 .my-profile {
     width: 100%;
     padding: 20px 200px;
     margin: 0 auto;
 }
 
-.tickets {
-    margin-top: 50px;
+.bookings {
+    margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    grid-auto-rows: 1fr;
+    gap: 1%;
 }
-      
-.ticket-card {
-    box-sizing: border-box;
-    width: 100%;
-    margin-bottom: 10px;
-}
-      
+    
 .booking {
-    border: 1px solid white;
-    border-radius: 10px;
-    padding: 10px;
+    width: 100%;
 }
-
-.booking:not(:last-child) {
-    margin-bottom: 20px;
+    
+@media screen and (max-width: 768px) {
+    .bookings {
+        grid-template-columns: repeat(1, 1fr);
+    }
 }
-
+  
+ 
 @media screen and (max-width: 1200px) {
     .my-profile {
         padding: 10px;

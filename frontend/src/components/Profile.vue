@@ -82,6 +82,7 @@ const deleteUser = async () => {
     align-items: center;
     gap: 20px;
     width: 100%;
+    margin: 0 auto;
     margin-bottom: 20px;
 }
 

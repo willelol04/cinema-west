@@ -174,6 +174,12 @@ class BookingBase(BaseModel):
     created_at: datetime
     expires_at: datetime
 
+class ScreeningYesResponse(BaseModel):
+    id: int
+    start_time: datetime
+    movie: Movie
+    theatre: TheatreMovieResponse
+
 class BookingResponse(BaseModel):
     id: int
     user_id: int
@@ -184,6 +190,7 @@ class BookingResponse(BaseModel):
     expires_at: datetime
     
     tickets: list[TicketResponse]
+    screening: ScreeningYesResponse
 
 
 # payment

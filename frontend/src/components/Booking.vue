@@ -68,23 +68,12 @@ const bookTickets = async () => {
 }
 onMounted(async () => {
   await fetchScreening()
-  /*
-  fetchIntervalID.value = setInterval(async () => { 
-    await fetchScreening()
-  }, 5000)
-  */
-  //console.log(fetchIntervalID.value)
 
 })
 const ws = new WebSocket("ws://localhost:8000/ws/"+route.params.id);
 
 onBeforeUnmount(() => {
 
-    clearInterval(fetchIntervalID.value); 
-    fetchIntervalID.value = null; 
-
-    clearInterval(wsIntervalId.value); 
-    wsIntervalId.value = null; 
     ws.close()
 
 })
@@ -97,16 +86,6 @@ onMounted(() => {
             booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids
             checkedSeats.value = checkedSeats.value.filter((seat) => !booked_seat_ids.value.includes(seat.id)) 
         };
-        /*
-        wsIntervalId.value = setInterval(() => { 
-            try {
-                timestamp = Date.now()
-                ws.send(JSON.stringify({msg: "user", timestamp: timestamp}))
-            } catch(e) {
-                console.log(e)
-            }
-        }, 2000)
-        */
 });
 </script>
 

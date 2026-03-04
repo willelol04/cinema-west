@@ -55,6 +55,37 @@ const onSubmit = () => {
   router.push({query: {q: search_field.value}});
 };
 
+
+const cancelBooking = async (booking) => {
+    try {
+        const token = await getAccessTokenSilently();
+        const res = await fetch("http://localhost:8000/bookings", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                id: booking.id, 
+                screening_id: booking.screening.id
+            }),
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Booking cancellation failed: ", err);
+            return;
+        }
+
+        const result = await res.json();
+        console.log(result);
+        fetchCustomerResults();
+    } catch (e) {
+        console.log(e);
+        alert("Something went wrong: " + e.message);
+    }
+};
+
 </script>
 
 
@@ -75,7 +106,7 @@ const onSubmit = () => {
     <Profile class="profile" v-if="fetchComplete"  :user="{email: customer.email, sub: customer.auth_id}"/>
     <h3>Bookings:</h3>
     <ul class="bookings">
-        <li class="booking" v-for="booking in customer.bookings"><span class="booking-name"> {{ booking.tickets.length}} tickets to {{ booking.screening.movie.title }}, Booking ID:{{ booking.id }}</span><button class="delete-booking"><i class="pi pi-times"></i>Cancel</button></li>
+        <li class="booking" v-for="booking in customer.bookings"><span class="booking-name"> {{ booking.tickets.length}} tickets to {{ booking.screening.movie.title }}, Booking ID:{{ booking.id }}</span><button @click="cancelBooking(booking)" class="delete-booking"><i class="pi pi-times"></i>Cancel</button></li>
     </ul>
     </div>
    </div>
@@ -102,14 +133,18 @@ const onSubmit = () => {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-}
-
-
-.booking {
     padding-top: 5px;
     padding-bottom: 5px;
     border-top: 1px solid white;
 }
+
+.bookings {
+    width: 100%;
+    height: 200px;
+    overflow-y: scroll;
+    padding: 10px;
+}
+
 
 .booking > button {
     background-color: rgb(65, 63, 63);
@@ -122,12 +157,16 @@ const onSubmit = () => {
     flex-direction: row;
     align-items: start;
     justify-content: start;
+    flex-wrap: wrap;
     gap: 50px;
     
 }
 
 .customer {
-    width: 350px;
+    width: 500px;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 20px;
 }
 
 .profile {

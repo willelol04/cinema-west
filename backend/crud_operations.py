@@ -411,7 +411,8 @@ def get_user_bookings(auth_id, session):
                                  .where(Booking.user_id==get_user_by_auth_id(auth_id, session).id)
                                  .options(
                                      selectinload(Booking.tickets).selectinload(Ticket.seat).selectinload(Seat.theatre), 
-                                     selectinload(Booking.tickets).selectinload(Ticket.screening).selectinload(Screening.movie) 
+                                     selectinload(Booking.tickets).selectinload(Ticket.screening).selectinload(Screening.movie),
+                                     selectinload(Booking.screening).selectinload(Screening.theatre) 
                                     )).scalars().all()
         print(result)
         return result
