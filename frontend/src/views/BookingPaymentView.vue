@@ -27,17 +27,39 @@ const formData = reactive({
 })
 
 async function fetchBooking() {
-    const promise = await fetch('http://localhost:8000/bookings/'+route.params.id);
-    bookingResult.value = await promise.json();
-    formData.amount = bookingResult.value.total_price
-    console.log(bookingResult.value);
-    if(bookingResult.value.status == 'complete') {
-        paymentComplete.value = true;
-        alert("Payment already made!");
-        router.push("/");
-    } else {
-        fetchComplete.value = true;
+    try {
+        const token = await getAccessTokenSilently();
+        const promise = await fetch(`http://localhost:8000/bookings/${route.params.id}`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+        }
+        );
+        
+        if(!promise.ok ) {
+            router.push('/');
+            return;
+        }
+        
 
+        bookingResult.value = await promise.json();
+        
+
+
+        formData.amount = bookingResult.value.total_price
+        console.log(bookingResult.value);
+        if(bookingResult.value.status == 'complete') {
+            paymentComplete.value = true;
+            router.push("/");
+        } else {
+            fetchComplete.value = true;
+
+        }
+
+    } catch(e) {
+        console.log(e);
+        alert("Something went wrong: " + e.message);
     }
 }
 

@@ -83,7 +83,7 @@ def integrity_error(request: Request, exc: crud_operations.EntityNotFoundError):
 
 @app.exception_handler(crud_operations.AuthorizationError)
 def integrity_error(request: Request, exc: crud_operations.AuthorizationError):
-    return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED,
     content={"detail": str(exc), "error_type": "authorization_error"}
     )
 
@@ -241,8 +241,8 @@ async def delete_booking(booking: validation.BookingRemove, session: Session = D
     
 
 @app.get("/bookings/{id}", response_model=validation.BookingBase)
-def get_booking(id, session: Session = Depends(crud_operations.create_session)):
-    return crud_operations.get_booking(id, session)
+def get_booking(id, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    return crud_operations.get_booking(id, session, claims)
 
 @app.post("/pay-booking")
 async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):

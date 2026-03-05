@@ -371,11 +371,15 @@ def clean_pending_bookings():
 
 # booking
 
-def get_booking(id, session):
+def get_booking(id, session, claims):
     try:
         booking = session.get(Booking, id, options=[selectinload(Booking.tickets)])
+        user = get_user_by_auth_id(claims.sub, session)
         if booking:
-            return booking
+            if user.id != booking.user_id or user.is_admin == True:
+                raise AuthorizationError(f"User with id: {user.id} not authorized for this task")
+            else:
+                return booking
         else:
             raise EntityNotFoundError(f"No booking with id:{id}")
     except SQLAlchemyError as e:
