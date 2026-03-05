@@ -66,10 +66,6 @@ const bookTickets = async () => {
     }
 
 }
-onMounted(async () => {
-  await fetchScreening()
-
-})
 const ws = new WebSocket("ws://localhost:8000/ws/"+route.params.id);
 
 onBeforeUnmount(() => {
@@ -80,7 +76,8 @@ onBeforeUnmount(() => {
 
 let timestamp = null;
   
-onMounted(() => {
+onMounted(async () => {
+        await fetchScreening();
         ws.onmessage = (event) => {
             console.log(JSON.parse(event.data).booked_seat_ids)
             booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids

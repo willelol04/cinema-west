@@ -81,6 +81,12 @@ def integrity_error(request: Request, exc: crud_operations.EntityNotFoundError):
     content={"detail": str(exc), "error_type": "entity_not_found_error"}
     )
 
+@app.exception_handler(crud_operations.AuthorizationError)
+def integrity_error(request: Request, exc: crud_operations.AuthorizationError):
+    return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    content={"detail": str(exc), "error_type": "authorization_error"}
+    )
+
 async def getFromTMDB(path, parameters): 
     response = await tmdb_client.get(url=path, params=parameters)
 
@@ -239,7 +245,7 @@ def get_booking(id, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_booking(id, session)
 
 @app.post("/pay-booking")
-async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session)):
+async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
     """
     async with httpx.AsyncClient() as client:
         token_res = await client.post(
@@ -274,7 +280,7 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
     """
     
     
-    return crud_operations.confirm_booking(data.booking_id, session)
+    return crud_operations.confirm_booking(data.booking_id, session, claims)
         
 
 

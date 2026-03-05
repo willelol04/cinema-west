@@ -8,6 +8,7 @@ import Sort from '@/components/Sort.vue';
 const emit = defineEmits(['update'])
 
 const start_ind = ref(0);
+const showScroll = ref(null);
 
 const props = defineProps({title: {
         type: String,
@@ -22,7 +23,10 @@ const props = defineProps({title: {
         type: Number,
         default: 200,
     },
-    display: Number,
+    scroll: {
+        type: Boolean,
+        default: false,
+    },
     showTimes: {
         type: Boolean,
         default: false,
@@ -47,12 +51,16 @@ onMounted(() => {
   updateColumns();
   window.addEventListener("resize", updateColumns);
 });
+
 const visibleMovies = computed(() => {
-    if(props.display) {
+    console.log(props.movies.length, columns.value)
+    if(props.movies.length > columns.value && props.scroll) {
         const visible = props.movies.slice(start_ind.value * columns.value, start_ind.value * columns.value + columns.value);
+        showScroll.value = true;
         return visible;
 
     } else { 
+        showScroll.value = false;
         return props.movies;
     }
 
@@ -99,7 +107,7 @@ console.log(props.movies);
     <section>
     <div class="movies-header">
     <h1 class="title">{{ props.title }}</h1>
-    <div v-if="movies.length > display" class="scroll">
+    <div v-if="props.scroll && showScroll === true" class="scroll">
         <button class="scroll-left scroll-button" :disabled="!canScrollLeft()"  @click="scrollLeft()" ><i class="pi pi-chevron-circle-left" ></i></button>
         <button class="scroll-right scroll-button"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
     </div>

@@ -32,6 +32,7 @@ async function fetchBooking() {
     formData.amount = bookingResult.value.total_price
     console.log(bookingResult.value);
     if(bookingResult.value.status == 'complete') {
+        paymentComplete.value = true;
         alert("Payment already made!");
         router.push("/");
     } else {
@@ -89,10 +90,12 @@ onBeforeUnmount(async () => {
 const payBooking = async () => {
     try {
         fetchComplete.value = false;
+        const token = await getAccessTokenSilently();
         const res = await fetch("http://localhost:8000/pay-booking", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({
                 booking_id: route.params.id, 
@@ -105,7 +108,7 @@ const payBooking = async () => {
 
         if (!res.ok) {
             const err = await res.json();
-            alert("Payment failed: " + err.detail.detail);
+            alert(`[${err.error_type}: ${err.detail}]`);
             return;
         }
 

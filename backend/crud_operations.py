@@ -28,7 +28,9 @@ def create_session():
         with session.begin():
             try:
                 yield session
+                session.commit()
             except Exception as e:
+                session.rollback()
                 print(e)
                 raise
 
@@ -41,6 +43,13 @@ class DatabaseError(Exception):
     pass
 
 class EntityNotFoundError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+    def __str__(self):
+        return f"{self.message}"
+
+class AuthorizationError(Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -333,6 +342,7 @@ def get_genres_all(session):
 def create_theatre(id, name, per_row, rows, session):
     alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
     seats = [ {"id": alphabet[a]+str(n), "theatre_id": id} for a in range(rows) for n in range(1, per_row + 1)]
+    
 
     for seat in seats:
         print(seat["id"], seat["theatre_id"])
@@ -374,11 +384,15 @@ def get_booking(id, session):
         print(e)
         raise
 
-def confirm_booking(booking_id, session):
+def confirm_booking(booking_id, session, claims):
     try:
         booking = session.get(Booking, booking_id)
+        user = get_user_by_auth_id(claims.sub, session)
         if booking:
-            booking.status='complete'
+            if user.id != booking.user_id:
+                raise AuthorizationError(f"User with id: {user.id} not authorized for this task")
+            else:
+                booking.status='complete'
         else:
             raise EntityNotFoundError(f"No booking with id:{booking_id}")
         return {"status": "successful", "booking": booking}
@@ -454,7 +468,7 @@ if __name__ == "__main__":
         Theatre.__table__.create(bind=engine, checkfirst=True)
         Seat.__table__.create(bind=engine, checkfirst=True)
         Screening.__table__.create(bind=engine, checkfirst=True)
-        create_theatre(2, "Salong B", 15, 5)
+        create_theatre(1, "Salong A", 20, 7, session)
         Booking.__table__.create(bind=engine, checkfirst=True)
         Ticket.__table__.create(bind=engine, checkfirst=True)
 

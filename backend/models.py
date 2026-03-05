@@ -13,7 +13,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import selectinload
-from datetime import timedelta
+from datetime import timedelta, datetime, date
 
 
 
@@ -34,7 +34,7 @@ class Movie(Base):
     title: Mapped[str] = mapped_column(String(100))
     overview: Mapped[str] = mapped_column(String(1000))
     poster_path: Mapped[str] = mapped_column(String(1000))
-    release_date: Mapped[str] = mapped_column(Date, default="2024-01-01")
+    release_date: Mapped[date] = mapped_column(Date, default="2024-01-01")
     runtime: Mapped[int]= mapped_column(Integer)
     rating: Mapped[str] = mapped_column(String(20), nullable=True)
     language: Mapped[str] = mapped_column(String(10))
@@ -97,7 +97,7 @@ class Screening(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     movie_id: Mapped[int] = mapped_column(ForeignKey("movie.id", ondelete="CASCADE"))
     theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"))
-    start_time: Mapped[str] = mapped_column(DateTime)
+    start_time: Mapped[datetime] = mapped_column(DateTime)
     is_cancelled: Mapped[bool] = mapped_column(Boolean, default=False)
     
     movie: Mapped["Movie"] = relationship(back_populates="screenings")
@@ -115,8 +115,8 @@ class Booking(Base):
     total_price: Mapped[float] = mapped_column(Float)
     status: Mapped[str] = mapped_column(String(20), default='pending')
 
-    created_at: Mapped[str] = mapped_column(DateTime)
-    expires_at: Mapped[str] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(DateTime)
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
     
     tickets: Mapped[List["Ticket"]] = relationship()
     screening: Mapped["Screening"] = relationship()
