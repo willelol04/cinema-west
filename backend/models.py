@@ -118,7 +118,10 @@ class Booking(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime)
     expires_at: Mapped[datetime] = mapped_column(DateTime)
     
-    tickets: Mapped[List["Ticket"]] = relationship()
+    tickets: Mapped[List["Ticket"]] = relationship(order_by=lambda: (
+            func.substr(Ticket.seat_id, 1, 1),               # letter
+            cast(func.substr(Ticket.seat_id, 2), Integer)    # number
+        ))
     screening: Mapped["Screening"] = relationship()
 
 
