@@ -123,7 +123,7 @@ const scrollRight = () => {
 
 const addMovie = async (movie) => {
     const token = await getAccessTokenSilently();
-    const response = await fetch("http://localhost:8000/movies/", {
+    const response = await fetch("/api/movies/", {
         method: "POST",
         body: JSON.stringify(movie),
         headers: {
@@ -141,7 +141,7 @@ const addMovie = async (movie) => {
 const deleteMovie = async (movie) => {
     try {
     const token = await getAccessTokenSilently();
-    const response = await fetch("http://localhost:8000/movies/", {
+    const response = await fetch("/api/movies/", {
         method: "DELETE",
         body: JSON.stringify(movie),
         headers: {
@@ -171,7 +171,7 @@ const deleteMovie = async (movie) => {
 const updateScreening = async (screening) => {
     try {
     const token = await getAccessTokenSilently();
-    const response = await fetch("http://localhost:8000/screenings", {
+    const response = await fetch("/api/screenings", {
         method: "PATCH",
         body: JSON.stringify({id: screening.id, start_time: screening.start_time}),
         headers: {
@@ -202,7 +202,7 @@ const deleteScreening = async (screening_id) => {
     if(confirm("Are you sure you want to delete this screening?")) {
     try {
     const token = await getAccessTokenSilently();
-    const response = await fetch("http://localhost:8000/screenings", {
+    const response = await fetch("/api/screenings", {
         method: "DELETE",
         body: JSON.stringify({id: screening_id}),
         headers: {

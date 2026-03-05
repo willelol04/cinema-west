@@ -22,7 +22,7 @@ const props = defineProps({
 const deleteUser = async () => {
         try {
         const token = await getAccessTokenSilently()
-        const response = await fetch("http://localhost:8000/auth0/users/", {
+        const response = await fetch("/api/auth0/users/", {
             method: "DELETE",
             body: JSON.stringify(props.user),
             headers: {

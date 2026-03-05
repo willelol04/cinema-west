@@ -13,7 +13,7 @@ const checkedUser = ref(false);
 
 const userExists = async (userAuthId) => {
     try {
-        const response = await fetch("http://localhost:8000/auth0/users/"+userAuthId);
+        const response = await fetch("/api/auth0/users/"+userAuthId);
         const userResponse = await response.json();
         console.log("user exists: ", userResponse ? true : false);
         console.log(userResponse);
@@ -33,7 +33,7 @@ const addUser = async (user) => {
     try {
     console.log("received obj", user)
     const token = await getAccessTokenSilently();
-    const response = await fetch("http://localhost:8000/users", {
+    const response = await fetch("/api/users", {
         method: "POST",
         body: JSON.stringify(user),
         headers: {

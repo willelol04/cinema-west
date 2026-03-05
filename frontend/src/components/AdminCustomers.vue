@@ -21,7 +21,7 @@ async function fetchCustomerResults(numbers_tried = 1) {
     fetchComplete.value = false;
     try {
     const token = await getAccessTokenSilently();
-    const customerResultsPromise = await fetch(`http://localhost:8000/users/search/${route.query.q}`, {
+    const customerResultsPromise = await fetch(`/api/users/search/${route.query.q}`, {
       headers: {
         "Content-type": "application/json",
         "authorization": `Bearer ${token}`,
@@ -59,7 +59,7 @@ const onSubmit = () => {
 const cancelBooking = async (booking) => {
     try {
         const token = await getAccessTokenSilently();
-        const res = await fetch("http://localhost:8000/bookings", {
+        const res = await fetch("/api/bookings", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

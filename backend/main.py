@@ -24,9 +24,9 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy.orm import Session
 import atexit
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from models import engine
-
+from fastapi.staticfiles import StaticFiles
 
 manager = websocket.ConnectionManager()
 
@@ -35,6 +35,9 @@ scheduler.add_job(crud_operations.clean_pending_bookings, 'interval', seconds=10
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 app = FastAPI()
+
+
+
 load_dotenv()
 tmdb_key = os.getenv('TMDBKEY')
 auth0_domain = os.getenv('AUTH0_DOMAIN')
@@ -98,7 +101,7 @@ async def getFromTMDB(path, parameters):
 
 # GET REQUESTS
 
-@app.get("/tmdb/movies/upcoming")
+@app.get("/api/tmdb/movies/upcoming")
 async def getUpcoming():
     url = "/discover/movie"
     today = datetime.date.today()
@@ -114,7 +117,7 @@ async def getUpcoming():
               }
     return await getFromTMDB(url, params)
 
-@app.get("/tmdb/movies/search/{query}")
+@app.get("/api/tmdb/movies/search/{query}")
 async def search_movie(query):
     url = "/search/movie"
     params = { 
@@ -125,7 +128,7 @@ async def search_movie(query):
               }
     return await getFromTMDB(url, params)
 
-@app.get("/tmdb/movies/{id}")
+@app.get("/api/tmdb/movies/{id}")
 async def getMovieDetails(id):
         url = f"/movie/{id}"
         params = {"append_to_response": "releases"}
@@ -133,36 +136,36 @@ async def getMovieDetails(id):
 
 
 
-@app.get("/movies/id/{id}") 
+@app.get("/api/movies/id/{id}") 
 def get_movie(id: int, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_movie(id, session)
 
-@app.get("/movie/isadded/{id}")
+@app.get("/api/movie/isadded/{id}")
 def movie_is_added(id, session: Session = Depends(crud_operations.create_session)):
     movie = get_movie(id, session)
     return {"message": True if movie else False}
 
-@app.get("/movies/upcoming") 
+@app.get("/api/movies/upcoming") 
 def get_movies_upcoming(session: Session = Depends(crud_operations.create_session)):
     movies = crud_operations.get_movies_upcoming(session)
     print(movies)
     return movies
 
-@app.get("/movies/", response_model=List[validation.MovieAdmin])
+@app.get("/api/movies", response_model=List[validation.MovieAdmin])
 def get_movies_all(title: str | None = None, genre: int | None = None, rating: str | None = None, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_movies_all(title, genre, rating, session)
 
-@app.get("/movies/schedule", response_model=validation.MovieSchedule)
+@app.get("/api/movies/schedule", response_model=validation.MovieSchedule)
 def get_movies_schedule(session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_movies_schedule(session)
 
-@app.get("/theatres")
+@app.get("/api/theatres")
 def get_theatres_all(session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_theatres_all(session)
 
 # POST-REQUESTS
 
-@app.post("/movies/", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
+@app.post("/api/movies/", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
 async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud_operations.create_session)):
     url = f"/movie/{movie.id}?append_to_response=release_dates"
     params = {"append_to_response": "releases"}
@@ -170,42 +173,42 @@ async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud
     print(movie_res)
     return crud_operations.add_movie(movie_res, session)
 
-@app.delete("/movies/", dependencies=[Depends(auth0.require_auth())])
+@app.delete("/api/movies", dependencies=[Depends(auth0.require_auth())])
 def delete_movie(movie: validation.Movie,session: Session = Depends(crud_operations.create_session)):
     return crud_operations.delete_movie(movie, session)
 
-@app.post("/users", status_code=status.HTTP_201_CREATED)
+@app.post("/api/users", status_code=status.HTTP_201_CREATED)
 def add_user(user: validation.UserAuth,session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
     print(user)
     crud_operations.add_user(user, session, claims)
     return user
 
-@app.get("/users/{id}")
+@app.get("/api/users/{id}")
 def get_user(id,session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_user_by_id(id, session)
 
-@app.get("/users/search/{query}", dependencies=[Depends(auth0.require_auth())], response_model=List[validation.UserAdmin])
+@app.get("/api/users/search/{query}", dependencies=[Depends(auth0.require_auth())], response_model=List[validation.UserAdmin])
 def search_user(query, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.search_user(query, session)
 
-@app.get("/auth0/users/{auth_id}")
+@app.get("/api/auth0/users/{auth_id}")
 def get_auth_user(auth_id, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_user_by_auth_id(auth_id, session)
 
-@app.post("/screenings", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
+@app.post("/api/screenings", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
 def add_screening(screening: validation.ScreeningAdd, session: Session = Depends(crud_operations.create_session)):
     crud_operations.add_screening(screening, session)
     return screening
 
-@app.delete("/screenings", status_code=status.HTTP_200_OK, dependencies=[Depends(auth0.require_auth())])
+@app.delete("/api/screenings", status_code=status.HTTP_200_OK, dependencies=[Depends(auth0.require_auth())])
 def delete_screening(screening: validation.ScreeningBase, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.delete_screening(screening, session)
 
-@app.get("/screenings/{id}")
+@app.get("/api/screenings/{id}")
 def get_screening(id, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_screening(id, session)
 
-@app.get("/screenings")
+@app.get("/api/screenings")
 def get_screenings_all(session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_screenings_all(session)
 
@@ -217,20 +220,17 @@ async def get_genres():
         result = await getFromTMDB(url, params)
         return result['genres']
 
-def post_genres(genres, session: Session = Depends(crud_operations.create_session)):
-    crud_operations.post_genres(genres, session)
-    return genres
 
 def get_genres_all(session: Session = Depends(crud_operations.create_session)):
     print(crud_operations.get_genres_all(session))
     
 # Booking
 
-@app.post("/bookings", status_code=status.HTTP_201_CREATED)
+@app.post("/api/bookings", status_code=status.HTTP_201_CREATED)
 def add_booking(booking: validation.BookingAdd, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
     return crud_operations.add_booking(booking, session, claims.sub)
 
-@app.delete("/bookings", dependencies=[Depends(auth0.require_auth())])
+@app.delete("/api/bookings", dependencies=[Depends(auth0.require_auth())])
 async def delete_booking(booking: validation.BookingRemove, session: Session = Depends(crud_operations.create_session)):
     ret = crud_operations.delete_booking(booking, session)
     booked_seats = crud_operations.get_selected_seats(booking.screening_id, session)
@@ -238,11 +238,11 @@ async def delete_booking(booking: validation.BookingRemove, session: Session = D
     return ret
     
 
-@app.get("/bookings/{id}", response_model=validation.BookingBase)
+@app.get("/api/bookings/{id}", response_model=validation.BookingBase)
 def get_booking(id, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
     return crud_operations.get_booking(id, session, claims)
 
-@app.post("/pay-booking")
+@app.post("/api/pay-booking")
 async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
     """
     async with httpx.AsyncClient() as client:
@@ -275,7 +275,9 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
 
         if transaction_res.status_code != 200:
             raise HTTPException(status_code=400, detail=transaction_res.json())
+    
     """
+
     
     
     return crud_operations.confirm_booking(data.booking_id, session, claims)
@@ -287,22 +289,21 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
 
 # Tickets
 
-@app.get("/my-bookings/", response_model=List[validation.BookingResponse])
+@app.get("/api/my-bookings/", response_model=List[validation.BookingResponse])
 def get_user_bookings(session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
     return crud_operations.get_user_bookings(claims.sub, session)
 
 #EVENT FUNCTIONS
 @app.on_event("startup")
 async def startup():
-    return
     genres = await get_genres()
-    post_genres(genres)
+    #crud_operations.post_genres(genres)
 
 
 
 # screenings
 
-@app.patch("/screenings", dependencies=[Depends(auth0.require_auth())])
+@app.patch("/api/screenings", dependencies=[Depends(auth0.require_auth())])
 def patch_screening(screening: validation.ScreeningPatchRequest, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.patch_screening(screening, session)
 
@@ -356,7 +357,7 @@ async def get_management_token():
         return response.json()["access_token"]
 
 
-@app.delete("/auth0/users", dependencies=[Depends(auth0.require_auth())])
+@app.delete("/api/auth0/users", dependencies=[Depends(auth0.require_auth())])
 async def delete_user(user: validation.AuthUserRemove, session: Session = Depends(crud_operations.create_session)):
     async with httpx.AsyncClient() as client:
         token = await get_management_token()
@@ -369,11 +370,27 @@ async def delete_user(user: validation.AuthUserRemove, session: Session = Depend
                 "Authorization": f"Bearer {token}"
             }
         )
+
     
     return crud_operations.delete_user(user, session)
 
 
 
-@app.get("/filters", response_model=validation.Filters)
+@app.get("/api/filters", response_model=validation.Filters)
 def get_filters(session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_filters(session)
+
+
+
+
+"""
+app.mount("/static", StaticFiles(directory="dist"), name="static")
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    file_path = f"dist/{full_path}" # Serve index.html for SPA routing
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+    else:
+        return FileResponse("dist/index.html")
+
+"""

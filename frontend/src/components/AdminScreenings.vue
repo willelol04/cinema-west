@@ -17,13 +17,13 @@ const screening = reactive({
 })
 
 const fetchMovies = async () => {
-    const promise = await fetch('http://localhost:8000/movies');
+    const promise = await fetch("/api/movies");
     movieResults.value = await promise.json();
     console.log(movieResults.value);
 }
 
 const fetchTheatres = async () => {
-    const promise = await fetch('http://localhost:8000/theatres');
+    const promise = await fetch("/api/theatres");
     theatreResults.value = await promise.json();
     console.log(theatreResults.value);
 }
@@ -31,7 +31,7 @@ const fetchTheatres = async () => {
 const addScreening = async () => {
     if (screening.start_times.length > 0) {
     const token = await getAccessTokenSilently();
-    const response = await fetch("http://localhost:8000/screenings", {
+    const response = await fetch("/api/screenings", {
         method: "POST",
         body: JSON.stringify(screening),
         headers: {

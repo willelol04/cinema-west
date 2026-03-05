@@ -12,7 +12,7 @@ const fetchComplete = ref(false)
  const testFetch = async () => {
     try {
       const params = new URLSearchParams({start_date: format(Date.now(), 'yyyy-MM-dd'), end_date: format(Date.now(), 'yyyy-MM-dd')});
-      const promise = await fetch(`http://localhost:8000/movies/schedule`);
+      const promise = await fetch(`/api/movies/schedule`);
       ourMovies.value = await promise.json();
       fetchComplete.value = true;
     } catch(e) {
@@ -42,6 +42,4 @@ const fetchComplete = ref(false)
     
     
     
-@media screen and(max-width: 1600px) {
-}
 </style>

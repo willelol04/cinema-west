@@ -6,7 +6,7 @@ const { logout, isLoading } = useAuth0()
 const handleLogout = () => {
   logout({
     logoutParams: {
-      returnTo: 'http://localhost:3000/'
+      returnTo: window.location.origin
     }
   })
 }

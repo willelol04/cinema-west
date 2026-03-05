@@ -16,7 +16,7 @@ const router = useRouter();
 
 async function movieIsAdded(id) {
     const token = await getAccessTokenSilently();
-    const promise = await fetch('http://localhost:8000/movie/isadded/'+id, {
+    const promise = await fetch("/api/movie/isadded/"+id, {
       headers: {
         "Content-type": "application/json",
         "authorization": `Bearer ${token}`,
@@ -32,7 +32,7 @@ async function fetchMovieResults(numbers_tried = 1) {
     fetchComplete.value = false;
     try {
     const token = await getAccessTokenSilently();
-    const movieResultsPromise = await fetch(`http://localhost:8000/tmdb/movies/search/${route.query.q}`, {
+    const movieResultsPromise = await fetch(`/api/tmdb/movies/search/${route.query.q}`, {
       headers: {
         "Content-type": "application/json",
         "authorization": `Bearer ${token}`,

@@ -122,7 +122,7 @@ const scrollRight = () => {
 
 const addMovie = async (movie) => {
     const token = await getAccessTokenSilently();
-    const response = await fetch("http://localhost:8000/movies/", {
+    const response = await fetch("/api/movies/", {
         method: "POST",
         body: JSON.stringify({id: movie.id}),
         headers: {
@@ -140,7 +140,7 @@ const addMovie = async (movie) => {
 const deleteMovie = async (movie) => {
     try {
     const token = await getAccessTokenSilently();
-    const response = await fetch("http://localhost:8000/movies/", {
+    const response = await fetch("/api/movies/", {
         method: "DELETE",
         body: JSON.stringify(movie),
         headers: {

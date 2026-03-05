@@ -11,13 +11,13 @@ const theatresResults = ref(null)
 
 
 const fetchTheatres = async () => {
-    const promise = await fetch('http://localhost:8000/theatres');
+    const promise = await fetch("/api/theatres");
     theatresResults.value = await promise.json();
 }
 
 async function fetchMovies() { 
     try {
-    const movieResultsPromise = await fetch("http://localhost:8000/movies/", {
+    const movieResultsPromise = await fetch("/api/movies", {
       headers: {
         "Content-type": "application/json",
       }

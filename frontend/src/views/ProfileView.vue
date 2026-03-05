@@ -12,7 +12,7 @@ const bookings = ref([])
 const fetchBookings = async () => { 
     try {
     const token = await getAccessTokenSilently();
-    const bookingsPromise = await fetch("http://localhost:8000/my-bookings/", {
+    const bookingsPromise = await fetch("/api/my-bookings/", {
       headers: {
         "Content-type": "application/json",
         "Authorization": `Bearer ${token}`
@@ -34,7 +34,7 @@ onMounted(async () => {await fetchBookings()})
 const cancelBooking = async (booking) => {
     try {
         const token = await getAccessTokenSilently();
-        const res = await fetch("http://localhost:8000/bookings", {
+        const res = await fetch("/api/bookings", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

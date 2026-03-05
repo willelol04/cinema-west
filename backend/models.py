@@ -148,7 +148,9 @@ class Ticket(Base):
         )
 
 
-engine = create_engine(
-"mysql+pymysql://cinema:6P3AZdYtUaWb7tBxHQa%@127.0.0.1/cinema?charset=utf8mb4",
-echo = True)
+jaws_db = "mysql+pymysql://gjisbozryr4hecgb:n1md8zcrm93ersbg@rmspavs8mpub7dkq.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/ycb7addrosdwlaip"
 
+local_db = "mysql+pymysql://cinema:6P3AZdYtUaWb7tBxHQa%@127.0.0.1/cinema?charset=utf8mb4"
+
+engine = create_engine(local_db,
+echo = True)

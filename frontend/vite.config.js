@@ -10,9 +10,21 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  build: {
+    outDir: '../backend/dist',
+    emptyOutDir: true,
+  },
   server: {
     port: 3000,
+    proxy: { 
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
+      },
+    },
   },
+  
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

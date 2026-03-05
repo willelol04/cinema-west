@@ -24,7 +24,7 @@ const resetSortData = () => {
 async function fetchFilters() {
     try {
     fetchComplete.value = false;
-    const promise = await fetch('http://localhost:8000/filters');
+    const promise = await fetch("/api/filters");
     filters.value = await promise.json();
     fetchComplete.value = true;
     console.log(filters.value);

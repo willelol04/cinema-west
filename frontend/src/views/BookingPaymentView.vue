@@ -29,7 +29,7 @@ const formData = reactive({
 async function fetchBooking() {
     try {
         const token = await getAccessTokenSilently();
-        const promise = await fetch(`http://localhost:8000/bookings/${route.params.id}`, {
+        const promise = await fetch(`/api/bookings/${route.params.id}`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
@@ -67,7 +67,7 @@ async function fetchBooking() {
 const cancelBooking = async (booking_id) => {
     try {
         const token = await getAccessTokenSilently();
-        const res = await fetch("http://localhost:8000/bookings", {
+        const res = await fetch("/api/bookings", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -113,7 +113,7 @@ const payBooking = async () => {
     try {
         fetchComplete.value = false;
         const token = await getAccessTokenSilently();
-        const res = await fetch("http://localhost:8000/pay-booking", {
+        const res = await fetch("/api/pay-booking", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

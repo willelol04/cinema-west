@@ -7,7 +7,7 @@ const movieResults = ref([]);
 const fetchComplete = ref(false);
 
 async function fetchMovies() {
-    const promise = await fetch('http://localhost:8000/movies/');
+    const promise = await fetch("/api/movies");
     movieResults.value = await promise.json();
     console.log(movieResults.value);
 }
@@ -23,7 +23,7 @@ async function updateMovies(sortData) {
     if(sortData.rating !== null) {
       searchParams.append('rating', sortData.rating)
     }
-    const promise = await fetch(`http://localhost:8000/movies/?${searchParams}`);
+    const promise = await fetch(`/api/movies?${searchParams}`);
     movieResults.value = await promise.json();
     console.log(movieResults.value);
     console.log(searchParams)

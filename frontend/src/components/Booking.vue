@@ -18,7 +18,7 @@ const route = useRoute();
 const router = useRouter();
 
 async function fetchScreening() {
-    const promise = await fetch('http://localhost:8000/screenings/'+route.params.id);
+    const promise = await fetch("/api/screenings/"+route.params.id);
     screeningResult.value = await promise.json();
     booked_seat_ids.value = screeningResult.value.booked_seat_ids;
     console.log(screeningResult.value);
@@ -29,7 +29,7 @@ const bookTickets = async () => {
     if(checkedSeats.value.length > 0) {
         try {
         const token = await getAccessTokenSilently();
-        const response = await fetch("http://localhost:8000/bookings", {
+        const response = await fetch("/api/bookings", {
             method: "POST",
             body: JSON.stringify({seats: checkedSeats.value, screening_id: screeningResult.value.id}),
             headers: {
@@ -66,7 +66,7 @@ const bookTickets = async () => {
     }
 
 }
-const ws = new WebSocket("ws://localhost:8000/ws/"+route.params.id);
+const ws = new WebSocket(`/ws/${route.params.id}`);
 
 onBeforeUnmount(() => {
 
