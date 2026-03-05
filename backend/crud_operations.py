@@ -124,9 +124,9 @@ def delete_user(user, session):
         print(e)
         raise
 
-def add_user(user: validation.UserAuth, session):
+def add_user(user: validation.UserAuth, session, claims):
     try:
-        session.execute(insert(User).values(auth_id=user.sub, nickname=user.nickname, email=user.email))
+        session.execute(insert(User).values(auth_id=user.sub, nickname=user.nickname, email=user.email, is_admin=1 if 'admin' in claims["http://localhost:8000/roles"] else 0))
         return user
     except Exception as e:
         print("--Error--", e)

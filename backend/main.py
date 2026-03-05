@@ -174,12 +174,10 @@ async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud
 def delete_movie(movie: validation.Movie,session: Session = Depends(crud_operations.create_session)):
     return crud_operations.delete_movie(movie, session)
 
-@app.post("/users", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
-def add_user(user: validation.UserAuth,session: Session = Depends(crud_operations.create_session) ):
-    print("------")
+@app.post("/users", status_code=status.HTTP_201_CREATED)
+def add_user(user: validation.UserAuth,session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
     print(user)
-    print("------")
-    crud_operations.add_user(user, session)
+    crud_operations.add_user(user, session, claims)
     return user
 
 @app.get("/users/{id}")
