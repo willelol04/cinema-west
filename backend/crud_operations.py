@@ -106,7 +106,7 @@ def search_user(query, session):
     except Exception as e:
         raise
 
-def delete_user(user, session):
+def delete_user(user, session, claims):
     try:
         user_obj = session.get(User, get_user_by_auth_id(user.sub, session).id) 
         if user_obj:
@@ -157,13 +157,6 @@ def delete_theatre(screening, session):
             print(e)
             raise
 
-def add_screening(theatre: validation.ScreeningAdd, session):
-    try:
-        theatre_obj = Screening(**theatre.dict())
-        session.add(theatre_obj)
-    except Exception as e:
-        print(e)
-        raise
 
 
 # -- Movies --
@@ -222,7 +215,7 @@ def get_movies_upcoming(session):
         print(e)
         raise
 
-def delete_movie(movie, session):
+def delete_movie(movie, session, claims):
     try:
         db_movie = session.get(Movie, movie.id)
         session.delete(db_movie)
@@ -234,7 +227,7 @@ def delete_movie(movie, session):
         print(e)
         raise DatabaseError("Database query Failed") from e
 
-def add_movie(movie, session):
+def add_movie(movie, session, claims):
     try:
         rating = None
         for country in movie['releases']['countries']:
@@ -253,7 +246,6 @@ def add_movie(movie, session):
         session.flush()
 
         for genre in movie["genres"]:
-            print("\n\n\n\n--------------", genre, "\n\n\n\n\n")
             print(genre)
             session.execute(insert(movie_genre).values(genre_id=genre["id"], movie_id=movie["id"]))
     except Exception as e:
@@ -283,7 +275,7 @@ def get_screenings_all(session):
         print(e)
         raise
 
-def patch_screening(screening, session):
+def patch_screening(screening, session, claims):
     try:
         screening_obj = session.get(Screening, screening.id)
         if screening_obj:
@@ -298,7 +290,7 @@ def patch_screening(screening, session):
         print(e)
         raise DatabaseError("Database query Failed") from e
 
-def delete_screening(screening, session):
+def delete_screening(screening, session, claims):
     try:
         screening_obj = session.get(Screening, screening.id)
         if screening_obj:
@@ -309,7 +301,8 @@ def delete_screening(screening, session):
         print(e)
         raise
 
-def add_screening(screening, session):
+def add_screening(screening, session, claims):
+
     try:
         for time in screening.start_times:
             session.add(Screening(movie_id=screening.movie_id, start_time=time, theatre_id=screening.theatre_id))
@@ -370,9 +363,6 @@ def get_booking(id, session, claims):
     try:
         booking = session.get(Booking, id, options=[selectinload(Booking.tickets)])
         user = get_user_by_auth_id(claims.sub, session)
-        print("\n\n\n\n\n\n\n\n")
-        print(f"-- GET -- issuer [{user.id}], owner [{booking.user_id}]")
-        print("\n\n\n\n\n\n\n\n")
         if booking:
             if user.id == booking.user_id or user.is_admin == True:
                 return booking

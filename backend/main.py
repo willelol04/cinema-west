@@ -37,6 +37,9 @@ atexit.register(lambda: scheduler.shutdown())
 app = FastAPI()
 
 
+roles_string = 'http://localhost:8000/roles'
+
+
 
 load_dotenv()
 tmdb_key = os.getenv('TMDBKEY')
@@ -86,7 +89,7 @@ def integrity_error(request: Request, exc: crud_operations.EntityNotFoundError):
 
 @app.exception_handler(crud_operations.AuthorizationError)
 def integrity_error(request: Request, exc: crud_operations.AuthorizationError):
-    return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED,
+    return JSONResponse(status_code=status.HTTP_403_FORBIDDEN,
     content={"detail": str(exc), "error_type": "authorization_error"}
     )
 
@@ -165,16 +168,21 @@ def get_theatres_all(session: Session = Depends(crud_operations.create_session))
 
 # POST-REQUESTS
 
-@app.post("/api/movies", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
-async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud_operations.create_session)):
+@app.post("/api/movies", status_code=status.HTTP_201_CREATED)
+async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    if 'admin' not in claims[roles_string]:
+        raise crud_operations.AuthorizationError
+
     url = f"/movie/{movie.id}?append_to_response=release_dates"
     params = {"append_to_response": "releases"}
     movie_res = await getFromTMDB(url, params)
     print(movie_res)
-    return crud_operations.add_movie(movie_res, session)
+    return crud_operations.add_movie(movie_res, session, claims)
 
-@app.delete("/api/movies", dependencies=[Depends(auth0.require_auth())])
-def delete_movie(movie: validation.MovieBase,session: Session = Depends(crud_operations.create_session)):
+@app.delete("/api/movies")
+def delete_movie(movie: validation.MovieBase,session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    if 'admin' not in claims[roles_string]:
+        raise crud_operations.AuthorizationError
     return crud_operations.delete_movie(movie, session)
 
 @app.post("/api/users", status_code=status.HTTP_201_CREATED)
@@ -195,14 +203,18 @@ def search_user(query, session: Session = Depends(crud_operations.create_session
 def get_auth_user(auth_id, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_user_by_auth_id(auth_id, session)
 
-@app.post("/api/screenings", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
-def add_screening(screening: validation.ScreeningAdd, session: Session = Depends(crud_operations.create_session)):
-    crud_operations.add_screening(screening, session)
+@app.post("/api/screenings", status_code=status.HTTP_201_CREATED)
+def add_screening(screening: validation.ScreeningAdd, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    if 'admin' not in claims[roles_string]:
+        raise crud_operations.AuthorizationError
+    crud_operations.add_screening(screening, session, claims)
     return screening
 
 @app.delete("/api/screenings", status_code=status.HTTP_200_OK, dependencies=[Depends(auth0.require_auth())])
-def delete_screening(screening: validation.ScreeningBase, session: Session = Depends(crud_operations.create_session)):
-    return crud_operations.delete_screening(screening, session)
+def delete_screening(screening: validation.ScreeningBase, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    if 'admin' not in claims[roles_string]:
+        raise crud_operations.AuthorizationError
+    return crud_operations.delete_screening(screening, session, claims)
 
 @app.get("/api/screenings/{id}")
 def get_screening(id, session: Session = Depends(crud_operations.create_session)):
@@ -228,6 +240,8 @@ def get_genres_all(session: Session = Depends(crud_operations.create_session)):
 
 @app.post("/api/bookings", status_code=status.HTTP_201_CREATED)
 def add_booking(booking: validation.BookingAdd, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    if 'admin' not in claims[roles_string]:
+        raise crud_operations.AuthorizationError
     return crud_operations.add_booking(booking, session, claims.sub)
 
 @app.delete("/api/bookings", dependencies=[Depends(auth0.require_auth())])
@@ -303,8 +317,10 @@ async def startup():
 
 # screenings
 
-@app.patch("/api/screenings", dependencies=[Depends(auth0.require_auth())])
-def patch_screening(screening: validation.ScreeningPatchRequest, session: Session = Depends(crud_operations.create_session)):
+@app.patch("/api/screenings")
+def patch_screening(screening: validation.ScreeningPatchRequest, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    if 'admin' not in claims[roles_string]:
+        raise crud_operations.AuthorizationError
     return crud_operations.patch_screening(screening, session)
 
 @app.on_event("shutdown")
