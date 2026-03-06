@@ -3,7 +3,6 @@ import { RouterLink } from 'vue-router';
 import { ref, computed, onMounted } from 'vue';
 import MoviesView from '@/views/MoviesView.vue';
 import MovieDetails from './MovieDetails.vue';
-import ConfirmDeleteModal from './ConfirmDeleteModal.vue';
 import {useAuth0} from "@auth0/auth0-vue";
 import {addMovie, deleteMovie, getMovie} from '../api/movies'
 import {updateScreening, deleteScreening} from '../api/screenings'

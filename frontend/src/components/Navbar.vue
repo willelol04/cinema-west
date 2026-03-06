@@ -193,7 +193,6 @@ nav > ul li a {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
 }
 .login-btn {
     padding: 8px 5px;

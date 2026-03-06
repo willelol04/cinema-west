@@ -3,14 +3,12 @@ import { RouterLink } from 'vue-router';
 import { ref, computed, onMounted } from 'vue';
 import MoviesView from '@/views/MoviesView.vue';
 import MovieDetails from './MovieDetails.vue';
-import ConfirmDeleteModal from './ConfirmDeleteModal.vue';
 import {addMovie, deleteMovie} from '../api/movies'
 import {useAuth0} from "@auth0/auth0-vue";
 const { isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const start_ind = ref(0);
 const fetchComplete = ref(false);
-const confirmDelete = ref(false)
 
 const emit = defineEmits("update")
 
@@ -19,59 +17,7 @@ const props = defineProps({
         type: String,
         default: 'Movies',
     },
-    movies: {
-        type: Array,
-        default: [
-            {
-                title: 'Jack reacher 0',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 1',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 2',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 3',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 4',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 5',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 6',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 7',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 8',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 9',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 10',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 11',
-                times: ['22.43', '19.00', '14.00'],
-            },
-        ],
-    },
+    movies: Array,
     limit: {
         type: Number,
         default: 200,

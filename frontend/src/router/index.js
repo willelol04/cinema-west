@@ -18,10 +18,15 @@ import AdminMovieDB from '@/components/AdminMovieDB.vue';
 import AdminScreenings from '@/components/AdminScreenings.vue';
 import AdminCustomers from '@/components/AdminCustomers.vue';
 
-const LoginGuard = (to, from) => {
+const LoginGuard = async (to, from) => {
     const { user, isLoading, isAuthenticated } = useAuth0();
-    if(! (isAuthenticated.value && to.name !== from.name)) {
-        return {name: 'home'};
+
+    while (isLoading.value) {
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+
+    if(! (isAuthenticated.value)) {
+        return {name: from.name};
     } 
                 
 }
@@ -82,8 +87,8 @@ const router = createRouter({
             component: AdminView,
             beforeEnter: [LoginGuard, (to, from) => {
                 const { user, isLoading } = useAuth0();
-                if(! (user.value['http://localhost:8000/roles'].includes('admin') && to.name !== from.name)) {
-                    return {name: 'home'};
+                if(! (user.value['http://localhost:8000/roles'].includes('admin'))) {
+                    return {name: from.name};
                 } 
                 
             }

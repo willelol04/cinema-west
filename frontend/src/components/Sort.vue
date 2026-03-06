@@ -3,6 +3,7 @@
 import { eachMinuteOfInterval } from 'date-fns';
 import {ref, onMounted, reactive, watch} from 'vue';
 import {debounce} from 'lodash';
+import { normalFetch } from '@/api/general';
 
 const filters = ref(null)
 const fetchComplete = ref(false)
@@ -24,8 +25,7 @@ const resetSortData = () => {
 async function fetchFilters() {
     try {
     fetchComplete.value = false;
-    const promise = await fetch("/api/filters");
-    filters.value = await promise.json();
+    filters.value = await normalFetch("/api/filters");
     fetchComplete.value = true;
     console.log(filters.value);
     } catch(e){

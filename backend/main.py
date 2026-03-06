@@ -31,7 +31,7 @@ from fastapi.staticfiles import StaticFiles
 manager = websocket.ConnectionManager()
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(crud_operations.clean_pending_bookings, 'interval', seconds=10)
+scheduler.add_job(crud_operations.clean_pending_bookings, 'interval', minutes=5)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 app = FastAPI()

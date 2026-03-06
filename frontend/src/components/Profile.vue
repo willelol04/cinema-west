@@ -33,9 +33,7 @@ const deleteUserSelf = async () => {
             alert(`Error: ${e}`)
             console.log(e)
         } 
-
     }
-
 }
 
 
