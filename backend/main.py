@@ -165,7 +165,7 @@ def get_theatres_all(session: Session = Depends(crud_operations.create_session))
 
 # POST-REQUESTS
 
-@app.post("/api/movies/", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
+@app.post("/api/movies", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
 async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud_operations.create_session)):
     url = f"/movie/{movie.id}?append_to_response=release_dates"
     params = {"append_to_response": "releases"}
@@ -174,7 +174,7 @@ async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud
     return crud_operations.add_movie(movie_res, session)
 
 @app.delete("/api/movies", dependencies=[Depends(auth0.require_auth())])
-def delete_movie(movie: validation.Movie,session: Session = Depends(crud_operations.create_session)):
+def delete_movie(movie: validation.MovieBase,session: Session = Depends(crud_operations.create_session)):
     return crud_operations.delete_movie(movie, session)
 
 @app.post("/api/users", status_code=status.HTTP_201_CREATED)

@@ -4,6 +4,7 @@ import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import {useAuth0} from "@auth0/auth0-vue";
+import { searchMovies, getMovie } from '../api/movies';
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 
@@ -15,54 +16,27 @@ const route = useRoute();
 const router = useRouter();
 
 async function movieIsAdded(id) {
-    const token = await getAccessTokenSilently();
-    const promise = await fetch("/api/movie/isadded/"+id, {
-      headers: {
-        "Content-type": "application/json",
-        "authorization": `Bearer ${token}`,
-      }
-    });
-    const result = await promise.json();
-    console.log(result.message);
-    return result.message;
+    return (await getMovie(id) !== null ? true : false);
 }
 
-async function fetchMovieResults(numbers_tried = 1) { 
-    const num = numbers_tried;
-    fetchComplete.value = false;
+async function fetchMovieResults() { 
     try {
-    const token = await getAccessTokenSilently();
-    const movieResultsPromise = await fetch(`/api/tmdb/movies/search/${route.query.q}`, {
-      headers: {
-        "Content-type": "application/json",
-        "authorization": `Bearer ${token}`,
-      }
-    })
-    const movieResultsObject = await movieResultsPromise.json();
-    for (const movie of movieResultsObject.results) {
-        if (await movieIsAdded(movie.id) == true) {
-            movie.isAdded = true;
-            console.log(movie.id, "is added")
+        fetchComplete.value = false;
+        const token = await getAccessTokenSilently();
+        movieResults.value = (await searchMovies(route.query.q, token)).results;
+        for (const movie of movieResults.value) {
+            movie.isAdded = await movieIsAdded(movie.id)
         }
-    }
-    
-    movieResults.value = movieResultsObject.results;
-
-    console.log(movieResults.value);
-    fetchComplete.value = true;
-    search_field.value = '';
+        fetchComplete.value = true;
+        search_field.value = '';
 
     } catch(e) {
-    console.log(e);
-    setTimeout(() => {fetchMovieResults(1+num)}, 20000);
-    console.log("failed - ", num);
-    } finally {
-    console.log("quit");
-    }
+        console.log(e);
+    } 
 }
 watch(
 () => route.query.q,    
-() => {if(route.query.q) fetchMovieResults()},
+async () => {if(route.query.q) await fetchMovieResults()},
 {immediate: true},
 
 )
@@ -70,6 +44,10 @@ watch(
 const onSubmit = () => {
   router.push({query: {q: search_field.value}});
 };
+
+const updateMovie = (movie) => {
+    movie.isAdded = !movie.isAdded;
+}
 
 </script>
 
@@ -82,9 +60,9 @@ const onSubmit = () => {
         <input type="search" v-model="search_field" id="movie-search">
         <input type="submit" value="Sök">
     </form>
-    <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieResults"  @update="fetchMovieResults"/>
+    <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieResults"  @update="updateMovie"/>
     <BeatLoader v-if="!fetchComplete" class="fetch-loading" :color="'#bdc7bf'"/>
-    <div v-if="fetchComplete && movieResults.length === 0 && route.query.q" class="empty">No results were found</div>
+    <div v-if="fetchComplete && movieResults?.length === 0 && route.query.q" class="empty">No results were found</div>
     </div>
     
 

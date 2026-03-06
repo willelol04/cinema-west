@@ -4,8 +4,9 @@ import { ref, computed, onMounted } from 'vue';
 import MoviesView from '@/views/MoviesView.vue';
 import MovieDetails from './MovieDetails.vue';
 import ConfirmDeleteModal from './ConfirmDeleteModal.vue';
+import {addMovie, deleteMovie} from '../api/movies'
 import {useAuth0} from "@auth0/auth0-vue";
-const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
+const { isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const start_ind = ref(0);
 const fetchComplete = ref(false);
@@ -120,53 +121,28 @@ const scrollRight = () => {
 };
 
 
-const addMovie = async (movie) => {
-    const token = await getAccessTokenSilently();
-    const response = await fetch("/api/movies/", {
-        method: "POST",
-        body: JSON.stringify({id: movie.id}),
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${token}`,
-        }
-
-    });
-
-    console.log(response);
-    emit('update')
-
-};
-
-const deleteMovie = async (movie) => {
+const addMovieUpdate = async (movie) => {
     try {
-    const token = await getAccessTokenSilently();
-    const response = await fetch("/api/movies/", {
-        method: "DELETE",
-        body: JSON.stringify(movie),
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": `Bearer ${token}`,
-        }
-
-    });
-    
-    if (!response.ok) {
-        const error = await response.json();
-        alert(`Error: ${error.detail}`)
-        console.log(error)
-        return null
-    }
-    
-    emit('update');
-    alert("Movie removed");
-
+        const token = await getAccessTokenSilently();
+        await addMovie(movie, token);
+        emit('update', movie)
     } catch(e) {
         console.log(e)
     }
 
 };
 
+const deleteMovieUpdate = async (movie) => {
+    try {
+    const token = await getAccessTokenSilently();
+    await deleteMovie(movie, token);
+    emit('update', movie);
 
+    } catch(e) {
+        console.log(e)
+    }
+
+};
 
 </script>
 
@@ -191,8 +167,8 @@ const deleteMovie = async (movie) => {
             </ul>
             </div>
             <div class="movie-actions">
-                <button @click="addMovie(movie)" v-if="!movie.isAdded" class="movie-action movie-add"><i class="pi pi-plus-circle"></i>Lägg till</button>
-                <button @click="deleteMovie(movie)" v-else class="movie-action movie-remove"><i class="pi pi-trash"></i>Ta bort</button>
+                <button @click="addMovieUpdate(movie)" v-if="!movie.isAdded" class="movie-action movie-add"><i class="pi pi-plus-circle"></i>Lägg till</button>
+                <button @click="deleteMovieUpdate(movie)" v-else class="movie-action movie-remove"><i class="pi pi-trash"></i>Ta bort</button>
             </div>
         </div>
         </TransitionGroup>

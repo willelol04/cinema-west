@@ -9,7 +9,6 @@ import LogoutButton from './LogoutButton.vue';
 
 const { user, isAuthenticated, isLoading, error } = useAuth0()
 
-const props = defineProps(['isLoggedIn'])
 
 
 const dropDownState = ref(false);
@@ -31,7 +30,6 @@ function returnDropDownState() {
     return dropDownState.value === true;
 }
 
-const userType = "My profile";
 
 watch(
   () => route.fullPath,
@@ -39,15 +37,6 @@ watch(
     dropDownState.value = false
   }
 );
-
-watch(
-    () => user?.value,
-    (value) => {
-        if(value) {
-            console.log("----", value);
-        }
-    }
-)
 
 
 const isDesktop = true;
@@ -58,7 +47,6 @@ const toggleSidenav = () => {
     showSideNav.value = !showSideNav.value;
 }
 
-console.log("without watcher", user["http://localhost:8000/roles"]);
 
 
 </script>

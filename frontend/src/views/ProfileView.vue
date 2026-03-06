@@ -8,7 +8,6 @@ import { useAuth0, User } from '@auth0/auth0-vue';
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const bookings = ref([])
-
 const fetchBookings = async () => { 
     try {
     const token = await getAccessTokenSilently();

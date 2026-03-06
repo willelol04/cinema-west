@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { routeLocationKey, useRoute, useRouter } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import {useAuth0} from "@auth0/auth0-vue";
-const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
+const {isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const timer = ref(300);
 

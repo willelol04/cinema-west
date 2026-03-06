@@ -4,9 +4,12 @@ import Profile from '@/components/Profile.vue';
 import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
-import {useAuth0} from "@auth0/auth0-vue";
-const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
+import { Auth0Plugin, useAuth0, User } from '@auth0/auth0-vue';
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently, checkSession } = useAuth0();
+
+import { searchUsers} from '../api/users';
+import { deleteBooking } from '../api/bookings';
 
 const search_field = defineModel('Bing');
 const fetchComplete = ref(true);
@@ -16,37 +19,22 @@ const route = useRoute();
 const router = useRouter();
 
 
-async function fetchCustomerResults(numbers_tried = 1) { 
-    const num = numbers_tried;
+async function fetchCustomerResults() { 
     fetchComplete.value = false;
     try {
-    const token = await getAccessTokenSilently();
-    const customerResultsPromise = await fetch(`/api/users/search/${route.query.q}`, {
-      headers: {
-        "Content-type": "application/json",
-        "authorization": `Bearer ${token}`,
-      }
-    })
-    const customerResultsObject = await customerResultsPromise.json();
+        const token = await getAccessTokenSilently();
+        customerResults.value = await searchUsers(route.query.q, token);
 
-    customerResults.value = customerResultsObject;
-
-    console.log(customerResults.value);
-    fetchComplete.value = true;
-    console.log(fetchComplete.value)
-    search_field.value = '';
+        fetchComplete.value = true;
+        search_field.value = '';
 
     } catch(e) {
-    console.log(e);
-    setTimeout(() => {fetchCustomerResults(1+num)}, 20000);
-    console.log("failed - ", num);
-    } finally {
-    console.log("quit");
-    }
+        console.log(e);
+    } 
 }
 watch(
 () => route.query.q,    
-() => {if(route.query.q) fetchCustomerResults()},
+async () => {if(route.query.q) await fetchCustomerResults()},
 {immediate: true},
 
 )
@@ -59,30 +47,10 @@ const onSubmit = () => {
 const cancelBooking = async (booking) => {
     try {
         const token = await getAccessTokenSilently();
-        const res = await fetch("/api/bookings", {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                id: booking.id, 
-                screening_id: booking.screening.id
-            }),
-        });
-
-        if (!res.ok) {
-            const err = await res.json();
-            alert("Booking cancellation failed: ", err);
-            return;
-        }
-
-        const result = await res.json();
-        console.log(result);
-        fetchCustomerResults();
+        await deleteBooking({id: booking.id, screening_id: booking.screening.id}, token)
+        await fetchCustomerResults();
     } catch (e) {
         console.log(e);
-        alert("Something went wrong: " + e.message);
     }
 };
 

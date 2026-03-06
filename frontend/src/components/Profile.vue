@@ -5,7 +5,7 @@ import LogoutButton from './LogoutButton.vue';
 
 import { useAuth0, User } from '@auth0/auth0-vue';
 
-const { user, isAuthenticated, isLoading, logout, error, getAccessTokenSilently } = useAuth0();
+const { isAuthenticated, isLoading, logout, error, getAccessTokenSilently } = useAuth0();
 
 const props = defineProps({
     user: {

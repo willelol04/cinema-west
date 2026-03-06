@@ -5,13 +5,14 @@ import MoviesView from '@/views/MoviesView.vue';
 import MovieDetails from './MovieDetails.vue';
 import ConfirmDeleteModal from './ConfirmDeleteModal.vue';
 import {useAuth0} from "@auth0/auth0-vue";
+import {addMovie, deleteMovie} from '../api/movies'
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const start_ind = ref(0);
 const fetchComplete = ref(false);
 const confirmDelete = ref(false)
 
-const emit = defineEmits("update")
+const emit = defineEmits(["popMovie", "updateMovie"])
 
 const props = defineProps({
     title: {
@@ -121,44 +122,24 @@ const scrollRight = () => {
 };
 
 
-const addMovie = async (movie) => {
-    const token = await getAccessTokenSilently();
-    const response = await fetch("/api/movies/", {
-        method: "POST",
-        body: JSON.stringify(movie),
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${token}`,
-        }
-
-    });
-
-    console.log(response);
-    emit('update')
+const addMovieUpdate = async (movie) => {
+    try {
+        const token = await getAccessTokenSilently();
+        await addMovie(movie, token);
+        emit('update')
+    } catch(e) {
+        console.log(e)
+    }
 
 };
 
-const deleteMovie = async (movie) => {
+const deleteMovieUpdate = async (movie, ind) => {
     try {
     const token = await getAccessTokenSilently();
-    const response = await fetch("/api/movies/", {
-        method: "DELETE",
-        body: JSON.stringify(movie),
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": `Bearer ${token}`,
-        }
-
-    });
+    await deleteMovie(movie, token);
     
-    if (!response.ok) {
-        const error = await response.json();
-        alert(`Error: ${error.detail}`)
-        console.log(error)
-        return null
-    }
     
-    emit('update');
+    emit('popMovie', ind);
     alert("Movie removed");
 
     } catch(e) {
@@ -168,7 +149,7 @@ const deleteMovie = async (movie) => {
 };
 
 
-const updateScreening = async (screening) => {
+const updateScreening = async (movie, screening) => {
     try {
     const token = await getAccessTokenSilently();
     const response = await fetch("/api/screenings", {
@@ -188,7 +169,7 @@ const updateScreening = async (screening) => {
         return null
     }
     
-    emit('update');
+    emit('updateMovie', movie);
     alert("Screening updated");
 
     } catch(e) {
@@ -198,7 +179,7 @@ const updateScreening = async (screening) => {
 };
 
 
-const deleteScreening = async (screening_id) => {
+const deleteScreening = async (ind, screening_id) => {
     if(confirm("Are you sure you want to delete this screening?")) {
     try {
     const token = await getAccessTokenSilently();
@@ -219,7 +200,9 @@ const deleteScreening = async (screening_id) => {
         return null
     }
     
-    emit('update');
+    movie.showScreenings = false;
+    movie.screenings.splice(ind, 1);
+    
     alert("Screening removed");
 
     } catch(e) {
@@ -241,7 +224,7 @@ const deleteScreening = async (screening_id) => {
     </div>
     </div>
         <TransitionGroup name="list" tag="div" class="movies-container">
-        <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
+        <div class="movie-card" v-for="(movie, ind) in visibleMovies" :key="movie">
             <img class="movie-poster" v-if=movie.poster_path :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
             <i v-else class="pi pi-image"></i>
             <div class="movie-details">
@@ -253,10 +236,10 @@ const deleteScreening = async (screening_id) => {
                     <span v-if="!screening.showEdit">
                     {{ screening.start_time }}
                     <button @click="screening.showEdit = !screening.showEdit"> <i class="pi pi-pen-to-square"></i></button>
-                    <button @click="deleteScreening(screening.id)"><i class="pi pi-times"></i></button>                       
+                    <button @click="deleteScreening(movie, screening.id)"><i class="pi pi-times"></i></button>                       
                     </span>
                     <span v-else>
-                    <form @submit.prevent="updateScreening(screening)">
+                    <form @submit.prevent="updateScreening(movie, screening)">
                     <input type="datetime-local" v-model="screening.start_time" id="time">
                     <input type="submit">
                     <button @click="screening.showEdit = !screening.showEdit">Cancel edit</button>
@@ -266,8 +249,7 @@ const deleteScreening = async (screening_id) => {
             </ul>
             </div>
             <div class="movie-actions">
-                <button @click="addMovie(movie)" v-if="!movie.isAdded" class="movie-action movie-add"><i class="pi pi-plus-circle"></i>Lägg till</button>
-                <button @click="deleteMovie(movie)" v-else class="movie-action movie-remove"><i class="pi pi-trash"></i>Ta bort</button>
+                <button @click="deleteMovieUpdate(movie, ind)" class="movie-action movie-remove"><i class="pi pi-trash"></i>Ta bort</button>
             </div>
         </div>
         </TransitionGroup>

@@ -4,6 +4,7 @@ import { onMounted, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import MoviesList from './MoviesList.vue';
+import { getMovie } from '@/api/movies';
 
 
 const movieResults = ref([]);
@@ -48,6 +49,17 @@ onMounted(async () => {
 
 })
 
+const popMovie = (ind) => {
+  movieResults.value.splice(ind, 1)
+}
+
+const updateMovie = async (movie) => {
+  movie.screenings = await getMovie(movie).screenings;
+  movie.showEdit = false;
+  movie.showScreenings = false;
+
+}
+
 </script>
 
 
@@ -55,7 +67,7 @@ onMounted(async () => {
     
     <div class="movie-database">
     <h1>Movie Database</h1>
-    <MoviesListAdmin v-if="movieResults" :movies="movieResults" :theatres="theatresResults" @update="fetchMovies" title="Added:"/>
+    <MoviesListAdmin v-if="movieResults" :movies="movieResults" :theatres="theatresResults" @popMovie="popMovie" @updateMovie="updateMovie" title="Added:"/>
     </div>
     
 
