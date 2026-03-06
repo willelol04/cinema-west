@@ -9,34 +9,14 @@ import router from '@/router';
 
 const Router = useRouter();
 
-const upcomingMovies = ref([]);
-const fetchComplete = ref(false);
+const props = defineProps({
+    upcomingMovies: Array,
+});
     
 const goToMovie = (slide) => {
-    const movie_id = upcomingMovies.value[slide.index].id;
-    Router.push("/movies/"+movie_id);
+    const movie_id = props.upcomingMovies[slide.index].id;
+    Router.push(`/movies/${movie_id}`);
 }
-
-
-    
-onMounted(async function fetchUpcoming(numbers_tried = 1) {
-    const num = numbers_tried;
-    try {
-        const upcomingMoviePromise = await fetch("/api/movies/upcoming")
-        const upcomingMovieObject = await upcomingMoviePromise.json();
-        upcomingMovies.value = upcomingMovieObject;
-        console.log(upcomingMovies.value);
-        fetchComplete.value = true;
-        console.log("successful - ", num);
-    } catch(e) {
-        console.log(e);
-        setTimeout(() => {fetchUpcoming(1+num)}, 20000);
-        console.log("failed - ", num);
-    } finally {
-        console.log("quit");
-    }
-})
-
 
 
 
@@ -50,7 +30,6 @@ const carousel = ref({
 });
 
 
-const columns = ref(6);
 
 const updateColumns = () => {
   const width = window.innerWidth;
@@ -87,8 +66,8 @@ onMounted(() => {
 <template>
     <section>
     <h1 style="text-align: center;">Coming soon</h1>
- <Carousel3d v-if="fetchComplete" class="carousel" :space="carousel.space" :display="carousel.display" :autoplay-timeout="10000" :autoplay="true" :controls-visible="carousel.controlsVisible" :onMainSlideClick="goToMovie" :clickable="carousel.clickable" :width="carousel.width" :height="carousel.height">
-    <Slide v-for="(item, ind) in upcomingMovies" class="slide" :index="ind">
+ <Carousel3d class="carousel" :space="carousel.space" :display="carousel.display" :autoplay-timeout="10000" :autoplay="true" :controls-visible="carousel.controlsVisible" :onMainSlideClick="goToMovie" :clickable="carousel.clickable" :width="carousel.width" :height="carousel.height">
+    <Slide v-for="(item, ind) in props.upcomingMovies" class="slide" :index="ind">
     <div class="upcoming-movie">
     <img v-if="item.poster_path" :src="`https://image.tmdb.org/t/p/original`+item.poster_path" height="326" width="auto">
     <img v-else src="../assets/poster_examples/jack1.jpg" height="326" width="auto">
@@ -104,19 +83,12 @@ onMounted(() => {
 
 
   </Carousel3d>
-  <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
   </section>
 </template>
 
 <style scoped>
 
 
-.fetch-loading {
-    margin: 0 auto;
-    text-align: center;
-    color: #bdc7bf;
-    padding: 100px;
-}
 section {
     padding: 20px 10vw;
 }

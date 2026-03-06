@@ -206,15 +206,10 @@ def get_movies_schedule(session):
 
         tomorrows_screenings = session.execute(select(Screening).where(Screening.start_time >= tomorrow_start).where(Screening.start_time <= tomorrow_end).options(selectinload(Screening.movie))).scalars().all()
         tomorrows_movies = [screening.movie for screening in tomorrows_screenings]
-        print("\n\n\n\n\n")
-        print(now)
-        print(today_start)
-        print(today_end)
-        print(tomorrow_start)
-        print(tomorrow_end)
-        print(todays_movies)
-        print("\n\n\n\n\n")
-        return {"today": todays_movies, "tomorrow": tomorrows_movies}
+        
+        upcoming_movies = get_movies_upcoming(session)
+
+        return {"today": todays_movies, "tomorrow": tomorrows_movies, "upcoming": upcoming_movies}
     except Exception as e:
         print(e)
         raise
@@ -375,11 +370,14 @@ def get_booking(id, session, claims):
     try:
         booking = session.get(Booking, id, options=[selectinload(Booking.tickets)])
         user = get_user_by_auth_id(claims.sub, session)
+        print("\n\n\n\n\n\n\n\n")
+        print(f"-- GET -- issuer [{user.id}], owner [{booking.user_id}]")
+        print("\n\n\n\n\n\n\n\n")
         if booking:
-            if user.id != booking.user_id or user.is_admin == True:
-                raise AuthorizationError(f"User with id: {user.id} not authorized for this task")
-            else:
+            if user.id == booking.user_id or user.is_admin == True:
                 return booking
+            else:
+                raise AuthorizationError(f"User with id: {user.id} not authorized for this task")
         else:
             raise EntityNotFoundError(f"No booking with id:{id}")
     except SQLAlchemyError as e:
@@ -392,6 +390,9 @@ def confirm_booking(booking_id, session, claims):
     try:
         booking = session.get(Booking, booking_id)
         user = get_user_by_auth_id(claims.sub, session)
+        print("\n\n\n\n\n\n\n\n")
+        print(f"-- PAYMENT -- issuer [{user.id}], owner [{booking.user_id}]")
+        print("\n\n\n\n\n\n\n\n")
         if booking:
             if user.id != booking.user_id:
                 raise AuthorizationError(f"User with id: {user.id} not authorized for this task")

@@ -68,6 +68,7 @@ class MovieAdmin(MovieBase):
 class MovieSchedule(BaseModel):
     today: list[MovieAdmin]
     tomorrow: list[MovieAdmin]
+    upcoming: list[MovieAdmin]
     
 # -- User --
 class UserBase(BaseModel):

@@ -124,7 +124,7 @@ const scrollRight = () => {
 const addMovieUpdate = async (movie) => {
     try {
         const token = await getAccessTokenSilently();
-        await addMovie(movie, token);
+        await addMovie({id: movie.id}, token);
         emit('update', movie)
     } catch(e) {
         console.log(e)
@@ -135,7 +135,7 @@ const addMovieUpdate = async (movie) => {
 const deleteMovieUpdate = async (movie) => {
     try {
     const token = await getAccessTokenSilently();
-    await deleteMovie(movie, token);
+    await deleteMovie({id: movie.id}, token);
     emit('update', movie);
 
     } catch(e) {

@@ -4,8 +4,9 @@ import { onMounted } from 'vue';
 import LogoutButton from './LogoutButton.vue';
 
 import { useAuth0, User } from '@auth0/auth0-vue';
+import { deleteUser } from '@/api/users';
 
-const { isAuthenticated, isLoading, logout, error, getAccessTokenSilently } = useAuth0();
+const { isAuthenticated, user, isLoading, logout, error, getAccessTokenSilently } = useAuth0();
 
 const props = defineProps({
     user: {
@@ -19,38 +20,21 @@ const props = defineProps({
 })
 
 
-const deleteUser = async () => {
+const deleteUserSelf = async () => {
+    if(isAuthenticated?.value === true && user?.value) {
         try {
-        const token = await getAccessTokenSilently()
-        const response = await fetch("/api/auth0/users/", {
-            method: "DELETE",
-            body: JSON.stringify(props.user),
-            headers: {
-                "Content-Type": "application/json",
-                "authorization": `Bearer ${token}`,
+            console.log("usr: ", user)
+            const token = await getAccessTokenSilently();
+            await deleteUser({sub: user.value.sub, email: user.value.email}, token);
+            if(props.isMyProfile === true) {
+                logout();
             }
-
-        });
-        
-        
-        if (!response.ok) {
-            const error = await response.json();
-            alert(`Error: ${error.detail}`)
-            console.log(error)
-            return null
-        }
-        
-        if(props.isMyProfile === true) {
-            logout();
-        }
-
-            
         } catch(e) {
             alert(`Error: ${e}`)
             console.log(e)
-        } finally {
-            
-        }
+        } 
+
+    }
 
 }
 
@@ -66,7 +50,7 @@ const deleteUser = async () => {
     <div class="right">
         <h2 class="user-name">{{ props.user.email }}</h2>
         <LogoutButton v-if="props.isMyProfile" class="profile-logout" />
-        <button class="delete-acc" @click="deleteUser()" value="Delete account">Delete Account</button>
+        <button class="delete-acc" @click="deleteUserSelf()" value="Delete account">Delete Account</button>
     </div>
     </div>
 

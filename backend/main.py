@@ -360,16 +360,16 @@ async def get_management_token():
 @app.delete("/api/auth0/users", dependencies=[Depends(auth0.require_auth())])
 async def delete_user(user: validation.AuthUserRemove, session: Session = Depends(crud_operations.create_session)):
     async with httpx.AsyncClient() as client:
-        token = await get_management_token()
-        print("\n\n\n\n\n\n\n")
-        print(token)
-        print("\n\n\n\n\n\n\n")
-        delete_res = await client.delete(
-            f"https://{auth0_domain}/api/v2/users/{user.sub}",
-            headers={
-                "Authorization": f"Bearer {token}"
-            }
-        )
+        try:
+            token = await get_management_token()
+            await client.delete(
+                f"https://{auth0_domain}/api/v2/users/{user.sub}",
+                headers={
+                    "Authorization": f"Bearer {token}"
+                }
+            )
+        except Exception as e:
+            print(e)
 
     
     return crud_operations.delete_user(user, session)

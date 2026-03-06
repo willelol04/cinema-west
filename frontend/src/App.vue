@@ -10,8 +10,6 @@ import { getUser, addUser } from './api/users';
 
 const checkedUser = ref(false);
 
-
-
 const userExists = async (userAuthId) => {
     try {
         const token = await getAccessTokenSilently();
@@ -29,18 +27,14 @@ const userExists = async (userAuthId) => {
 
 }
 
-
-
-
-
 watch(
-  () => ([user, user.value]),
-  async ([user, value]) => {
-    if(user && value && !checkedUser.value) {
+  () => (user.value),
+  async (currUser) => {
+    if(currUser && currUser.sub && !checkedUser.value) {
         checkedUser.value = true;
-        if(! await userExists(value.sub)) {
+        if(! await userExists(currUser.sub)) {
           const token = await getAccessTokenSilently();
-          await addUser({sub: value.sub, nickname: value.nickname, email: value.email}, token);
+          await addUser({sub: currUser.sub, email:currUser.email, nickname: currUser.nickname}, token);
         } else {
           console.log("user exists, woo!");
 
@@ -49,16 +43,9 @@ watch(
   }
 )
 
-onMounted( async () => console.log("hej: ", await checkSession()))
+onMounted(checkSession);
 
 </script>
-
-
-
-
-<!---COMMENTING GITHUGÖLKJERÖLHJKT-->
-
-
 
 <template>
   <Navbar />

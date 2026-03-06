@@ -20,14 +20,13 @@ app.use(createAuth0({
   domain: import.meta.env.VITE_AUTH0_DOMAIN,
   clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
   authorizationParams: {
-    redirect_uri: window.location.origin,
-    audience: "http://localhost:8000",
+    redirect_uri: window.location.origin+'/callback',
+    audience: 'http://localhost:8000',
   },
   cacheLocation: "localstorage",
   useRefreshTokens: true,
 }))
 
-app.use(router);
 app.use(PrimeVue, {
     theme: {
         preset: Aura,
@@ -42,8 +41,10 @@ app.use(PrimeVue, {
 
 app.use(Carousel3dPlugin);
 
-app.mount('#app');
-
+app.use(router);
+router.isReady().then(() => {
+  app.mount('#app');
+})
   
 
 

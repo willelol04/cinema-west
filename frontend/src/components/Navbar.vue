@@ -21,8 +21,6 @@ const isActive = (currentRoutePath) => {
 
 const toggleDropdown = () => {
     dropDownState.value = !dropDownState.value;
-    console.log(dropDownState.value);
-    console.log("click");
 };
 
 
@@ -37,17 +35,6 @@ watch(
     dropDownState.value = false
   }
 );
-
-
-const isDesktop = true;
-const showSideNav = ref(false)
-
-
-const toggleSidenav = () => {
-    showSideNav.value = !showSideNav.value;
-}
-
-
 
 </script>
 

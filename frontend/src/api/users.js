@@ -6,28 +6,17 @@ export async function getUser(userAuth0Id, token) {
 
 
 export async function addUser(user, token) {
-    return await authenticatedFetch("/api/users", {
+    return await authenticatedFetch("/api/users", token, {
         method: "POST",
         body: JSON.stringify(user)
-    }, token);
+    });
 }
 
-export async function deleteUser(user) {
-    try {
-        const res = await authenticatedFetch("/api/auth0/users", {
+export async function deleteUser(user,  token) {
+        return await authenticatedFetch("/api/auth0/users", token, {
             method: "DELETE",
             body: JSON.stringify(user)
         });
-
-        if(!res.ok) {
-            err = await res.json();
-            console.log(`[${err.error_type}: ${err.detail}]`);
-        }
-        
-        return res.json();
-    } catch(e) {
-        console.log(e);
-    }
 }
 
 

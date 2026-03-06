@@ -2,52 +2,55 @@
 import MoviesList from './MoviesList.vue';
 import { ref, onMounted, reactive } from 'vue';
 import {useAuth0} from "@auth0/auth0-vue";
+import { getMoviesAll } from '@/api/movies';
+import { getTheatres } from '@/api/theatres';
+import { addScreening } from '@/api/screenings';
+import router from '@/router';
 
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
     
 const movieResults = ref([]);
 const theatreResults = ref([]);
 const start_time = ref(null)
-const fetchComplete = ref(false);
 const screening = reactive({
-    movie_id: 0,
-    theatre_id: 0,
+    movie_id: null,
+    theatre_id: null,
     start_times: [],
 
 })
 
 const fetchMovies = async () => {
-    const promise = await fetch("/api/movies");
-    movieResults.value = await promise.json();
-    console.log(movieResults.value);
+    try {
+        movieResults.value = await getMoviesAll();
+    } catch (e) {
+        console.log(e)
+    }
 }
 
 const fetchTheatres = async () => {
-    const promise = await fetch("/api/theatres");
-    theatreResults.value = await promise.json();
-    console.log(theatreResults.value);
-}
-
-const addScreening = async () => {
-    if (screening.start_times.length > 0) {
-    const token = await getAccessTokenSilently();
-    const response = await fetch("/api/screenings", {
-        method: "POST",
-        body: JSON.stringify(screening),
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${token}`,
-        }
-
-    });
-    
-    alert("Screening(s) added.")
-    console.log(await response.text());
+    try {
+        theatreResults.value = await getTheatres();
+    } catch(e) {
+        console.log(e);
     }
+}
+
+const addScreeningUpdate = async () => {
+    if (screening.start_times.length > 0 && screening.movie_id !== null && screening.theatre_id !== null) {
+        try {
+            const token = await getAccessTokenSilently();
+            await addScreening(screening, token);
+            
+            alert("Screening(s) added.");
+
+        } catch(e) {
+            console.log(e);
+        }
+    } 
 
 }
 
-const addTime = () => {
+const addStartTime = () => {
     if (!screening.start_times.includes(start_time.value)) {
         screening.start_times.push(start_time.value);
     }
@@ -64,7 +67,7 @@ onMounted(fetchTheatres);
 
 <template>
     <div class="add-screening">
-    <form method="POST" @submit.prevent="addScreening">
+    <form method="POST" @submit.prevent="addScreeningUpdate">
     <h1>New Screening</h1>
         <div class="grid">
         <label for="movies">Movie:</label>
@@ -76,7 +79,7 @@ onMounted(fetchTheatres);
         <label for="time">Time:</label>
         <span>
         <input type="datetime-local" v-model="start_time" id="time">
-        <button type="button" @click="addTime()">Add time</button>
+        <button type="button" @click="addStartTime()">Add time</button>
         <div class="screening_times">
             <div class="time" v-for="(time, ind) in screening.start_times">{{ time }}<button type="button" @click="deleteTime(ind)"><i class="pi pi-times"></i></button></div>
         </div>

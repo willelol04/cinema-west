@@ -9,17 +9,21 @@ export function getMoviesAll() {
     return normalFetch("/api/movies");
 }
 
+export function getMovieSchedule() {
+    return normalFetch("/api/movies/schedule");
+}
+
 export function deleteMovie(movie, token) {
     return authenticatedFetch("/api/movies", token, {
         method: "DELETE",
-        body: JSON.stringify({id: movie.id}),
+        body: JSON.stringify(movie),
     });
 }
 
 export function addMovie(movie, token) {
     return authenticatedFetch("/api/movies", token, {
         method: "POST",
-        body: JSON.stringify({id: movie.id}),
+        body: JSON.stringify(movie),
     });
 }
 

@@ -1,5 +1,8 @@
 <script setup>
 import { RouterView, useRoute } from 'vue-router';
+import { useAuth0 } from '@auth0/auth0-vue'
+ 
+const {isAuthenticated} = useAuth0;
 
 const isActive = (currentRoutePath) => {
     const route = useRoute();
@@ -7,7 +10,7 @@ const isActive = (currentRoutePath) => {
 }
 </script>
 
-<template>
+<template v-if="isAuthenticated?.value === true">
     <main>
         <div class="dashboard-menu">
             <ul>

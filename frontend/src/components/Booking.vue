@@ -5,54 +5,37 @@ import Booking from '@/components/Booking.vue';
 import { useRoute, useRouter } from 'vue-router';
 import {useAuth0} from "@auth0/auth0-vue";
 import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+import {getScreening} from '@/api/screenings';
+import {addBooking} from '@/api/bookings';
+
 
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const screeningResult = ref(null);
 const checkedSeats = ref([]);
-const fetchIntervalID = ref(null)
-const wsIntervalId = ref(null)
 const booked_seat_ids = ref([])
 
 const route = useRoute();
 const router = useRouter();
 
 async function fetchScreening() {
-    const promise = await fetch("/api/screenings/"+route.params.id);
-    screeningResult.value = await promise.json();
+    screeningResult.value = await getScreening(route.params.id);
     booked_seat_ids.value = screeningResult.value.booked_seat_ids;
-    console.log(screeningResult.value);
-
 }
 
 const bookTickets = async () => {
     if(checkedSeats.value.length > 0) {
         try {
         const token = await getAccessTokenSilently();
-        const response = await fetch("/api/bookings", {
-            method: "POST",
-            body: JSON.stringify({seats: checkedSeats.value, screening_id: screeningResult.value.id}),
-            headers: {
-                "Content-Type": "application/json",
-                "authorization": `Bearer ${token}`,
-            }
-
-        });
-        
-        if (!response.ok) {
-            const error = await response.json();
-            alert(`Error: ${error.detail}`)
-            console.log(error)
-            return null
-        }
-        
-        const bookingId = await response.json()
+        const bookingId = await addBooking({seats: checkedSeats.value, screening_id: screeningResult.value.id}, token);
 
         console.log(bookingId);
         ws.send(JSON.stringify({msg: "user", timestamp: timestamp}))
         console.log("Sent")
 
-        router.push(`/payment/${bookingId}`)
+        if(bookingId) {
+            router.push(`/payment/${bookingId}`)
+        }
             
         } catch(e) {
             alert(`Error: ${e}`)
@@ -66,12 +49,10 @@ const bookTickets = async () => {
     }
 
 }
-const ws = new WebSocket(`/ws/${route.params.id}`);
+const ws = new WebSocket(`http://localhost:8000/ws/${route.params.id}`);
 
 onBeforeUnmount(() => {
-
     ws.close()
-
 })
 
 let timestamp = null;

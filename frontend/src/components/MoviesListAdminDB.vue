@@ -5,14 +5,15 @@ import MoviesView from '@/views/MoviesView.vue';
 import MovieDetails from './MovieDetails.vue';
 import ConfirmDeleteModal from './ConfirmDeleteModal.vue';
 import {useAuth0} from "@auth0/auth0-vue";
-import {addMovie, deleteMovie} from '../api/movies'
+import {addMovie, deleteMovie, getMovie} from '../api/movies'
+import {updateScreening, deleteScreening} from '../api/screenings'
+import { eachMinuteOfInterval } from 'date-fns';
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const start_ind = ref(0);
-const fetchComplete = ref(false);
-const confirmDelete = ref(false)
 
-const emit = defineEmits(["popMovie", "updateMovie"])
+const emit = defineEmits(['update'])
+
 
 const props = defineProps({
     title: {
@@ -20,59 +21,7 @@ const props = defineProps({
         default: 'Movies',
     },
     theatres: Array,
-    movies: {
-        type: Array,
-        default: [
-            {
-                title: 'Jack reacher 0',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 1',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 2',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 3',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 4',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 5',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 6',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 7',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 8',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 9',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 10',
-                times: ['22.43', '19.00', '14.00'],
-            },
-            {
-                title: 'Jack reacher 11',
-                times: ['22.43', '19.00', '14.00'],
-            },
-        ],
-    },
+    movies: Array,
     limit: {
         type: Number,
         default: 200,
@@ -121,27 +70,11 @@ const scrollRight = () => {
     }
 };
 
-
-const addMovieUpdate = async (movie) => {
-    try {
-        const token = await getAccessTokenSilently();
-        await addMovie(movie, token);
-        emit('update')
-    } catch(e) {
-        console.log(e)
-    }
-
-};
-
 const deleteMovieUpdate = async (movie, ind) => {
     try {
     const token = await getAccessTokenSilently();
-    await deleteMovie(movie, token);
-    
-    
-    emit('popMovie', ind);
-    alert("Movie removed");
-
+    await deleteMovie({id: movie.id}, token);
+    emit('update');
     } catch(e) {
         console.log(e)
     }
@@ -149,67 +82,26 @@ const deleteMovieUpdate = async (movie, ind) => {
 };
 
 
-const updateScreening = async (movie, screening) => {
+const updateScreeningUpdate = async (screening) => {
     try {
-    const token = await getAccessTokenSilently();
-    const response = await fetch("/api/screenings", {
-        method: "PATCH",
-        body: JSON.stringify({id: screening.id, start_time: screening.start_time}),
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": `Bearer ${token}`,
-        }
-
-    });
-    
-    if (!response.ok) {
-        const error = await response.json();
-        alert(`Error: ${error.detail}`)
-        console.log(error)
-        return null
-    }
-    
-    emit('updateMovie', movie);
-    alert("Screening updated");
-
+        const token = await getAccessTokenSilently();
+        await updateScreening(screening, token);
+        emit('update');
     } catch(e) {
         console.log(e)
-    }
-
+    } 
 };
 
 
-const deleteScreening = async (ind, screening_id) => {
+const deleteScreeningUpdate = async (screening) => {
     if(confirm("Are you sure you want to delete this screening?")) {
-    try {
-    const token = await getAccessTokenSilently();
-    const response = await fetch("/api/screenings", {
-        method: "DELETE",
-        body: JSON.stringify({id: screening_id}),
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": `Bearer ${token}`,
+        try {
+            const token = await getAccessTokenSilently();
+            await deleteScreening(screening, token)
+            emit('update');
+        } catch(e) {
+            console.log(e)
         }
-
-    });
-    
-    if (!response.ok) {
-        const error = await response.json();
-        alert(`Error: ${error.detail}`)
-        console.log(error)
-        return null
-    }
-    
-    movie.showScreenings = false;
-    movie.screenings.splice(ind, 1);
-    
-    alert("Screening removed");
-
-    } catch(e) {
-        console.log(e)
-    }
-
-
     }
 };
 </script>
@@ -236,10 +128,10 @@ const deleteScreening = async (ind, screening_id) => {
                     <span v-if="!screening.showEdit">
                     {{ screening.start_time }}
                     <button @click="screening.showEdit = !screening.showEdit"> <i class="pi pi-pen-to-square"></i></button>
-                    <button @click="deleteScreening(movie, screening.id)"><i class="pi pi-times"></i></button>                       
+                    <button @click="deleteScreeningUpdate(screening)"><i class="pi pi-times"></i></button>                       
                     </span>
                     <span v-else>
-                    <form @submit.prevent="updateScreening(movie, screening)">
+                    <form @submit.prevent="updateScreeningUpdate(screening)">
                     <input type="datetime-local" v-model="screening.start_time" id="time">
                     <input type="submit">
                     <button @click="screening.showEdit = !screening.showEdit">Cancel edit</button>

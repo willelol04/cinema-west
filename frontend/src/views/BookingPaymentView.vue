@@ -3,6 +3,7 @@ import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { routeLocationKey, useRoute, useRouter } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import {useAuth0} from "@auth0/auth0-vue";
+import { getBooking, deleteBooking } from '@/api/bookings';
 const {isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const timer = ref(300);
@@ -29,23 +30,7 @@ const formData = reactive({
 async function fetchBooking() {
     try {
         const token = await getAccessTokenSilently();
-        const promise = await fetch(`/api/bookings/${route.params.id}`, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-        }
-        );
-        
-        if(!promise.ok ) {
-            router.push('/');
-            return;
-        }
-        
-
-        bookingResult.value = await promise.json();
-        
-
+        bookingResult.value = await getBooking(route.params.id, token);
 
         formData.amount = bookingResult.value.total_price
         console.log(bookingResult.value);
@@ -64,29 +49,10 @@ async function fetchBooking() {
 }
 
 
-const cancelBooking = async (booking_id) => {
+const cancelBooking = async () => {
     try {
         const token = await getAccessTokenSilently();
-        const res = await fetch("/api/bookings", {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                id: bookingResult.value.id, 
-                screening_id: bookingResult.value.screening_id
-            }),
-        });
-
-        if (!res.ok) {
-            const err = await res.json();
-            alert("Booking cancellation failed: ", err);
-            return;
-        }
-
-        const result = await res.json();
-        console.log(result);
+        await deleteBooking({id: bookingResult.value.id, screening_id: bookingResult.value.screening_id}, token);
     } catch (e) {
         console.log(e);
         alert("Something went wrong: " + e.message);
@@ -102,7 +68,7 @@ onMounted(async () => {
 
 onBeforeUnmount(async () => {
     if(!paymentComplete.value && bookingResult.value) {
-         await cancelBooking(route.params.id);
+         await cancelBooking();
     }
 });
 
