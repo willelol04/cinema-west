@@ -21,3 +21,12 @@ create table screening(id int AUTO_INCREMENT NOT NULL, movie_id int not null, th
 
 drop table ticket;
 create table ticket(id int AUTO_INCREMENT not null, user_id int not null, screening_id int not null, seat_id int not null, created_at datetime default NOW() not null, is_cancelled bool default false not null, primary key(id), foreign key (user_id) references user(id), foreign key (screening_id) references screening(id), foreign key(seat_id) references seat(id), unique(screening_id, seat_id));
+
+
+drop table booking;
+drop table movie_genre;
+drop table movie;
+drop table booking;
+drop table screening;
+drop table ticket;
+drop table user;
