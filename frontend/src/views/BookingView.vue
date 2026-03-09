@@ -82,7 +82,7 @@ onMounted(async () => {
         <h3>{{ screeningResult.movie.title }} - {{ format(screeningResult.start_time, "EEEE, MMMM do HH:mm") }}</h3>
         <form method="POST" @submit.prevent="bookTickets()" action="#">
         <div class="screen">Movie Screen</div>
-        <div :style="`grid-template-columns: repeat(${screeningResult.theatre.seats_per_row}, 1fr)`" class="gridding">
+        <div :style="`grid-template-columns: repeat(${screeningResult.theatre.seats_per_row}, 1fr)`" class="seat-grid">
         <label v-for="(seat, ind) in screeningResult.theatre.seats" :key="ind" class="checkbox-label">
             <div class="seat">
             <input v-model="checkedSeats" type="checkbox" :value="seat" :disabled="booked_seat_ids?.includes(seat.id)">
@@ -103,7 +103,7 @@ onMounted(async () => {
 h3 {
     text-align: center;
 }
-.gridding {
+.seat-grid {
     width: 100%;
     display: grid;
     margin: 0 auto;
@@ -115,6 +115,7 @@ h3 {
     background-position: center; 
     background-size: cover;
     position: relative;
+    padding: 20px 200px;
 }
 
 .screen {
@@ -129,11 +130,10 @@ h3 {
 }
 
 form {
+    width: 100%;
     display: block;
     text-align: center;
     margin: 0 auto;
-    padding: 20px;
-    width: fit-content;
     
 }
 
@@ -202,18 +202,34 @@ input[type="submit"]:hover {
 
 }
 @media only screen and (max-width: 768px) {
+    .check i {
+        font-size: 12px;
 
-
-input[type="checkbox"] {
-    width: 16px;
-    height: 16px
-
-}
-
-.check i {
-    font-size: 16px;
+    }
 
 }
+
+@media only screen and (max-width: 1200px) {
+
+    input[type="checkbox"] {
+        width: 12px;
+        height: 12px
+
+    }
+
+    .seat-grid {
+        gap: 5px 3px;
+    }
+
+    .check i {
+        font-size: 12px;
+
+    }
+
+
+    .booking {
+        padding: 10px;
+    }
 }
 
 

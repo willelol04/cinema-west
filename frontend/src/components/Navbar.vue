@@ -41,7 +41,7 @@ watch(
 <template>
         <nav>
         <div class="top">
-        <h1><RouterLink to="/"><img src="../public/favicon.ico" style="vertical-align: middle; margin-right: 15px;" height="50">cinema west</RouterLink></h1>
+            <h1><RouterLink to="/"><img src="../public/favicon.ico" style="vertical-align: middle; margin-right: 15px;" height="50"><span class="logo-text">cinema west</span></RouterLink></h1>
         <div class="nav-dropdown first">
         <button v-if="isAuthenticated && !isLoading && user" @click="toggleDropdown()" class="nav-item user-btn"><i class="pi pi-user"></i>{{ user.name.slice(0,7) }}...<i v-if="returnDropDownState()" class="pi pi-chevron-up"></i><i v-else class="pi pi-chevron-down"></i></button>
         <LoginButton v-else></LoginButton>
@@ -193,6 +193,7 @@ nav > ul li a {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 30px;
 }
 .login-btn {
     padding: 8px 5px;
@@ -201,8 +202,16 @@ nav > ul li a {
 
 @media screen and (max-width: 1200px) {
     nav {
-        padding: 50px;
-        padding-bottom: 0;
+        padding: 0;
+    }
+
+    .top {
+        padding: 10px;
+    }
+    
+
+    .logo-text {
+        display: none;
     }
 }
 

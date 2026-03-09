@@ -40,7 +40,7 @@ const updateColumns = () => {
     display: 1,
     controlsVisible: true,
     clickable: false,
-    width: 500,
+    width: 217,
     height: 326,
     };
   }

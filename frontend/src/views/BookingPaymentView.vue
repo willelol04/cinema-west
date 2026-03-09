@@ -204,4 +204,14 @@ button {
 form {
     text-align: center;
 }
+
+@media screen and (max-width:1200px) {
+    .booking-confirmation {
+        width: 100%;
+    }
+
+    section {
+        padding: 10px;
+    }
+}
 </style>

@@ -58,7 +58,7 @@ const cancelBooking = async (booking) => {
 <template>
     
     <div class="my-profile">
-        <Profile v-if="isAuthenticated" :isMyProfile="true" :user="{email: user.email, sub: user.sub}"/>
+        <Profile class="profile-info" v-if="isAuthenticated" :isMyProfile="true" :user="{email: user.email, sub: user.sub}"/>
         <div v-if="showAlert" class="new-booking-alert"><button @click="showAlert=false" class="close-alert-btn"><i class="pi pi-times"></i></button>Alert: You have a new booking added to your account! <button class="go-to-booking-btn" @click="goToBooking(route.query.bookingId)" > Go to booking</button></div>
         <div class="bookings">
         <BookingCard class="booking" v-for="(booking, ind) in bookings" @delete="cancelBooking(booking)" :booking="booking"/>
@@ -119,16 +119,22 @@ const cancelBooking = async (booking) => {
     width: 100%;
 }
     
-@media screen and (max-width: 768px) {
-    .bookings {
-        grid-template-columns: repeat(1, 1fr);
-    }
-}
   
  
 @media screen and (max-width: 1200px) {
     .my-profile {
         padding: 10px;
+    }
+
+    .bookings {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .profile-info {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: middle;
     }
 }
 

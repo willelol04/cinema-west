@@ -59,6 +59,7 @@ const deleteUserSelf = async () => {
 
 <style scoped>
 
+
 .profile {
     display: flex;
     flex-direction: row;
@@ -103,6 +104,12 @@ const deleteUserSelf = async () => {
 
 .user-name {
     margin-bottom: 10px;
+}
+
+@media screen and (max-width: 1200px) {
+    .right {
+        text-align: center;
+    }
 }
 
 </style>
