@@ -13,7 +13,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import selectinload
-from datetime import timedelta, datetime, date
+from datetime import timedelta, date, datetime, timezone
 
 
 
@@ -33,9 +33,9 @@ class Movie(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(100))
     overview: Mapped[str] = mapped_column(String(1000))
-    poster_path: Mapped[str] = mapped_column(String(1000))
-    release_date: Mapped[date] = mapped_column(Date, default="2024-01-01")
-    runtime: Mapped[int]= mapped_column(Integer)
+    poster_path: Mapped[str] = mapped_column(String(1000), nullable=True)
+    release_date: Mapped[date] = mapped_column(Date, nullable=True)
+    runtime: Mapped[int]= mapped_column(Integer, nullable=True)
     rating: Mapped[str] = mapped_column(String(20), nullable=True)
     language: Mapped[str] = mapped_column(String(10))
 
@@ -56,7 +56,7 @@ class User(Base):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    auth_id: Mapped[str] = mapped_column(String(50))
+    sub: Mapped[str] = mapped_column(String(50))
     nickname: Mapped[str] = mapped_column(String(50))
     email: Mapped[str] = mapped_column(String(50))
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -64,7 +64,7 @@ class User(Base):
     tickets: Mapped[List["Ticket"]] = relationship(cascade="all, delete-orphan")
     bookings: Mapped[List["Booking"]] = relationship(cascade="all, delete-orphan")
 
-    __table_args__ = (UniqueConstraint("auth_id", name="unique_auth0_id"),)
+    __table_args__ = (UniqueConstraint("sub", name="unique_auth0_id"),)
 
 
 
@@ -98,7 +98,8 @@ class Screening(Base):
     movie_id: Mapped[int] = mapped_column(ForeignKey("movie.id", ondelete="CASCADE"))
     theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"))
     start_time: Mapped[datetime] = mapped_column(DateTime)
-    is_cancelled: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(nullable=True, onupdate=datetime.now(timezone.utc))
     
     movie: Mapped["Movie"] = relationship(back_populates="screenings")
     tickets: Mapped[List["Ticket"]] = relationship(back_populates="screening", cascade="all, delete-orphan")
@@ -115,13 +116,14 @@ class Booking(Base):
     total_price: Mapped[float] = mapped_column(Float)
     status: Mapped[str] = mapped_column(String(20), default='pending')
 
-    created_at: Mapped[datetime] = mapped_column(DateTime)
-    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+    paid_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc)+timedelta(minutes=5))
     
     tickets: Mapped[List["Ticket"]] = relationship(order_by=lambda: (
             func.substr(Ticket.seat_id, 1, 1),               # letter
             cast(func.substr(Ticket.seat_id, 2), Integer)    # number
-        ))
+        ), cascade="all, delete-orphan")
     screening: Mapped["Screening"] = relationship()
 
 
@@ -145,12 +147,12 @@ class Ticket(Base):
         ForeignKeyConstraint(
             ["seat_id", "theatre_id"], ["seat.id", "seat.theatre_id"]
         ),
-        )
+    )
 
 
 jaws_db = "mysql+pymysql://gjisbozryr4hecgb:n1md8zcrm93ersbg@rmspavs8mpub7dkq.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/ycb7addrosdwlaip"
 
 local_db = "mysql+pymysql://cinema:6P3AZdYtUaWb7tBxHQa%@127.0.0.1/cinema?charset=utf8mb4"
 
-engine = create_engine(local_db,
+engine = create_engine(jaws_db,
 echo = True)

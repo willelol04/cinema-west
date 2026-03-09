@@ -103,8 +103,7 @@ const deleteMovieUpdate = async (movie) => {
     </div>
         <TransitionGroup name="list" tag="div" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
-            <img class="movie-poster" v-if=movie.poster_path :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
-            <i v-else class="pi pi-image"></i>
+            <img class="movie-poster" :src="(movie.poster_path ? `https://image.tmdb.org/t/p/original`+movie.poster_path : `https://placehold.co/400x600/000000/000000/png`)">
             <div class="movie-details">
             <h2>{{ movie.title }}</h2>
             <p v-if="movie.overview">{{ movie.overview.slice(0, 300) }}...</p>

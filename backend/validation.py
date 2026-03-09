@@ -78,6 +78,7 @@ class UserAuth(BaseModel):
     sub: str
     nickname: str
     email: str
+    is_admin: bool
 
 # -- Screening --
 class ScreeningBase(BaseModel):
@@ -105,7 +106,6 @@ class TheatreBase(BaseModel):
 # -- Ticket --
 class TicketBase(BaseModel):
     id: int
-
 
 
 class BookingAdd(BaseModel):
@@ -209,9 +209,8 @@ class PaymentRequest(BaseModel):
 
 # user
 
-class AuthUserRemove(BaseModel):
+class UserRemove(BaseModel):
     sub: str
-    email: str
 
 class BookingResponseTwo(BaseModel):
     id: int
@@ -227,7 +226,7 @@ class BookingResponseTwo(BaseModel):
     
 
 class UserAdmin(BaseModel):
-    auth_id: str
+    sub: str
     id: int
     nickname: str
     email: str

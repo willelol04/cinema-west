@@ -1,57 +1,51 @@
 <script setup>
-    
 import Profile from '@/components/Profile.vue';
 import BookingCard from '@/components/BookingCard.vue';
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import { useAuth0, User } from '@auth0/auth0-vue';
 
+import {useRoute, useRouter} from 'vue-router';
+import { deleteBooking, getMyBookings } from '@/api/bookings'
+
+const route = useRoute();
+const router = useRouter();
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const bookings = ref([])
+const showAlert = ref(false);
 const fetchBookings = async () => { 
     try {
     const token = await getAccessTokenSilently();
-    const bookingsPromise = await fetch("/api/my-bookings/", {
-      headers: {
-        "Content-type": "application/json",
-        "Authorization": `Bearer ${token}`
-      }
-    })
-
-    bookings.value = await bookingsPromise.json();
-
-    console.log(bookings.value);
+    bookings.value = await getMyBookings(token);
 
     } catch(e) {
         alert(e);
     }    
 }
 
-onMounted(async () => {await fetchBookings()})
 
+onMounted(async () => {
+    await fetchBookings();
+
+    await nextTick();
+
+    if(route.query.state=='new-booking' && route.query.bookingId) {
+        showAlert.value = true;
+    }
+})
+
+const goToBooking = (bookingId) => {
+    console.log(bookingId);
+    const element = document.querySelector(`#booking-${bookingId}`)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+}
 
 const cancelBooking = async (booking) => {
     try {
         const token = await getAccessTokenSilently();
-        const res = await fetch("/api/bookings", {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                id: booking.id, 
-                screening_id: booking.screening.id
-            }),
-        });
-
-        if (!res.ok) {
-            const err = await res.json();
-            alert("Booking cancellation failed: ", err);
-            return;
-        }
-
-        const result = await res.json();
+        const result = await deleteBooking({id: booking.id, screening_id: booking.screening_id}, token)
         console.log(result);
         fetchBookings();
     } catch (e) {
@@ -65,6 +59,7 @@ const cancelBooking = async (booking) => {
     
     <div class="my-profile">
         <Profile v-if="isAuthenticated" :isMyProfile="true" :user="{email: user.email, sub: user.sub}"/>
+        <div v-if="showAlert" class="new-booking-alert"><button @click="showAlert=false" class="close-alert-btn"><i class="pi pi-times"></i></button>Alert: You have a new booking added to your account! <button class="go-to-booking-btn" @click="goToBooking(route.query.bookingId)" > Go to booking</button></div>
         <div class="bookings">
         <BookingCard class="booking" v-for="(booking, ind) in bookings" @delete="cancelBooking(booking)" :booking="booking"/>
         </div>
@@ -74,10 +69,40 @@ const cancelBooking = async (booking) => {
 </template>
 
 <style scoped>
+
 .my-profile {
     width: 100%;
     padding: 20px 200px;
-    margin: 0 auto;
+    margin: 0 auto;    
+    height: 100%;
+}
+
+.new-booking-alert button {
+    vertical-align: middle;
+}
+
+.close-alert-btn {
+    margin-right: 20px;
+}
+
+.go-to-booking-btn {
+    text-decoration: underline;
+    background: black;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+    
+
+.new-booking-alert {
+    width: 100%;
+    background: rgb(46, 138, 81);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .bookings {
@@ -86,7 +111,8 @@ const cancelBooking = async (booking) => {
     grid-template-columns: repeat(3, 1fr);
     justify-items: center;
     grid-auto-rows: 1fr;
-    gap: 1%;
+    height: 100%;
+    gap: 15px;
 }
     
 .booking {

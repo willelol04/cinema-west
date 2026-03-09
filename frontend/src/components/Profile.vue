@@ -21,18 +21,20 @@ const props = defineProps({
 
 
 const deleteUserSelf = async () => {
-    if(isAuthenticated?.value === true && user?.value) {
-        try {
-            console.log("usr: ", user)
-            const token = await getAccessTokenSilently();
-            await deleteUser({sub: user.value.sub, email: user.value.email}, token);
-            if(props.isMyProfile === true) {
-                logout();
-            }
-        } catch(e) {
-            alert(`Error: ${e}`)
-            console.log(e)
-        } 
+    if(confirm("Are you sure you want to delete account?")) {
+        if(isAuthenticated?.value === true && user?.value) {
+            try {
+                console.log("usr: ", user)
+                const token = await getAccessTokenSilently();
+                await deleteUser({sub: user.value.sub}, token);
+                if(props.isMyProfile === true) {
+                    logout();
+                }
+            } catch(e) {
+                alert(`Error: ${e}`)
+                console.log(e)
+            } 
+        }
     }
 }
 

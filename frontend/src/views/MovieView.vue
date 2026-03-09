@@ -1,16 +1,15 @@
 <script setup>
 import MovieDetails from '@/components/MovieDetails.vue';
-import Booking from '@/components/Booking.vue';
 import { useRoute } from 'vue-router';
 import { onMounted, ref } from 'vue';
+import { getMovie } from '@/api/movies';
 
 const movieResults = ref({});
 
 const route = useRoute();
 
 async function fetchMovie() {
-    const promise = await fetch("/api/movies/id/"+route.params.id);
-    movieResults.value = await promise.json();
+    movieResults.value = await getMovie(route.params.id);
     console.log(movieResults.value);
 }
 
@@ -21,7 +20,6 @@ onMounted(fetchMovie);
 
 <template>
     <MovieDetails :movie="movieResults" />
-
 </template>
 
 <style scoped>

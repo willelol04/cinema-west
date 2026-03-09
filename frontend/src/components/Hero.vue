@@ -67,16 +67,15 @@ onMounted(() => {
     <section>
     <h1 style="text-align: center;">Coming soon</h1>
  <Carousel3d class="carousel" :space="carousel.space" :display="carousel.display" :autoplay-timeout="10000" :autoplay="true" :controls-visible="carousel.controlsVisible" :onMainSlideClick="goToMovie" :clickable="carousel.clickable" :width="carousel.width" :height="carousel.height">
-    <Slide v-for="(item, ind) in props.upcomingMovies" class="slide" :index="ind">
+    <Slide v-for="(movie, ind) in props.upcomingMovies" class="slide" :index="ind">
     <div class="upcoming-movie">
-    <img v-if="item.poster_path" :src="`https://image.tmdb.org/t/p/original`+item.poster_path" height="326" width="auto">
-    <img v-else src="../assets/poster_examples/jack1.jpg" height="326" width="auto">
+    <img :src="(movie.poster_path ? `https://image.tmdb.org/t/p/original`+movie.poster_path : `https://placehold.co/400x600/000000/000000/png`)" height="326" width="auto">
     <div class="right">
-        <h3 class="upcoming-movie-title">{{ item.title }}</h3>
+        <h3 class="upcoming-movie-title">{{ movie.title }}</h3>
         <br>
-        <h4 class="upcoming-movie-date">{{ format(item.release_date, 'MMMM do yyyy') }}</h4>
+        <h4 class="upcoming-movie-date">{{ format(movie.release_date, 'MMMM do yyyy') }}</h4>
         <br>
-        <p class="upcoming-movie-overview">{{ item.overview.length < 200 ? item.overview : item.overview.slice(0,200)+"..." }} </p>
+        <p class="upcoming-movie-overview">{{ movie.overview.length < 200 ? movie.overview : movie.overview.slice(0,200)+"..." }} </p>
     </div>
     </div>
     </Slide>

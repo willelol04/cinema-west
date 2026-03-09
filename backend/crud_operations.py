@@ -14,12 +14,11 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError, NoResultFound
 from sqlalchemy import func, text
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 
 from models import engine, Base, movie_genre, Movie, User, Genre, Theatre, Ticket, Screening, Seat, Booking
 import validation
 
-import datetime
 from contextlib import contextmanager
 
 
@@ -50,20 +49,25 @@ class EntityNotFoundError(Exception):
         return f"{self.message}"
 
 class AuthorizationError(Exception):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
+    def __init__(self, user_id):
+        self.user_id = user_id
     def __str__(self):
-        return f"{self.message}"
+        return f"User with id: {self.user_id} not authorized for this task."
+
+class BookingAlreadyPaidError(Exception):
+    def __init__(self, booking_id):
+        self.booking_id = booking_id
+
+    def __str__(self):
+        return f"Booking has already been paid for."
 
 
-def add_booking(booking: validation.BookingAdd, session, auth_id: str):
+def add_booking(user, booking: validation.BookingAdd, session):
         try:
-            id = get_user_by_auth_id(auth_id, session).id
             created_tickets = []
-            booking_id = session.execute(insert(Booking).values(user_id=id, screening_id=booking.screening_id, total_price=100*len(booking.seats), created_at=func.now(), expires_at=func.adddate(func.now(), text("INTERVAL 5 MINUTE"))).returning(Booking.id)).scalar()
+            booking_id = session.execute(insert(Booking).values(user_id=user.id, screening_id=booking.screening_id, total_price=100*len(booking.seats)).returning(Booking.id)).scalar()
             for seat in booking.seats:
-                t = Ticket(user_id=id, booking_id=booking_id, screening_id=booking.screening_id, seat_id=seat["id"], theatre_id=seat["theatre_id"])
+                t = Ticket(user_id=user.id, booking_id=booking_id, screening_id=booking.screening_id, seat_id=seat["id"], theatre_id=seat["theatre_id"])
                 created_tickets.append(t)
             session.add_all(created_tickets)
             session.flush()
@@ -85,9 +89,13 @@ def get_user_by_id(id, session):
     except Exception as e:
         raise
 
-def get_user_by_auth_id(auth_id, session):
+def get_user_by_sub(sub, session):
     try:
-        return session.execute(select(User).where(User.auth_id==auth_id)).scalar()
+        user = session.execute(select(User).where(User.sub==sub)).scalar()
+        if user:
+            return user
+        else: 
+            raise EntityNotFoundError(f"User with id {user} not found.")
     except Exception as e:
         raise
 
@@ -106,13 +114,9 @@ def search_user(query, session):
     except Exception as e:
         raise
 
-def delete_user(user, session, claims):
+def delete_user(user, session):
     try:
-        user_obj = session.get(User, get_user_by_auth_id(user.sub, session).id) 
-        if user_obj:
-            session.delete(user_obj)
-        else:
-            raise EntityNotFoundError(f"user with user_id:{user_obj.id} not found")
+        session.execute(delete(User).where(User.sub == user.sub))
         return {"id": user.sub}
     except IntegrityError as e:
         print(e)
@@ -124,9 +128,9 @@ def delete_user(user, session, claims):
         print(e)
         raise
 
-def add_user(user: validation.UserAuth, session, claims):
+def add_user(user: validation.UserAuth, session):
     try:
-        session.execute(insert(User).values(auth_id=user.sub, nickname=user.nickname, email=user.email, is_admin=1 if 'admin' in claims["http://localhost:8000/roles"] else 0))
+        session.execute(insert(User).values(sub=user.sub, nickname=user.nickname, email=user.email, is_admin=user.is_admin))
         return user
     except Exception as e:
         print("--Error--", e)
@@ -187,7 +191,7 @@ def get_movies_all(title, genre, rating, session):
 
 def get_movies_schedule(session):
     try:
-        now = datetime.datetime.today()
+        now = datetime.now(timezone.utc)
         today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         today_end = now.replace(hour=23, minute=59, second=59, microsecond=999999)
 
@@ -215,7 +219,7 @@ def get_movies_upcoming(session):
         print(e)
         raise
 
-def delete_movie(movie, session, claims):
+def delete_movie(movie, session):
     try:
         db_movie = session.get(Movie, movie.id)
         session.delete(db_movie)
@@ -227,7 +231,7 @@ def delete_movie(movie, session, claims):
         print(e)
         raise DatabaseError("Database query Failed") from e
 
-def add_movie(movie, session, claims):
+def add_movie(movie, session):
     try:
         rating = None
         for country in movie['releases']['countries']:
@@ -275,7 +279,7 @@ def get_screenings_all(session):
         print(e)
         raise
 
-def patch_screening(screening, session, claims):
+def patch_screening(screening, session):
     try:
         screening_obj = session.get(Screening, screening.id)
         if screening_obj:
@@ -290,7 +294,7 @@ def patch_screening(screening, session, claims):
         print(e)
         raise DatabaseError("Database query Failed") from e
 
-def delete_screening(screening, session, claims):
+def delete_screening(screening, session):
     try:
         screening_obj = session.get(Screening, screening.id)
         if screening_obj:
@@ -301,7 +305,7 @@ def delete_screening(screening, session, claims):
         print(e)
         raise
 
-def add_screening(screening, session, claims):
+def add_screening(screening, session):
 
     try:
         for time in screening.start_times:
@@ -359,15 +363,14 @@ def clean_pending_bookings():
 
 # booking
 
-def get_booking(id, session, claims):
+def get_booking(user, id, session):
     try:
         booking = session.get(Booking, id, options=[selectinload(Booking.tickets)])
-        user = get_user_by_auth_id(claims.sub, session)
         if booking:
-            if user.id == booking.user_id or user.is_admin == True:
-                return booking
-            else:
-                raise AuthorizationError(f"User with id: {user.id} not authorized for this task")
+                if booking.user_id == user.id or user.is_admin:
+                    return booking
+                else:
+                    raise AuthorizationError(user.id)
         else:
             raise EntityNotFoundError(f"No booking with id:{id}")
     except SQLAlchemyError as e:
@@ -376,34 +379,37 @@ def get_booking(id, session, claims):
         print(e)
         raise
 
-def confirm_booking(booking_id, session, claims):
+def confirm_booking(user, booking_id, session):
     try:
         booking = session.get(Booking, booking_id)
-        user = get_user_by_auth_id(claims.sub, session)
-        print("\n\n\n\n\n\n\n\n")
-        print(f"-- PAYMENT -- issuer [{user.id}], owner [{booking.user_id}]")
-        print("\n\n\n\n\n\n\n\n")
-        if booking:
-            if user.id != booking.user_id:
-                raise AuthorizationError(f"User with id: {user.id} not authorized for this task")
-            else:
-                booking.status='complete'
-        else:
+
+        if not booking:
             raise EntityNotFoundError(f"No booking with id:{booking_id}")
+
+        if user.id != booking.user_id:
+            raise AuthorizationError(user.id)
+
+        if booking.status == 'complete':
+            raise BookingAlreadyPaidError(booking_id)
+        
+        booking.status='complete'
+        booking.paid_at=datetime.now(timezone.utc)
+
         return {"status": "successful", "booking": booking}
         
     except SQLAlchemyError as e:
         raise DatabaseError from e
 
-def delete_booking(booking, session):
+def delete_booking(booking, session, user):
     try:
         booking_obj = session.get(Booking, booking.id)
-        if booking_obj:
-            for ticket in booking_obj.tickets:
-                session.delete(ticket)
-            session.delete(booking_obj)
+        if booking_obj.user_id == user.id or user.is_admin:
+            if booking_obj:
+                session.delete(booking_obj)
+            else:
+                raise EntityNotFoundError(f"No booking with id:{booking.id}")
         else:
-            raise EntityNotFoundError(f"No booking with id:{booking.id}")
+            raise AuthorizationError(user.id)
     except IntegrityError as e:
         print("--Error--", e)
         raise DatabaseConflictError("Conflict occured while deleting booking.") from e
@@ -413,11 +419,10 @@ def delete_booking(booking, session):
 
 
 # tickets
-def get_user_bookings(auth_id, session):
-    print(auth_id)
+def get_user_bookings(user, session):
     try:
         result = session.execute(select(Booking)
-                                 .where(Booking.user_id==get_user_by_auth_id(auth_id, session).id)
+                                 .where(Booking.user_id==user.id)
                                  .options(
                                      selectinload(Booking.tickets).selectinload(Ticket.seat).selectinload(Seat.theatre), 
                                      selectinload(Booking.tickets).selectinload(Ticket.screening).selectinload(Screening.movie),
@@ -463,7 +468,7 @@ if __name__ == "__main__":
         Theatre.__table__.create(bind=engine, checkfirst=True)
         Seat.__table__.create(bind=engine, checkfirst=True)
         Screening.__table__.create(bind=engine, checkfirst=True)
-        create_theatre(1, "Salong A", 20, 7, session)
+        #create_theatre(1, "Salong A", 20, 7, session)
         Booking.__table__.create(bind=engine, checkfirst=True)
         Ticket.__table__.create(bind=engine, checkfirst=True)
 

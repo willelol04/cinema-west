@@ -1,7 +1,6 @@
 <script setup>
 import Hero from '@/components/Hero.vue';
 import MoviesList from '@/components/MoviesList.vue';
-import Booking from '@/components/Booking.vue';
 import { ref, onMounted } from 'vue';
 import { ConfirmPopupStyle } from 'primevue';
 import { format, formatDistance, formatRelative, subDays } from 'date-fns';

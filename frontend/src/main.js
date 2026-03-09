@@ -24,7 +24,6 @@ app.use(createAuth0({
     audience: 'http://localhost:8000',
   },
   cacheLocation: "localstorage",
-  useRefreshTokens: true,
 }))
 
 app.use(PrimeVue, {

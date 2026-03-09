@@ -29,7 +29,8 @@ const fetchMovies = async () => {
 
 const fetchTheatres = async () => {
     try {
-        theatreResults.value = await getTheatres();
+        const token = await getAccessTokenSilently();
+        theatreResults.value = await getTheatres(token);
     } catch(e) {
         console.log(e);
     }

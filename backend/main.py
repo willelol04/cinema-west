@@ -60,6 +60,16 @@ tmdb_headers = {
 
 tmdb_client = httpx.AsyncClient(headers=tmdb_headers, base_url="https://api.themoviedb.org/3")
 
+async def verify_user(claims: dict = Depends(auth0.require_auth()), session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_user_by_sub(claims.sub, session)
+
+def require_admin(claims: dict = Depends(auth0.require_auth()), session: Session = Depends(crud_operations.create_session)):
+    user = crud_operations.get_user_by_sub(claims.sub, session)
+    if 'admin' in claims[roles_string] and user.is_admin == True:
+        return
+    else:
+        raise crud_operations.AuthorizationError(user.id)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -93,6 +103,12 @@ def integrity_error(request: Request, exc: crud_operations.AuthorizationError):
     content={"detail": str(exc), "error_type": "authorization_error"}
     )
 
+@app.exception_handler(crud_operations.BookingAlreadyPaidError)
+def integrity_error(request: Request, exc: crud_operations.BookingAlreadyPaidError):
+    return JSONResponse(status_code=status.HTTP_409_CONFLICT,
+    content={"detail": str(exc), "error_type": "booking_already_paid_error"}
+    )
+
 async def getFromTMDB(path, parameters): 
     response = await tmdb_client.get(url=path, params=parameters)
 
@@ -104,6 +120,7 @@ async def getFromTMDB(path, parameters):
 
 # GET REQUESTS
 
+"""
 @app.get("/api/tmdb/movies/upcoming")
 async def getUpcoming():
     url = "/discover/movie"
@@ -119,8 +136,9 @@ async def getUpcoming():
               "sort_by":"popularity.desc",
               }
     return await getFromTMDB(url, params)
+"""
 
-@app.get("/api/tmdb/movies/search/{query}")
+@app.get("/api/tmdb/movies/search/{query}", dependencies=[Depends(require_admin)])
 async def search_movie(query):
     url = "/search/movie"
     params = { 
@@ -131,7 +149,7 @@ async def search_movie(query):
               }
     return await getFromTMDB(url, params)
 
-@app.get("/api/tmdb/movies/{id}")
+@app.get("/api/tmdb/movies/{id}", dependencies=[Depends(require_admin)])
 async def getMovieDetails(id):
         url = f"/movie/{id}"
         params = {"append_to_response": "releases"}
@@ -142,6 +160,8 @@ async def getMovieDetails(id):
 @app.get("/api/movies/id/{id}") 
 def get_movie(id: int, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_movie(id, session)
+
+"""
 
 @app.get("/api/movie/isadded/{id}")
 def movie_is_added(id, session: Session = Depends(crud_operations.create_session)):
@@ -154,6 +174,10 @@ def get_movies_upcoming(session: Session = Depends(crud_operations.create_sessio
     print(movies)
     return movies
 
+"""
+
+
+
 @app.get("/api/movies", response_model=List[validation.MovieAdmin])
 def get_movies_all(title: str | None = None, genre: int | None = None, rating: str | None = None, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_movies_all(title, genre, rating, session)
@@ -162,59 +186,49 @@ def get_movies_all(title: str | None = None, genre: int | None = None, rating: s
 def get_movies_schedule(session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_movies_schedule(session)
 
-@app.get("/api/theatres")
+@app.get("/api/theatres", dependencies=[Depends(require_admin)])
 def get_theatres_all(session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_theatres_all(session)
 
 # POST-REQUESTS
 
-@app.post("/api/movies", status_code=status.HTTP_201_CREATED)
-async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    if 'admin' not in claims[roles_string]:
-        raise crud_operations.AuthorizationError
-
+@app.post("/api/movies", dependencies=[Depends(require_admin), ], status_code=status.HTTP_201_CREATED)
+async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud_operations.create_session)):
     url = f"/movie/{movie.id}?append_to_response=release_dates"
     params = {"append_to_response": "releases"}
     movie_res = await getFromTMDB(url, params)
     print(movie_res)
-    return crud_operations.add_movie(movie_res, session, claims)
+    return crud_operations.add_movie(movie_res, session)
 
-@app.delete("/api/movies")
-def delete_movie(movie: validation.MovieBase,session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    if 'admin' not in claims[roles_string]:
-        raise crud_operations.AuthorizationError
+@app.delete("/api/movies", dependencies=[Depends(require_admin)])
+def delete_movie(movie: validation.MovieBase,session: Session = Depends(crud_operations.create_session)):
     return crud_operations.delete_movie(movie, session)
 
-@app.post("/api/users", status_code=status.HTTP_201_CREATED)
-def add_user(user: validation.UserAuth,session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    print(user)
-    crud_operations.add_user(user, session, claims)
+@app.post("/api/users", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
+def add_user(user: validation.UserAuth, session: Session = Depends(crud_operations.create_session)):
+    crud_operations.add_user(user, session)
     return user
 
-@app.get("/api/users/{id}")
+@app.get("/api/users/{id}", dependencies=[Depends(auth0.require_auth())])
 def get_user(id,session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_user_by_id(id, session)
 
-@app.get("/api/users/search/{query}", dependencies=[Depends(auth0.require_auth())], response_model=List[validation.UserAdmin])
+@app.get("/api/users/search/{query}", dependencies=[Depends(require_admin)], response_model=List[validation.UserAdmin])
 def search_user(query, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.search_user(query, session)
 
-@app.get("/api/auth0/users/{auth_id}")
-def get_auth_user(auth_id, session: Session = Depends(crud_operations.create_session)):
-    return crud_operations.get_user_by_auth_id(auth_id, session)
+@app.get("/api/auth0/users/{sub}", dependencies=[Depends(auth0.require_auth())])
+def get_auth_user(sub, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_user_by_sub(sub, session)
 
-@app.post("/api/screenings", status_code=status.HTTP_201_CREATED)
-def add_screening(screening: validation.ScreeningAdd, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    if 'admin' not in claims[roles_string]:
-        raise crud_operations.AuthorizationError
-    crud_operations.add_screening(screening, session, claims)
+@app.post("/api/screenings", dependencies=[Depends(require_admin)], status_code=status.HTTP_201_CREATED)
+def add_screening(screening: validation.ScreeningAdd, session: Session = Depends(crud_operations.create_session)):
+    crud_operations.add_screening(screening, session)
     return screening
 
-@app.delete("/api/screenings", status_code=status.HTTP_200_OK, dependencies=[Depends(auth0.require_auth())])
-def delete_screening(screening: validation.ScreeningBase, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    if 'admin' not in claims[roles_string]:
-        raise crud_operations.AuthorizationError
-    return crud_operations.delete_screening(screening, session, claims)
+@app.delete("/api/screenings", status_code=status.HTTP_200_OK, dependencies=[Depends(require_admin)])
+def delete_screening(screening: validation.ScreeningBase, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.delete_screening(screening, session)
 
 @app.get("/api/screenings/{id}")
 def get_screening(id, session: Session = Depends(crud_operations.create_session)):
@@ -239,25 +253,23 @@ def get_genres_all(session: Session = Depends(crud_operations.create_session)):
 # Booking
 
 @app.post("/api/bookings", status_code=status.HTTP_201_CREATED)
-def add_booking(booking: validation.BookingAdd, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    if 'admin' not in claims[roles_string]:
-        raise crud_operations.AuthorizationError
-    return crud_operations.add_booking(booking, session, claims.sub)
+def add_booking(booking: validation.BookingAdd, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
+    return crud_operations.add_booking(user, booking, session)
 
-@app.delete("/api/bookings", dependencies=[Depends(auth0.require_auth())])
-async def delete_booking(booking: validation.BookingRemove, session: Session = Depends(crud_operations.create_session)):
-    ret = crud_operations.delete_booking(booking, session)
+@app.delete("/api/bookings")
+async def delete_booking(booking: validation.BookingRemove, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
+    ret = crud_operations.delete_booking(booking, session, user)
     booked_seats = crud_operations.get_selected_seats(booking.screening_id, session)
-    await manager.broadcast_seats_json(booking.screening_id, {"msg": "Thank you", "booked_seat_ids": booked_seats})
+    await manager.broadcast_seats_json(booking.screening_id, {"msg": "update", "booked_seat_ids": booked_seats, "timestamp": int(datetime.datetime.now().timestamp())})
     return ret
     
 
 @app.get("/api/bookings/{id}", response_model=validation.BookingBase)
-def get_booking(id, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    return crud_operations.get_booking(id, session, claims)
+def get_booking(id, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
+    return crud_operations.get_booking(user, id, session)
 
 @app.post("/api/pay-booking")
-async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
     """
     async with httpx.AsyncClient() as client:
         token_res = await client.post(
@@ -294,7 +306,7 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
 
     
     
-    return crud_operations.confirm_booking(data.booking_id, session, claims)
+    return crud_operations.confirm_booking(user, data.booking_id, session)
         
 
 
@@ -303,9 +315,9 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
 
 # Tickets
 
-@app.get("/api/my-bookings/", response_model=List[validation.BookingResponse])
-def get_user_bookings(session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    return crud_operations.get_user_bookings(claims.sub, session)
+@app.get("/api/my-bookings", response_model=List[validation.BookingResponse])
+def get_user_bookings(user = Depends(verify_user), session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    return crud_operations.get_user_bookings(user, session)
 
 #EVENT FUNCTIONS
 @app.on_event("startup")
@@ -317,10 +329,8 @@ async def startup():
 
 # screenings
 
-@app.patch("/api/screenings")
-def patch_screening(screening: validation.ScreeningPatchRequest, session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    if 'admin' not in claims[roles_string]:
-        raise crud_operations.AuthorizationError
+@app.patch("/api/screenings", dependencies=[Depends(require_admin)])
+def patch_screening(screening: validation.ScreeningPatchRequest, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.patch_screening(screening, session)
 
 @app.on_event("shutdown")
@@ -331,14 +341,18 @@ async def shutdown():
     
 
 @app.websocket("/ws/{screening_id}")
-async def websocket(websocket: WebSocket, screening_id: int, session: Session = Depends(crud_operations.create_session)):
+async def websocket(websocket: WebSocket, screening_id: int):
     await manager.connect(websocket)
+    with Session(engine) as session:
+        booked_seats = crud_operations.get_selected_seats(screening_id, session)
+    await manager.send_personal_json({"msg": "update", "booked_seat_ids": booked_seats}, websocket)
     try:
         while True:
             data = await websocket.receive_json()
             print("\n\n\n\n", "Thank you", data, "\n\n\n\n")
-            booked_seats = crud_operations.get_selected_seats(screening_id, session)
-            await manager.broadcast_seats_json(screening_id, {"msg": "Thank you", "booked_seat_ids": booked_seats})
+            with Session(engine) as session:
+                booked_seats = crud_operations.get_selected_seats(screening_id, session)
+            await manager.broadcast_seats_json(screening_id, {"msg": "update", "booked_seat_ids": booked_seats})
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         
@@ -373,8 +387,12 @@ async def get_management_token():
         return response.json()["access_token"]
 
 
-@app.delete("/api/auth0/users", dependencies=[Depends(auth0.require_auth())])
-async def delete_user(user: validation.AuthUserRemove, session: Session = Depends(crud_operations.create_session)):
+@app.delete("/api/auth0/users")
+async def delete_user(user: validation.UserRemove, session: Session = Depends(crud_operations.create_session), db_user = Depends(verify_user)):
+
+    if not(user.sub == db_user.sub or db_user.is_admin):
+        raise crud_operations.AuthorizationError(db_user.id)
+
     async with httpx.AsyncClient() as client:
         try:
             token = await get_management_token()
@@ -399,7 +417,6 @@ def get_filters(session: Session = Depends(crud_operations.create_session)):
 
 
 
-"""
 app.mount("/static", StaticFiles(directory="dist"), name="static")
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
@@ -409,4 +426,3 @@ async def serve_spa(full_path: str):
     else:
         return FileResponse("dist/index.html")
 
-"""

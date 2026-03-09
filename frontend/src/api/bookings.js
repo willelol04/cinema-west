@@ -13,6 +13,11 @@ export async function deleteBooking(booking, token) {
 
 }
 
+export async function getMyBookings(token) {
+    return await authenticatedFetch("/api/my-bookings", token);
+
+}
+
 export async function addBooking(booking, token) {
     return await authenticatedFetch("/api/bookings", token, {
         method: "POST",

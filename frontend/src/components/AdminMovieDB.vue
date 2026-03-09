@@ -6,6 +6,8 @@ import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import MoviesList from './MoviesList.vue';
 import { getMovie, getMoviesAll } from '@/api/movies';
 import { getTheatres } from '@/api/theatres';
+import {useAuth0} from "@auth0/auth0-vue";
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 
 const movieResults = ref([]);
@@ -13,7 +15,8 @@ const theatresResults = ref(null)
 
 
 const fetchTheatres = async () => {
-    theatresResults.value = await getTheatres();
+    const token = await getAccessTokenSilently();
+    theatresResults.value = await getTheatres(token);
 }
 
 async function fetchMovies() { 

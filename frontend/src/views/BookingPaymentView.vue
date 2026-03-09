@@ -44,7 +44,8 @@ async function fetchBooking() {
 
     } catch(e) {
         console.log(e);
-        alert("Something went wrong: " + e.message);
+        alert("Something went wrong.", e.detail);
+        router.push("/");
     }
 }
 
@@ -102,10 +103,13 @@ const payBooking = async () => {
 
         const result = await res.json();
         console.log(result);
-        fetchComplete.value = true;
-        alert("Payment successful!");
-        paymentComplete.value = true;
-        router.push("/profile");
+        setTimeout(() => {
+            fetchComplete.value = true
+            paymentComplete.value = true;
+            router.push({path: "/profile", query: {state: "new-booking", bookingId: route.params.id}});
+        
+        }, 1500)
+        //alert("Payment successful!");
     } catch (e) {
         console.log(e);
         alert("Something went wrong: " + e.message);

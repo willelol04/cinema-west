@@ -34,7 +34,7 @@ watch(
         checkedUser.value = true;
         if(! await userExists(currUser.sub)) {
           const token = await getAccessTokenSilently();
-          await addUser({sub: currUser.sub, email:currUser.email, nickname: currUser.nickname}, token);
+          await addUser({sub: currUser.sub, email:currUser.email, nickname: currUser.nickname, is_admin: currUser['http://localhost:8000/roles'].includes('admin')}, token);
         } else {
           console.log("user exists, woo!");
 

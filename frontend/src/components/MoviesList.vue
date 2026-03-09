@@ -115,9 +115,8 @@ console.log(props.movies);
     <Sort v-if="props.filter" @update="emitUpdate"/>
         <TransitionGroup name="list" tag="div" :style="`grid-template-columns: repeat(${columns}, minmax(100px, 1fr));`" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
-        <RouterLink :to="`/movies/`+ (movie.id ? movie.id : index) ">
-            <img v-if="movie.poster_path && movie.poster_path !== 'None'" :src="`https://image.tmdb.org/t/p/original`+movie.poster_path">
-            <img v-else src="../assets/poster_examples/jack2.jpg">
+        <RouterLink class="movie-link" :to="`/movies/`+ (movie.id ? movie.id : index) ">
+            <img :src="(movie.poster_path ? `https://image.tmdb.org/t/p/original`+movie.poster_path : `https://placehold.co/400x600/000000/000000/png`)">
             <h2 class="movie-card-title">{{ movie.title }}</h2>
             <ul class="time-list" v-if="showTimes">
                 <li class="time" v-for="time in movie.times">{{ time }}</li>
@@ -142,6 +141,15 @@ console.log(props.movies);
 }
 
 
+.placeholder-img {
+    width: 100%;
+    text-align: center;
+    i {
+        font-size: 5rem;
+    }
+}
+
+
 
 .time {
     display: inline-block;
@@ -149,6 +157,11 @@ console.log(props.movies);
 
 }
 
+.movie-link {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
 .movies-header {
     width: 100%;
     display: flex;

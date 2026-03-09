@@ -12,7 +12,7 @@ const emits = defineEmits(['delete']);
 </script>
 
 <template>
-        <div class="booking" :style="{
+    <div class="booking" :id="`booking-`+booking.id" :style="{
     backgroundImage: `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url(https://image.tmdb.org/t/p/original${booking.screening.movie.poster_path})`,
     backgroundSize: 'cover',
     backgroundPosition: 'top',

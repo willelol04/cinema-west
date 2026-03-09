@@ -3,8 +3,8 @@ import MoviesListAdmin from '@/components/MoviesListAdminDiscovery.vue';
 import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
-import {useAuth0} from "@auth0/auth0-vue";
 import { searchMovies, getMovie } from '../api/movies';
+import {useAuth0} from "@auth0/auth0-vue";
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 

@@ -71,7 +71,7 @@ const cancelBooking = async (booking) => {
    
    <div class="customer-results" v-if="fetchComplete">
     <div class="customer" v-for="customer in customerResults">
-    <Profile class="profile" v-if="fetchComplete"  :user="{email: customer.email, sub: customer.auth_id}"/>
+    <Profile class="profile" v-if="fetchComplete"  :user="{email: customer.email, sub: customer.sub}"/>
     <h3>Bookings:</h3>
     <ul class="bookings">
         <li class="booking" v-for="booking in customer.bookings"><span class="booking-name"> {{ booking.tickets.length}} tickets to {{ booking.screening.movie.title }}, Booking ID:{{ booking.id }}</span><button @click="cancelBooking(booking)" class="delete-booking"><i class="pi pi-times"></i>Cancel</button></li>

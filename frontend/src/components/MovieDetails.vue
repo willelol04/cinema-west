@@ -15,13 +15,15 @@ defineProps({
 
 <template v-if="movie">
     <div class="movie-container">
-    <img v-if="movie && movie.poster_path" :src="`https://image.tmdb.org/t/p/original`+movie.poster_path" alt="movie-poster">
+    <img class="movie-poster" :src="(movie.poster_path ? `https://image.tmdb.org/t/p/original`+movie.poster_path : `https://placehold.co/400x600/000000/000000/png`)">
+
     <div class="right">
         <div class="movie-details">
             <h2 v-if="movie.release_date" class="movie-title">{{ movie.title}} ({{ format(movie.release_date, "yyyy")}})</h2>
-            <h3>Length: {{ Math.floor(movie.runtime / 60) }}h {{ movie.runtime - Math.floor(movie.runtime / 60)*60 }}min</h3>
+            <h3 v-if="movie.runtime > 0">Length: {{ Math.floor(movie.runtime / 60) }}h {{ movie.runtime - Math.floor(movie.runtime / 60)*60 }}min</h3>
+            <h3 v-else>Length: N/A</h3>
             <h3 v-if="movie.genres && movie.genres.length > 0">Genres: <span v-for="(genre, index) in movie.genres.slice(0, movie.genres.length - 1)">{{ genre.name + ", "}} </span> <span>{{ movie.genres[movie.genres.length - 1].name }}</span></h3>
-            <h3>Rating: {{movie.rating}}</h3>
+            <h3>Rating: {{movie.rating ? movie.rating : 'N/A'}}</h3>
             <h3>Language: {{ movie.language }}</h3>
         </div>
         <div class="movie-description">{{ movie.overview }}</div>
