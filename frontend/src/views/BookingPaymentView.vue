@@ -4,6 +4,7 @@ import { routeLocationKey, useRoute, useRouter } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import {useAuth0} from "@auth0/auth0-vue";
 import { getBooking, deleteBooking } from '@/api/bookings';
+import NavigateBackButton from "@/components/NavigateBackButton.vue";
 const {isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const timer = ref(300);
@@ -119,6 +120,8 @@ const payBooking = async () => {
 
 <template>
     <section>
+      <NavigateBackButton v-if="fetchComplete" :target="`/booking/`+bookingResult.screening_id" text="Go Back To Booking">
+      </NavigateBackButton>
     <div class="booking-confirmation">
         <h1>Payment Information</h1>
         <form v-if="fetchComplete" @submit.prevent="payBooking()">
@@ -139,7 +142,7 @@ const payBooking = async () => {
 <style scoped>
 
 section {
-    padding: 24px;
+    padding: 20px 200px;
     width: 100%;
     margin: 0 auto;
     min-height: 73vh; 

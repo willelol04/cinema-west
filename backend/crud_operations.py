@@ -243,6 +243,7 @@ def add_movie(movie, session):
                          overview=movie["overview"], 
                          runtime=movie["runtime"],
                          poster_path=movie["poster_path"], 
+                         backdrop_path=movie["backdrop_path"], 
                          rating=rating,
                          language=movie["original_language"], 
                          release_date=movie["release_date"])

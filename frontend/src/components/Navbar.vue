@@ -14,8 +14,14 @@ const { user, isAuthenticated, isLoading, error } = useAuth0()
 const dropDownState = ref(false);
 const route = useRoute();
 
-const isActive = (currentRoutePath) => {
-    return route.path === currentRoutePath;
+const isActive = (...validRoutes) => {
+    for(const validRoute of validRoutes) {
+      if(route.name === validRoute) {
+        return true
+      }
+    }
+
+    return false
 }
 
 
@@ -54,9 +60,9 @@ watch(
         </div>
         </div>
             <ul>
-                <li ><RouterLink :class="[isActive('/') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>
-                <li ><RouterLink :class="[isActive('/movies') ? 'activeNavLink' : '', 'nav-item']" to="/movies">Movies</RouterLink></li>
-                <li ><RouterLink :class="[isActive('/about') ? 'activeNavLink' : '', 'nav-item']" to="/about">About</RouterLink></li>
+                <li ><RouterLink :class="[isActive('home') ? 'activeNavLink' : '', 'nav-item']" to="/">Home</RouterLink></li>
+                <li ><RouterLink :class="[isActive('movies', 'movie', 'booking') ? 'activeNavLink' : '', 'nav-item']" to="/movies">Movies</RouterLink></li>
+                <li ><RouterLink :class="[isActive('about') ? 'activeNavLink' : '', 'nav-item']" to="/about">About</RouterLink></li>
             </ul>
 
         </nav>
@@ -97,7 +103,6 @@ nav ul li {
 
 .nav-item {
     transition: 300ms;
-    margin-right: 20px;
     width: 100%;
 }
 
@@ -184,6 +189,7 @@ nav > ul li a {
     text-align: center;
     display: block;
     padding-bottom: 10px;
+    padding-top: 40px;
 }
 
 
@@ -193,7 +199,6 @@ nav > ul li a {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
 }
 .login-btn {
     padding: 8px 5px;

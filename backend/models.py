@@ -34,6 +34,7 @@ class Movie(Base):
     title: Mapped[str] = mapped_column(String(100))
     overview: Mapped[str] = mapped_column(String(1000))
     poster_path: Mapped[str] = mapped_column(String(1000), nullable=True)
+    backdrop_path: Mapped[str] = mapped_column(String(1000), nullable=True)
     release_date: Mapped[date] = mapped_column(Date, nullable=True)
     runtime: Mapped[int]= mapped_column(Integer, nullable=True)
     rating: Mapped[str] = mapped_column(String(20), nullable=True)

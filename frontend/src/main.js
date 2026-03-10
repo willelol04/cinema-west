@@ -20,10 +20,17 @@ app.use(createAuth0({
   domain: import.meta.env.VITE_AUTH0_DOMAIN,
   clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
   authorizationParams: {
+
     redirect_uri: window.location.origin+'/callback',
     audience: 'http://localhost:8000',
+    scope: 'openid profile email offline_access'
+
   },
   cacheLocation: "localstorage",
+    useRefreshTokens: true,
+
+
+
 }))
 
 app.use(PrimeVue, {
