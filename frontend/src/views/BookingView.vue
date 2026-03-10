@@ -125,6 +125,15 @@ onMounted(async () => {
     --seat-size: 32px;
 }
 
+@media only screen and (max-width: 1200px) {
+  :root {
+    --seat-size: 24px;
+  }
+
+
+
+}
+
 </style>
 
 <style scoped>
@@ -162,16 +171,19 @@ h3 {
     font-size: 32px;
 }
 .seat-grid {
-    width: 100%;
+    width: fit-content;
     display: grid;
     justify-items: center;;
-    margin: 0 auto;
     overflow-x: scroll;
     scrollbar-gutter: stable;
     padding: 20px;
-    gap: 40px 5px;
+    gap: 40px 2px;
+    padding: 30px;
+    margin: 0 auto;
 }
 main {
+  width: 100%;
+  margin: 0 auto;
   padding: 20px 200px;
   background-color: #131212;
 
@@ -191,14 +203,14 @@ main {
     font-size: 24px;
     text-align: center;
     margin-bottom: 45px;
-    padding: 150px;
+    padding: 75px;
     grid-column: 1 / -1;
     width: 100%;
   clip-path: polygon(
       0% 0%,   /* top left */
       100% 0%,   /* top right */
-      98% 100%,/* bottom right */
-      2% 100%   /* bottom left */
+      95% 100%,/* bottom right */
+      5% 100%   /* bottom left */
   );
 }
 
@@ -293,6 +305,24 @@ input[type="submit"]:hover {
 @media only screen and (max-width: 1200px) {
     main {
         padding: 10px;
+    }
+    .seat-grid {
+      width: 500px;
+      gap: 30px 1px;
+    }
+
+    .booking-details {
+      flex-direction: column;
+      justify-content: start;
+      padding: 0;
+      gap: 20px;
+      align-items: stretch;
+      padding: 20px;
+    }
+
+
+    h3 {
+      font-size: 24px;
     }
 
 
