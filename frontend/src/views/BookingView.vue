@@ -90,7 +90,7 @@ onMounted(async () => {
                 <div class="screen" :style="{
     backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://image.tmdb.org/t/p/original${screeningResult.movie.backdrop_path})`,
     backgroundSize: 'cover',
-    backgroundPosition: 'middle',
+    backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat'
     }"><i class="pi pi-play-circle"></i></div>
                 <label v-for="(seat, ind) in screeningResult.theatre.seats" :key="ind" class="checkbox-label">
@@ -203,7 +203,7 @@ main {
     font-size: 24px;
     text-align: center;
     margin-bottom: 45px;
-    padding: 75px;
+    padding: 25px;
     grid-column: 1 / -1;
     width: 100%;
   clip-path: polygon(
@@ -220,7 +220,7 @@ form {
     text-align: center;
     margin: 0 auto;
     overflow: hidden;
-    
+
 }
 
 .seat {
@@ -304,17 +304,18 @@ input[type="submit"]:hover {
 
 @media only screen and (max-width: 1200px) {
     main {
-        padding: 10px;
+        padding: 50px;
     }
+
     .seat-grid {
-      width: 500px;
+      width: 100%;
       gap: 30px 1px;
+      padding: 10px;
     }
 
     .booking-details {
       flex-direction: column;
       justify-content: start;
-      padding: 0;
       gap: 20px;
       align-items: stretch;
       padding: 20px;
