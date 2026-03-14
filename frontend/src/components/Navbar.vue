@@ -78,10 +78,9 @@ watch(
 }
 
 nav {
-    position: sticky;
     width: 100%;
     top: 0;
-    background: #1a1a1a;
+    background: var(--primary-bg);
     z-index: 20;
     padding-bottom: 0;
 }
@@ -96,7 +95,7 @@ nav ul li {
 }
 
 .activeNavLink {
-    color: #e50914;
+    color: var(--selected-default-color);
     border-bottom: 2px solid red;
     transition: 300ms;
 }
@@ -108,11 +107,11 @@ nav ul li {
 
 .nav-item:hover,
 .dropdown-list button {
-    color: #e50914;
+    color: var(--selected-default-color);
 }
 
 .nav-item:hover i {
-    color: #e50914;
+    color: var(--selected-default-color);
 }
 
 .sidenav-toggle {
@@ -120,7 +119,7 @@ nav ul li {
 }
 
 .pi {
-    color: white;
+    color: var(--text-default-color);
     margin-left: 15px;
     transition: 300ms;
 }
@@ -129,10 +128,11 @@ nav ul li {
     margin-right: 10px;
 }
 
+
 .dropdown-list {
     width: 175px;
     position: absolute;
-    background-color: rgba(43, 43, 43, 0.753);
+    background-color: var(--secondary-bg);
     color: white;
     padding: 10px 15px;
     border-radius: 5px;
@@ -147,7 +147,7 @@ nav ul li {
 
 .nav-dropdown ul li a,
 .nav-dropdown ul button {
-    color: white;
+    color: var(--text-default-color);
     padding: 5px;
     display: block;
 }
@@ -158,12 +158,12 @@ nav ul li {
 
 .user-btn {
     width: 175px;
-    background-color: rgba(43, 43, 43, 0.753);
-    color: white;
+    background-color: var(--secondary-bg);
+    color: var(--text-default-color);
     padding: 8px 5px;
     border-radius: 5px;
     font-size: 18px;
-    border: 1px solid #404040;
+    border: 1px solid var(--default-border-bg);
     margin: 0;
 }
 
@@ -172,7 +172,7 @@ nav {
     align-items: center;
     justify-content: center;
     width: 100%;
-    border-bottom: 1px solid #404040;
+    border-bottom: 1px solid var(--default-border-bg);
     padding: 20px 200px;
     padding-bottom: 0;
 }
@@ -202,7 +202,7 @@ nav > ul li a {
 }
 .login-btn {
     padding: 8px 5px;
-    border: 1px solid white;
+    border: 1px solid var(--text-default-color);
 }
 
 @media screen and (max-width: 1200px) {

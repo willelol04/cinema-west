@@ -67,7 +67,7 @@ onMounted(async () => {
         await fetchScreening();
 
         if(!ws) {
-            ws = new WebSocket(`http://localhost:8000/ws/${route.params.id}`);
+            ws = new WebSocket(`api/ws/${route.params.id}`);
         }
 
         ws.onmessage = async (event) => {
@@ -89,10 +89,10 @@ onMounted(async () => {
               <div :style="`grid-template-columns: repeat(${screeningResult.theatre.seats_per_row}, 1fr)`" class="seat-grid">
                 <div class="screen" :style="{
     backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://image.tmdb.org/t/p/original${screeningResult.movie.backdrop_path})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundSize: '100% 100%',
+    backgroundPosition: 'middle',
     backgroundRepeat: 'no-repeat'
-    }"><i class="pi pi-play-circle"></i></div>
+    }"></div>
                 <label v-for="(seat, ind) in screeningResult.theatre.seats" :key="ind" class="checkbox-label">
                   <div class="seat">
                     <input v-model="checkedSeats" type="checkbox" :value="seat" :disabled="booked_seat_ids?.includes(seat.id)">
@@ -154,8 +154,10 @@ onMounted(async () => {
   align-items: center;
   padding: 50px 20px;
   border-radius: 10px;
+  border: 2px solid var(--default-border-bg);
   background: #1a1a1a;
   margin-top: 50px;
+
 }
 
 .booking-info {
@@ -195,6 +197,9 @@ main {
     background-size: cover;
     position: relative;
     overflow: hidden;
+    background: var(--secondary-bg);
+    border-radius: 10px;
+    padding: 30px;
 }
 
 .screen {
@@ -202,16 +207,17 @@ main {
     margin: 0 auto;
     font-size: 24px;
     text-align: center;
-    margin-bottom: 45px;
-    padding: 25px;
+    padding-top: 30px;
+  padding-bottom: 30px;
     grid-column: 1 / -1;
     width: 100%;
   clip-path: polygon(
-      0% 0%,   /* top left */
-      100% 0%,   /* top right */
-      95% 100%,/* bottom right */
-      5% 100%   /* bottom left */
+      0% 0%,
+      100% 0%,
+      99% 100%,
+      1% 100%
   );
+
 }
 
 form {

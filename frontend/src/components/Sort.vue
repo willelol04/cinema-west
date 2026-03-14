@@ -89,36 +89,37 @@ watch(sortData, debounceUpdateData, {deep: true})
   flex: 1 1 200px;
   padding: 0.5rem;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 2px solid var(--default-border-bg);
+  background-color: var(--primary-bg);
 }
 
 .sort-container select {
   padding: 0.5rem;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 2px solid var(--default-border-bg);
 }
 select {
-  background-color: #1a1a1a;
+  background-color: var(--secondary-bg);
   color: white;
 }
 
 select option {
-  background-color: white;
-  color: black;
+  background-color: var(--secondary-bg);
+  color: var(--text-default-color);
 }
     
 .reset-button {
   padding: 0.5rem;
   border-radius: 4px;
   background-color: white;
-  border: 1px solid black;
+  border: 2px solid var(--default-border-bg);
   color: black;
 }
 
 .reset-button:hover {
     cursor: pointer;
-    background-color: #ccc;
-    
+    opacity: 60%;
+
 }
 
 option {

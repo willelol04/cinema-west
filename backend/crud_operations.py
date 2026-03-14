@@ -108,7 +108,7 @@ def get_users_all(session):
 
 def search_user(query, session):
     try:
-        results = session.execute(select(User).where(User.nickname.contains(query)).options(selectinload(User.bookings).selectinload(Booking.tickets), selectinload(User.bookings).selectinload(Booking.screening).selectinload(Screening.movie))).scalars().all()
+        results = session.execute(select(User).where(User.nickname.contains(query), User.is_admin != True).options(selectinload(User.bookings).selectinload(Booking.tickets), selectinload(User.bookings).selectinload(Booking.screening).selectinload(Screening.movie))).scalars().all()
         print(results)
         return results
     except Exception as e:
@@ -116,14 +116,21 @@ def search_user(query, session):
 
 def delete_user(user, session):
     try:
-        session.execute(delete(User).where(User.sub == user.sub))
+        user = get_user_by_sub(user.sub, session)
+        if not user:
+            raise EntityNotFoundError(f"No user with id:{user.id}")
+
+        if not user.is_admin:
+            session.delete(user)
+        else:
+            raise SQLAlchemyError
         return {"id": user.sub}
     except IntegrityError as e:
         print(e)
         raise DatabaseConflictError("Conflict occured while deleting movie.") from e
     except SQLAlchemyError as e:
         print(e)
-        raise DatabaseError("Database query Failed") from e
+        raise DatabaseError("Database query Failed. Cannot delete admin from API endpoint.") from e
     except Exception as e:
         print(e)
         raise

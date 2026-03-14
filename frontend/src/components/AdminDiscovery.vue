@@ -6,9 +6,10 @@ import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import { searchMovies, getMovie } from '../api/movies';
 import {useAuth0} from "@auth0/auth0-vue";
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
+import {debounce} from 'lodash';
+import Search from '@/components/Search.vue';
 
 
-const search_field = defineModel('Bing');
 const fetchComplete = ref(true);
 const movieResults = ref([]);
 
@@ -28,26 +29,16 @@ async function fetchMovieResults() {
             movie.isAdded = await movieIsAdded(movie.id)
         }
         fetchComplete.value = true;
-        search_field.value = '';
 
     } catch(e) {
         console.log(e);
     } 
 }
-watch(
-() => route.query.q,    
-async () => {if(route.query.q) await fetchMovieResults()},
-{immediate: true},
-
-)
-
-const onSubmit = () => {
-  router.push({query: {q: search_field.value}});
-};
 
 const updateMovie = (movie) => {
     movie.isAdded = !movie.isAdded;
 }
+
 
 </script>
 
@@ -55,27 +46,15 @@ const updateMovie = (movie) => {
 <template>
     
     <div class="search-movies">
-    <form method="GET" @submit.prevent="onSubmit">
-    <label for="movie-search"><h1>Discover movies</h1></label>
-        <input type="search" v-model="search_field" id="movie-search">
-        <input type="submit" value="Sök">
-    </form>
+    <Search :header="`Search Movies on TMDB:`" :searchFunction="fetchMovieResults"/>
     <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieResults"  @update="updateMovie"/>
     <BeatLoader v-if="!fetchComplete" class="fetch-loading" :color="'#bdc7bf'"/>
     <div v-if="fetchComplete && movieResults?.length === 0 && route.query.q" class="empty">No results were found</div>
     </div>
-    
-
-    
-    <!--
-    <MoviesList title="Already added movies:"/>
-    -->
 
 </template>
 
-
 <style scoped>
-
 
 
 .fetch-loading {
@@ -89,10 +68,11 @@ h1 {
 
 input {
     padding: 10px;
-    background: white;
-    color: black;
+    background: var(--secondary-bg);
+    color: white;
     height: 50px;
     vertical-align: middle;
+    border: 1px solid var(--default-border-bg);
     border-radius: 7px;
     margin: 0;
 
@@ -118,8 +98,5 @@ input[type="search"] {
         width: 90%;
     }
     
-    input[type="submit"] {
-        width: 10%;
-    }
 }
 </style>

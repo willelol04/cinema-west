@@ -146,7 +146,7 @@ h1 {
 }
 
 .movie-actions {
-    border-left: 1px solid #404040;
+    border-left: 1px solid var(--default-border-bg);
     text-align: center;
     display: flex;
     flex-direction: row;
@@ -189,7 +189,7 @@ section {
 
 .pi {
     font-size: 2rem;
-    background-color: #2b2b2b;
+    background-color: var(--secondary-bg);
     color: white;
     border-radius: 100%;
     font-weight: 100;
@@ -289,7 +289,7 @@ section {
 }
 
 .movie-remove i {
-    color: #e50914;
+    color: var(--selected-default-color);
     background-color: none;
     display: block;
 }
@@ -311,9 +311,9 @@ section {
 }
 
 .movie-card {
-    background-color: #2d2d2d;
+    background-color: var(--secondary-bg);
     border-radius: 10px;
-    border: 1px solid #404040;
+    border: 1px solid var(--default-border-bg);
     transition: 300ms;
     width: 100%;
     display: grid;

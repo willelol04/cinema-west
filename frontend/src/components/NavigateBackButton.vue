@@ -24,12 +24,13 @@ defineProps({
 a {
   width: 100%;
   transition: 300ms;
+  color: var(--text-default-color);
 }
 
 a:hover {
-  color: red;
+  color: var(--selected-default-color);
   i {
-    color: red;
+    color: var(--selected-default-color);
 
   }
 }

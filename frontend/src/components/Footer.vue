@@ -44,8 +44,8 @@ footer {
     padding-right: 200px;
     padding-top: 20px;
     padding-bottom: 50px;
-    border-top: 1px solid #404040;
-    border-bottom: 1px solid #404040;
+    border-top: 1px solid var(--default-border-bg);
+    border-bottom: 1px solid var(--default-border-bg);
     font-size: 16px;
     bottom: 0;
     text-align: left;

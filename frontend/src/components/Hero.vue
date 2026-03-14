@@ -92,9 +92,10 @@ section {
     padding: 20px 10vw;
 }
 
+
 .slide, .current {
-    background-color: rgba(43, 43, 43, 0.753);
-    border-radius: 5px;
+    background-color: var(--secondary-bg);
+  border-radius: 5px;
     transition: 300ms;
 }
 

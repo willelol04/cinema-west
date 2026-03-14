@@ -36,13 +36,20 @@ const fetchTheatres = async () => {
     }
 }
 
+const resetScreening = () => {
+  screening.movie_id = null;
+  screening.theatre_id = null;
+  screening.start_times = [];
+  start_time.value = null;
+}
+
 const addScreeningUpdate = async () => {
     if (screening.start_times.length > 0 && screening.movie_id !== null && screening.theatre_id !== null) {
         try {
             const token = await getAccessTokenSilently();
             await addScreening(screening, token);
-            
             alert("Screening(s) added.");
+            resetScreening();
 
         } catch(e) {
             console.log(e);
@@ -73,6 +80,7 @@ onMounted(fetchTheatres);
         <div class="grid">
         <label for="movies">Movie:</label>
         <select v-model="screening.movie_id" id="movies" required>
+            <option :value="null" selected>Select a Movie</option>
             <option v-for="(movie,ind) in movieResults" :value="movie.id">{{ movie.title }}</option>
         </select>
 
@@ -88,10 +96,13 @@ onMounted(fetchTheatres);
         </span>
         <label for="theatres">Theatre:</label>
         <select v-model="screening.theatre_id" id="theatres" required>
+            <option :value="null" selected>Select a Theatre</option>
             <option v-for="theatre in theatreResults" :value="theatre.id">{{ theatre.name }}</option>
         </select>
-        
-        <input type="submit" value="Add screening">
+          <span class="buttons">
+            <input type="submit" value="Add screening">
+            <input type="button" @click="resetScreening" value="Reset">
+          </span>
         </div>
     </form>
         
@@ -122,13 +133,14 @@ form {
 label {
     padding: 10px;
     padding-left: 0px;
+    text-align: left;
 }
 
 input, select, option, button {
-    border: 1px solid black;
+    border: 1px solid var(--default-border-bg);
     padding: 10px;
     border-radius: 3px;
-    background-color: #2b2b2b;
+    background-color: var(--secondary-bg);
     transition: 300ms;
 }
 
@@ -137,7 +149,7 @@ input:hover, select:hover, button:hover, option:hover {
     background-color: #494949;
 }
 
-input[type="submit"] {
+.buttons {
     grid-column: span 2;
 }
 

@@ -99,8 +99,8 @@ class Screening(Base):
     movie_id: Mapped[int] = mapped_column(ForeignKey("movie.id", ondelete="CASCADE"))
     theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"))
     start_time: Mapped[datetime] = mapped_column(DateTime)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
-    updated_at: Mapped[datetime] = mapped_column(nullable=True, onupdate=datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default= lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(nullable=True, onupdate=lambda: datetime.now(timezone.utc))
     
     movie: Mapped["Movie"] = relationship(back_populates="screenings")
     tickets: Mapped[List["Ticket"]] = relationship(back_populates="screening", cascade="all, delete-orphan")
@@ -117,9 +117,9 @@ class Booking(Base):
     total_price: Mapped[float] = mapped_column(Float)
     status: Mapped[str] = mapped_column(String(20), default='pending')
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     paid_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    expires_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc)+timedelta(minutes=5))
+    expires_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc)+timedelta(minutes=5))
     
     tickets: Mapped[List["Ticket"]] = relationship(order_by=lambda: (
             func.substr(Ticket.seat_id, 1, 1),               # letter

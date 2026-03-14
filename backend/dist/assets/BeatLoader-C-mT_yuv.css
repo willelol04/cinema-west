@@ -1,0 +1,1 @@
+.v-spinner .v-beat{animation:v-beatStretchDelay .7s infinite linear;animation-fill-mode:both;display:inline-block}.v-spinner .v-beat-odd{animation-delay:0s}.v-spinner .v-beat-even{animation-delay:.35s}@keyframes v-beatStretchDelay{50%{transform:scale(.75);-webkit-opacity:.2;opacity:.2}to{transform:scale(1);-webkit-opacity:1;opacity:1}}

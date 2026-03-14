@@ -172,7 +172,7 @@ h1 {
 }
 
 .movie-actions {
-    border-left: 1px solid #404040;
+    border-left: 1px solid var(--default-border-bg);
     text-align: center;
     display: flex;
     flex-direction: row;
@@ -190,7 +190,7 @@ h1 {
 
 form {
     input, select, option, button {
-    background-color: black;
+    background-color: var(--primary-bg);
     color: white;
     padding: 10px;
     margin-right: 10px;

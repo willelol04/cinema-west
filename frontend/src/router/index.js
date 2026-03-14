@@ -1,22 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { User, authGuard, useAuth0 } from '@auth0/auth0-vue';
 
-import HomeView from '@/views/HomeView.vue';
-import MoviesView from '@/views/MoviesView.vue';
-import MovieView from '@/views/MovieView.vue';
-import BookingView from '@/views/BookingView.vue';
-import AdminView from '@/views/AdminView.vue';
-import AboutView from '@/views/AboutView.vue';
-import ProfileView from '@/views/ProfileView.vue';
-import NotFoundView from '@/views/NotFoundView.vue';
-import BookingPaymentView from '@/views/BookingPaymentView.vue';
+const HomeView = () => import('@/views/HomeView.vue');
+const MoviesView = () => import('@/views/MoviesView.vue')
+const MovieView = () => import('@/views/MovieView.vue')
+const BookingView = () => import('@/views/BookingView.vue')
+const AdminView = () => import('@/views/AdminView.vue')
+const AboutView = () => import('@/views/AboutView.vue')
+const ProfileView = () => import('@/views/ProfileView.vue')
+const NotFoundView = () => import('@/views/NotFoundView.vue')
+const BookingPaymentView = () => import('@/views/BookingPaymentView.vue')
 
 
-import Callback from '@/components/Callback.vue';
-import AdminDiscovery from '@/components/AdminDiscovery.vue';
-import AdminMovieDB from '@/components/AdminMovieDB.vue';
-import AdminScreenings from '@/components/AdminScreenings.vue';
-import AdminCustomers from '@/components/AdminCustomers.vue';
+const Callback = () => import('@/components/Callback.vue')
+const AdminDiscovery = () => import('@/components/AdminDiscovery.vue')
+const AdminMovieDB = () => import('@/components/AdminMovieDB.vue')
+const AdminScreenings = () => import('@/components/AdminScreenings.vue')
+const AdminCustomers = () => import('@/components/AdminCustomers.vue')
 
 const LoginGuard = async (to, from) => {
     const { user, isLoading, isAuthenticated } = useAuth0();

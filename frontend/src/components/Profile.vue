@@ -74,8 +74,8 @@ const deleteUserSelf = async () => {
 .delete-acc {
     font-size: 18px;
     font-family: 'Inter', Tahoma, Geneva, Verdana, sans-serif;
-    color: #e50914;
-    border: 1px solid #c90912;
+    color: var(--selected-default-color);
+    border: 1px solid var(--selected-default-color);
     padding: 5px;
     border-radius: 8px;
     margin-left: 15px;
@@ -90,7 +90,7 @@ const deleteUserSelf = async () => {
 .profile-logout {
     padding: 5px;
     border-radius: 8px;
-    border: 1px solid white;
+    border: 1px solid var(--text-default-color);
     transition: 300ms;
 }
 
@@ -98,7 +98,7 @@ const deleteUserSelf = async () => {
     font-size: 64px;
     padding: 15px;
     border-radius: 25%;
-    border: 1px solid white;
+    border: 1px solid var(--text-default-color);
 }
 
 

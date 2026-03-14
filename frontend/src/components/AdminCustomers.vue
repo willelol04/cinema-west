@@ -4,6 +4,8 @@ import Profile from '@/components/Profile.vue';
 import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
+import {debounce} from 'lodash';
+import Search from '@/components/Search.vue'
 
 import { Auth0Plugin, useAuth0, User } from '@auth0/auth0-vue';
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently, checkSession } = useAuth0();
@@ -11,7 +13,6 @@ const { user, isAuthenticated, isLoading, error, getAccessTokenSilently, checkSe
 import { searchUsers} from '../api/users';
 import { deleteBooking } from '../api/bookings';
 
-const search_field = defineModel('Bing');
 const fetchComplete = ref(true);
 const customerResults = ref([]);
 
@@ -26,22 +27,11 @@ async function fetchCustomerResults() {
         customerResults.value = await searchUsers(route.query.q, token);
 
         fetchComplete.value = true;
-        search_field.value = '';
 
     } catch(e) {
         console.log(e);
     } 
 }
-watch(
-() => route.query.q,    
-async () => {if(route.query.q) await fetchCustomerResults()},
-{immediate: true},
-
-)
-
-const onSubmit = () => {
-  router.push({query: {q: search_field.value}});
-};
 
 
 const cancelBooking = async (booking) => {
@@ -60,15 +50,8 @@ const cancelBooking = async (booking) => {
 <template>
     
     <div class="search-customers">
-    <form method="GET" @submit.prevent="onSubmit">
-    <label for="customer-search"><h1>Search customers:</h1></label>
-        <input type="search" v-model="search_field" id="customer-search">
-        <input type="submit" value="Sök">
-    </form>
-   <!--
-   <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :customers="customerResults"  @update="fetchCustomerResults"/> 
-   --> 
-   
+      <Search :header="`Search Customers:`" :searchFunction="fetchCustomerResults"/>
+
    <div class="customer-results" v-if="fetchComplete">
     <div class="customer" v-for="customer in customerResults">
     <Profile class="profile" v-if="fetchComplete"  :user="{email: customer.email, sub: customer.sub}"/>
@@ -115,7 +98,7 @@ const cancelBooking = async (booking) => {
 
 
 .booking > button {
-    background-color: rgb(65, 63, 63);
+    background-color: var(--selected-default-color);
     padding: 5px;
 }
 
@@ -132,9 +115,11 @@ const cancelBooking = async (booking) => {
 
 .customer {
     width: 500px;
-    border: 1px solid white;
+    border: 1px solid var(--default-border-bg);
     border-radius: 10px;
     padding: 20px;
+
+    background-color: var(--secondary-bg);
 }
 
 .profile {
@@ -155,16 +140,7 @@ h1 {
     display: block;
 }
 
-input {
-    padding: 10px;
-    background: white;
-    color: black;
-    height: 50px;
-    vertical-align: middle;
-    border-radius: 7px;
-    margin: 0;
 
-}
 
 
 form {

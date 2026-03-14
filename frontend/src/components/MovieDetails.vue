@@ -85,10 +85,10 @@ main {
 
 
 .screening {
-    background-color: #2d2d2d;
+    background-color: var(--secondary-bg);
     color: white;
     padding: 15px;
-    border: 3px solid #404040;
+    border: 3px solid var(--default-border-bg);
     border-radius: 5px;
     transition: 250ms;
     width: 100%;
@@ -99,8 +99,7 @@ main {
 
 .screening:hover {
     background: white;
-    background-color: #404040;
-    border-color: #2d2d2d;
+    background-color: var(--default-border-bg);
 
 }
 

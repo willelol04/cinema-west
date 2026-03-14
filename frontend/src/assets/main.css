@@ -20,7 +20,17 @@ body {
 }
 
 
-
 ul {
     list-style-type: none;
+}
+
+:root {
+    --primary-bg: #1a1a1a;
+    --secondary-bg: rgba(43, 43, 43, 0.753);
+    --selected-default-color: #e50914;
+    --text-default-color: white;
+
+
+    --default-border-bg: #404040;
+
 }

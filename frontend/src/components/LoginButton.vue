@@ -27,12 +27,12 @@ const handleLogin = () => {
 
 button {
     width: 175px;
-    background-color: rgba(43, 43, 43, 0.753);
+    background-color: var(--secondary-bg);
     color: white;
     padding: 8px 5px;
     border-radius: 5px;
     font-size: 18px;
-    border: 1px solid #404040;
+    border: 1px solid var(--default-border-bg);
     margin: 0;
 }
 </style>

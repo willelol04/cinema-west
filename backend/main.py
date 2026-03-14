@@ -340,7 +340,7 @@ async def shutdown():
     print("closed tmdb")
     
 
-@app.websocket("/ws/{screening_id}")
+@app.websocket("/api/ws/{screening_id}")
 async def websocket(websocket: WebSocket, screening_id: int):
     await manager.connect(websocket)
     with Session(engine) as session:
@@ -389,6 +389,14 @@ async def get_management_token():
 
 @app.delete("/api/auth0/users")
 async def delete_user(user: validation.UserRemove, session: Session = Depends(crud_operations.create_session), db_user = Depends(verify_user)):
+
+    delete_user_obj = crud_operations.get_user_by_sub(user.sub)
+
+    if not delete_user_obj:
+        raise crud_operations.EntityNotFoundError(f"User with sub {user.sub} not found.")
+
+    if delete_user_obj.is_admin:
+        raise crud_operations.DatabaseError("Database query Failed. Cannot delete admin from API endpoint.")
 
     if not(user.sub == db_user.sub or db_user.is_admin):
         raise crud_operations.AuthorizationError(db_user.id)

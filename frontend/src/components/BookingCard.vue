@@ -45,7 +45,7 @@ const emits = defineEmits(['delete']);
 
  
 .booking {
-    border: 1px solid rgb(187, 178, 178);
+    border: 2px solid var(--default-border-bg);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -64,7 +64,7 @@ const emits = defineEmits(['delete']);
 
 .booking-info:first-child {
     padding-top: 16px;
-    border-top: 1px solid rgba(156, 164, 175, 0.3);
+    border-top: 1px solid var(--default-border-bg);
     
 }
 
@@ -75,13 +75,13 @@ const emits = defineEmits(['delete']);
 .booking-info  {
     margin-bottom: 16px;
     padding-bottom: 16px;
-    border-bottom: 1px solid rgba(156, 164, 175, 0.3);
+    border-bottom: 1px solid var(--default-border-bg);
     
 }
 
 .cancel-booking-button {
     width: 100%;
-    background-color: rgb(139, 12, 12);
+    background-color: var(--selected-default-color);
     color: white;
     vertical-align: middle;
     padding: 5px;

@@ -124,6 +124,7 @@ console.log(props.movies);
         </RouterLink>
         </div>
         </TransitionGroup>
+      <div v-if="movies?.length === 0" class="empty">No results were found</div>
 
     </section>
 
@@ -184,8 +185,8 @@ section {
 
 .pi {
     font-size: 2rem;
-    background-color: #2b2b2b;
-    color: white;
+    background-color: var(--primary-bg);
+    color: var(--text-default-color);
     border-radius: 100%;
     font-weight: 100;
 
@@ -219,7 +220,7 @@ section {
 }
 
 .link {
-    background-color: #e50914;
+    background-color: var(--selected-default-color);
     color: white;
     width: 100%;
     display: block;
@@ -236,8 +237,8 @@ section {
 }
 
 .movie-card {
-    background-color: #2d2d2d;
-    border: 1px solid #404040;
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--default-border-bg);
     border-radius: 16px;
     transition: 300ms;
     position: relative;
@@ -285,7 +286,7 @@ section {
         
 .scroll-button i {
     transition: 300ms;
-    color: white;
+    color: var(--text-default-color);
 }
 
 @media only screen and (max-width: 1208px) {
