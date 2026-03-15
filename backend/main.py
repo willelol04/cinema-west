@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
 import httpx
-import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel
 from typing import Optional, List
 import asyncio
@@ -39,6 +39,7 @@ app = FastAPI()
 
 roles_string = 'http://localhost:8000/roles'
 
+yes = 999
 
 
 load_dotenv()
@@ -259,8 +260,8 @@ def add_booking(booking: validation.BookingAdd, session: Session = Depends(crud_
 @app.delete("/api/bookings")
 async def delete_booking(booking: validation.BookingRemove, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
     ret = crud_operations.delete_booking(booking, session, user)
-    booked_seats = crud_operations.get_selected_seats(booking.screening_id, session)
-    await manager.broadcast_seats_json(booking.screening_id, {"msg": "update", "booked_seat_ids": booked_seats, "timestamp": int(datetime.datetime.now().timestamp())})
+    booked_seat_ids = crud_operations.get_screening(booking.screening_id, session).booked_seat_ids
+    await manager.broadcast_screening_json(booking.screening_id, {"type": "update", "screening_id": booking.screening_id, "booked_seat_ids": booked_seat_ids})
     return ret
     
 
@@ -338,24 +339,34 @@ async def shutdown():
     print("\n\nclosing tmdb_client\n\n")
     await tmdb_client.aclose()
     print("closed tmdb")
-    
+
+
 
 @app.websocket("/api/ws/{screening_id}")
 async def websocket(websocket: WebSocket, screening_id: int):
-    await manager.connect(websocket)
-    with Session(engine) as session:
-        booked_seats = crud_operations.get_selected_seats(screening_id, session)
-    await manager.send_personal_json({"msg": "update", "booked_seat_ids": booked_seats}, websocket)
+    print("\n\n\n\n\n", websocket.path_params, "\n\n\n\n\n")
+    try:
+        await manager.connect(websocket)
+        await manager.broadcast_json({"type": "ping", "msg": "joined", "screening_id": screening_id})
+        with Session(engine) as session:
+            booked_seat_ids = crud_operations.get_screening(int(websocket.path_params['screening_id']), session).booked_seat_ids
+        await manager.send_personal_json({"type": "update", "screening_id": screening_id, "booked_seat_ids": booked_seat_ids}, websocket)
+
+    except Exception as e:
+        raise e
+
+
     try:
         while True:
             data = await websocket.receive_json()
             print("\n\n\n\n", "Thank you", data, "\n\n\n\n")
             with Session(engine) as session:
-                booked_seats = crud_operations.get_selected_seats(screening_id, session)
-            await manager.broadcast_seats_json(screening_id, {"msg": "update", "booked_seat_ids": booked_seats})
+                booked_seat_ids = crud_operations.get_screening(int(websocket.path_params['screening_id']), session).booked_seat_ids
+            await manager.broadcast_screening_json(screening_id, {"type":"update", "screening_id": screening_id, "booked_seat_ids": booked_seat_ids})
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        
+        await manager.broadcast_json({"type": "ping", "msg": "left", "screening_id": screening_id})
+
 
     
 
@@ -428,9 +439,11 @@ def get_filters(session: Session = Depends(crud_operations.create_session)):
 app.mount("/static", StaticFiles(directory="dist"), name="static")
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
-    file_path = f"dist/{full_path}" # Serve index.html for SPA routing
+    file_path = f"dist/{full_path}"
     if os.path.isfile(file_path):
         return FileResponse(file_path)
     else:
         return FileResponse("dist/index.html")
+
+
 

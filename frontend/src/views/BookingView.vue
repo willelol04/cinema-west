@@ -22,6 +22,7 @@ let ws = null;
 async function fetchScreening() {
     screeningResult.value = await getScreening(route.params.id);
     booked_seat_ids.value = screeningResult.value.booked_seat_ids;
+
 }
 
 const bookTickets = async () => {
@@ -31,11 +32,15 @@ const bookTickets = async () => {
         const bookingId = await addBooking({seats: checkedSeats.value, screening_id: screeningResult.value.id}, token);
 
         console.log(bookingId);
-        if(ws) {
-            ws.send(JSON.stringify({msg: "update"}))
-        } else {
-            alert("WS not found");
+        if(bookingId) {
+          try {
+            ws.send(JSON.stringify({type: "update", msg: "booking issued."}))
+          } catch(e) {
+            alert(e, "WS not found");
+          }
+
         }
+
 
         console.log("Sent")
 
@@ -44,12 +49,10 @@ const bookTickets = async () => {
         }
             
         } catch(e) {
+            checkedSeats.value = [];
+            await fetchScreening();
             alert(`Error: ${e}`)
             console.log(e)
-        } finally {
-        checkedSeats.value = [];
-        await fetchScreening();
-            
         }
 
     }
@@ -58,23 +61,30 @@ const bookTickets = async () => {
 
 onBeforeUnmount(() => {
     if(ws) {
-        ws.close()
+      ws.close()
+      console.log("closing surely.")
     }
 })
 
 
 onMounted(async () => {
-        await fetchScreening();
+    await fetchScreening();
 
-        if(!ws) {
-            ws = new WebSocket(`api/ws/${route.params.id}`);
-        }
+    ws = new WebSocket(`/api/ws/${screeningResult.value.id}`);
+    ws.onmessage = async (event) => {
+      if (ws !== null) {
+        console.log(JSON.parse(event.data))
+      }
 
-        ws.onmessage = async (event) => {
-            console.log(JSON.parse(event.data))
-            booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids
-            checkedSeats.value = checkedSeats.value.filter((seat) => !booked_seat_ids.value.includes(seat.id))
-        };
+
+      if(JSON.parse(event.data)?.type === 'update') {
+        booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids
+        checkedSeats.value = checkedSeats.value.filter((seat) => !booked_seat_ids.value.includes(seat.id))
+      }
+
+
+    };
+
 });
 </script>
 
