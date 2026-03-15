@@ -1,0 +1,1 @@
+import{o as r,u as s,x as o}from"./index-ntnXnyrw.js";const n={__name:"Callback",setup(a){const t=s();return o(),r(async()=>{try{const e=sessionStorage.getItem("redirect_url");sessionStorage.removeItem("redirect_url"),e?.startsWith("/")?t.push(e):t.replace("/")}catch(e){alert(`${e}`)}}),(e,c)=>null}};export{n as default};

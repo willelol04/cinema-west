@@ -10,15 +10,14 @@ onMounted(async () => {
   try {
   const redirectUrl = sessionStorage.getItem('redirect_url')
   sessionStorage.removeItem('redirect_url');
-  if(redirectUrl.startsWith('/')) {
+  if(redirectUrl?.startsWith('/')) {
     router.push(redirectUrl);
   } else {
-    throw new Error("Illegal redirect URL")
+    router.replace('/');
   }
 
  } catch(e) {
   alert(`${e}`);
-  router.replace('/');
  }
 });
 

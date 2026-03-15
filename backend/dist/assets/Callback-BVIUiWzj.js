@@ -1,1 +1,0 @@
-import{o as t,u as s,x as o}from"./index-DQrv2DqM.js";const l={__name:"Callback",setup(a){const r=s();return o(),t(async()=>{try{const e=sessionStorage.getItem("redirect_url");if(sessionStorage.removeItem("redirect_url"),e.startsWith("/"))r.push(e);else throw new Error("Illegal redirect URL")}catch(e){alert(`${e}`),r.replace("/")}}),(e,c)=>null}};export{l as default};
