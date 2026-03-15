@@ -121,23 +121,6 @@ async def getFromTMDB(path, parameters):
 
 # GET REQUESTS
 
-"""
-@app.get("/api/tmdb/movies/upcoming")
-async def getUpcoming():
-    url = "/discover/movie"
-    today = datetime.date.today()
-    print(today)
-    params = {
-              "include_video": 'false', 
-              "language": "en-US", 
-              "page": 1, 
-              "primary_release_date.gte": today, 
-              "primary_release_date.lte": "2026-10-12", 
-              "with_origin_country": "US", 
-              "sort_by":"popularity.desc",
-              }
-    return await getFromTMDB(url, params)
-"""
 
 @app.get("/api/tmdb/movies/search/{query}", dependencies=[Depends(require_admin)])
 async def search_movie(query):
@@ -158,7 +141,7 @@ async def getMovieDetails(id):
 
 
 
-@app.get("/api/movies/id/{id}") 
+@app.get("/api/movies/id/{id}", response_model=validation.MovieDetails | None)
 def get_movie(id: int, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_movie(id, session)
 
@@ -179,9 +162,11 @@ def get_movies_upcoming(session: Session = Depends(crud_operations.create_sessio
 
 
 
-@app.get("/api/movies", response_model=List[validation.MovieAdmin])
+@app.get("/api/movies", response_model=List[validation.MovieDisplay])
+@app.get("/api/admin/movies", response_model=List[validation.MovieDetails])
 def get_movies_all(title: str | None = None, genre: int | None = None, rating: str | None = None, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_movies_all(title, genre, rating, session)
+
 
 @app.get("/api/movies/schedule", response_model=validation.MovieSchedule)
 def get_movies_schedule(session: Session = Depends(crud_operations.create_session)):
@@ -206,7 +191,7 @@ def delete_movie(movie: validation.MovieBase,session: Session = Depends(crud_ope
     return crud_operations.delete_movie(movie, session)
 
 @app.post("/api/users", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
-def add_user(user: validation.UserAuth, session: Session = Depends(crud_operations.create_session)):
+def add_user(user: validation.UserAdd, session: Session = Depends(crud_operations.create_session)):
     crud_operations.add_user(user, session)
     return user
 
@@ -398,15 +383,19 @@ async def get_management_token():
         return response.json()["access_token"]
 
 
+
+
 @app.delete("/api/auth0/users")
 async def delete_user(user: validation.UserRemove, session: Session = Depends(crud_operations.create_session), db_user = Depends(verify_user)):
 
-    delete_user_obj = crud_operations.get_user_by_sub(user.sub)
+    delete_user_obj = crud_operations.get_user_by_sub(user.sub, session)
 
     if not delete_user_obj:
         raise crud_operations.EntityNotFoundError(f"User with sub {user.sub} not found.")
 
-    if delete_user_obj.is_admin:
+    print(delete_user_obj.email)
+
+    if delete_user_obj.is_admin == True:
         raise crud_operations.DatabaseError("Database query Failed. Cannot delete admin from API endpoint.")
 
     if not(user.sub == db_user.sub or db_user.is_admin):
@@ -428,10 +417,10 @@ async def delete_user(user: validation.UserRemove, session: Session = Depends(cr
     return crud_operations.delete_user(user, session)
 
 
-
 @app.get("/api/filters", response_model=validation.Filters)
 def get_filters(session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_filters(session)
+
 
 
 
@@ -444,6 +433,7 @@ async def serve_spa(full_path: str):
         return FileResponse(file_path)
     else:
         return FileResponse("dist/index.html")
+
 
 
 

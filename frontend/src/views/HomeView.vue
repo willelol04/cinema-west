@@ -51,5 +51,9 @@ const fetchComplete = ref(false)
     color: #bdc7bf;
     padding: 100px;
 }
+
+main {
+  background-color: var(--primary-bg);
+}
     
 </style>

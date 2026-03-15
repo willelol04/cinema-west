@@ -1,144 +1,88 @@
+from __future__ import annotations
 from datetime import date, datetime
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
-
-# -- Movie --
-class MovieBase(BaseModel):
+# -- Genre --
+class GenreBase(BaseModel):
     id: int
 
-class TheatreMovieResponse(BaseModel):
-    id: int
+class Genre(GenreBase):
     name: str
 
-class ScreeningsMovieResponse(BaseModel):
-    id: int
-    start_time: datetime
-    theatre: TheatreMovieResponse
-
-class Movie(MovieBase):
-    adult: Optional[bool] = None
-    backdrop_path: Optional[str] = None
-    genre_ids: Optional[list] = None
-    original_language: Optional[str] = None
-    language: Optional[str] = None
-    original_title: Optional[str] = None
-    overview: Optional[str] = None
-    popularity: Optional[float] = None
-    poster_path: Optional[str] = None
-    release_date: Optional[date] = None
-    title: Optional[str] = None
-    video: Optional[bool] = None
-    vote_average: Optional[float] = None
-    vote_count: Optional[int] = None
-    runtime: Optional[int] = None
-    rating: Optional[str] = None
-
-class MovieYes(BaseModel):
-    id: int
-    title: str
-    overview: str
-    poster_path: str
-    release_date: date
-    runtime: int
-    rating: str
-    language: str
-
-
-
-class MovieAdmin(MovieBase):
-    adult: Optional[bool] = None
-    backdrop_path: Optional[str] = None
-    genre_ids: Optional[list] = None
-    original_language: Optional[str] = None
-    original_title: Optional[str] = None
-    overview: Optional[str] = None
-    popularity: Optional[float] = None
-    runtime: Optional[int] = None
-    rating: Optional[str] = None
-    poster_path: Optional[str] = None
-    release_date: Optional[date] = None
-    title: Optional[str] = None
-    video: Optional[bool] = None
-    vote_average: Optional[float] = None
-    vote_count: Optional[int] = None
-
-    screenings: list[ScreeningsMovieResponse] = None
-
-class MovieSchedule(BaseModel):
-    today: list[MovieAdmin]
-    tomorrow: list[MovieAdmin]
-    upcoming: list[MovieAdmin]
-    
-# -- User --
-class UserBase(BaseModel):
+# -- Theatre --
+class TheatreBase(BaseModel):
     id: int
 
-class UserAuth(BaseModel):
-    sub: str
-    nickname: str
-    email: str
-    is_admin: bool
+class Theatre(TheatreBase):
+    name: str
 
 # -- Screening --
+
 class ScreeningBase(BaseModel):
     id: int
-    
-class ScreeningPatchRequest(BaseModel):
-    id: int
+
+class ScreeningsMovieResponse(ScreeningBase):
     start_time: datetime
-    
-class ScreeningPatchResponse(BaseModel):
-    id: int
+    theatre: Theatre
+
+class ScreeningPatchRequest(ScreeningBase):
     start_time: datetime
-    
 
 class ScreeningAdd(BaseModel):
     movie_id: int
     theatre_id: int
     start_times: list[datetime]
 
-
-# -- Theatre --
-class TheatreBase(BaseModel):
+class ScreeningResponse(BaseModel):
     id: int
+    start_time: datetime
+    movie: MovieDisplayDetailed
+
+# -- Movie --
+class MovieBase(BaseModel):
+    id: int
+
+class MovieDisplay(MovieBase):
+    title: str
+    poster_path: str
+
+class MovieDisplayDetailed(MovieDisplay):
+    release_date: datetime
+    overview: str
+
+class MovieDetails(MovieDisplayDetailed):
+    runtime: Optional[int] = None
+    genres: Optional[list[Genre]] = None
+    language: Optional[str] = None
+    rating: Optional[str] = None
+    backdrop_path: Optional[str] = None
+
+    screenings: list[ScreeningsMovieResponse] = None
+
+class MovieSchedule(BaseModel):
+    today: list[MovieDisplay]
+    tomorrow: list[MovieDisplay]
+    upcoming: list[MovieDisplayDetailed]
+
+
+# -- User --
+class UserBase(BaseModel):
+    id: int
+
+class UserAdd(BaseModel):
+    sub: str
+    nickname: str
+    email: str
+    is_admin: bool
+
+
 
 # -- Ticket --
 class TicketBase(BaseModel):
     id: int
 
-
-class BookingAdd(BaseModel):
-    seats: list
-    screening_id: int 
-
-class BookingRemove(BaseModel):
-    id: int
-    screening_id: int
-
-class BookingTicketResponse(BaseModel):
-    id: int
-    expires_at: datetime
-    status: str
-
-class ScreeningResponse(BaseModel):
-    id: int
-    start_time: datetime
-    movie: Movie
-
-class Theatre(TheatreBase):
-    name: str
-
-class SeatResponse(TicketBase):
-    id: str
-    theatre: Theatre
-
-class TicketBooking(BaseModel):
-    id: int
-    seat: SeatResponse
-
 class TicketResponse(TicketBase):
-    id: int
     status: str
     booking: BookingTicketResponse
     screening: ScreeningResponse
@@ -148,23 +92,13 @@ class TicketResponse(TicketBase):
 
 # -- Seat --
 class SeatBase(BaseModel):
-    id: int
+    id: str
 
-# -- MovieGenre --
-class MovieGenreBase(BaseModel):
-    id: int
-    
+class SeatResponse(SeatBase):
+    theatre: Theatre
 
-# -- Genre --
-class GenreBase(BaseModel):
-    id: int
 
-class Genre(GenreBase):
-    name: str
-
-    
-    
-#booking 
+# -- Booking --
 
 class BookingBase(BaseModel):
     id: int
@@ -178,8 +112,8 @@ class BookingBase(BaseModel):
 class ScreeningYesResponse(BaseModel):
     id: int
     start_time: datetime
-    movie: Movie
-    theatre: TheatreMovieResponse
+    movie: MovieDetails
+    theatre: Theatre
 
 class BookingResponse(BaseModel):
     id: int
@@ -193,8 +127,21 @@ class BookingResponse(BaseModel):
     tickets: list[TicketResponse]
     screening: ScreeningYesResponse
 
+class BookingAdd(BaseModel):
+    seats: list
+    screening_id: int
 
-# payment
+class BookingRemove(BaseModel):
+    id: int
+    screening_id: int
+
+class BookingTicketResponse(BaseModel):
+    id: int
+    expires_at: datetime
+    status: str
+
+
+# -- Payment --
 
 class PaymentRequest(BaseModel):
     booking_id: int
@@ -203,40 +150,18 @@ class PaymentRequest(BaseModel):
     from_account: int
     amount: float
 
-
-
-
-
-# user
+# -- User --
 
 class UserRemove(BaseModel):
     sub: str
-
-class BookingResponseTwo(BaseModel):
-    id: int
-    user_id: int
-    screening_id: int
-    total_price: float
-    status: str
-    created_at: datetime
-    expires_at: datetime
-    
-    tickets: list[TicketResponse]
-    screening: ScreeningResponse
-    
 
 class UserAdmin(BaseModel):
     sub: str
     id: int
     nickname: str
     email: str
-    bookings: list[BookingResponseTwo]
+    bookings: list[BookingResponse]
 
-
-
-class Genre(BaseModel):
-    id: int
-    name: str
 
 class Filters(BaseModel):
     genres: list[Genre]

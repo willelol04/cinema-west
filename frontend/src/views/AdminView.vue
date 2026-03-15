@@ -47,6 +47,7 @@ main {
     min-height: 700px;
     display: grid;
     grid-template-columns: 1fr 9fr;
+    background-color: var(--main-bg);
 }
 
 
@@ -68,6 +69,7 @@ i {
     text-align: center;
     border-right: 1px solid #404040;
     height: 100%;
+    background-color: var(--primary-bg);
 }
 
 

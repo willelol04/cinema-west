@@ -39,5 +39,6 @@ class ConnectionManager:
         print("\n\n\n\n\n")
         print(screening_id)
         print("\n\n\n\n\n")
-        for connection in self.screening_connections[screening_id]:
-            await connection.send_json(data)
+        if(screening_id in self.screening_connections):
+            for connection in self.screening_connections[screening_id]:
+                await connection.send_json(data)

@@ -73,9 +73,7 @@ watch(
 
 
 
-* {
-    box-sizing: border-box;
-}
+
 
 nav {
     width: 100%;
@@ -85,9 +83,6 @@ nav {
     padding-bottom: 0;
 }
 
-header h1 {
-    font-size: 35px;
-}
 
 nav ul li {
     font-size: 18px;
@@ -114,9 +109,6 @@ nav ul li {
     color: var(--selected-default-color);
 }
 
-.sidenav-toggle {
-    z-index: 3;
-}
 
 .pi {
     color: var(--text-default-color);

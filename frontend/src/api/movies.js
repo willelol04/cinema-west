@@ -9,6 +9,10 @@ export function getMoviesAll() {
     return normalFetch("/api/movies");
 }
 
+export function getMoviesAllAdmin() {
+  return normalFetch("/api/admin/movies");
+}
+
 export function getMovieSchedule() {
     return normalFetch("/api/movies/schedule");
 }

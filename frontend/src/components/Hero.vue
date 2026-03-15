@@ -90,6 +90,7 @@ onMounted(() => {
 
 section {
     padding: 20px 10vw;
+    background-color: var(--main-bg);
 }
 
 

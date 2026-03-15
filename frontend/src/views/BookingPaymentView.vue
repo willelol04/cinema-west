@@ -119,7 +119,7 @@ const payBooking = async () => {
 </script>
 
 <template>
-    <section>
+    <main>
       <NavigateBackButton v-if="fetchComplete" :target="`/booking/`+bookingResult.screening_id" text="Go Back To Booking">
       </NavigateBackButton>
     <div class="booking-confirmation">
@@ -136,16 +136,17 @@ const payBooking = async () => {
         </form>
         <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
     </div>
-    </section>
+    </main>
 </template>
 
 <style scoped>
 
-section {
+main {
     padding: 20px 200px;
     width: 100%;
     margin: 0 auto;
-    min-height: 73vh; 
+    min-height: 73vh;
+    background-color: var(--main-bg);
 }
 
 .fetch-loading {

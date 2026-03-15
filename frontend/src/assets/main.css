@@ -27,6 +27,7 @@ ul {
 :root {
     --primary-bg: #1a1a1a;
     --secondary-bg: rgba(43, 43, 43, 0.753);
+    --main-bg: #131212;
     --selected-default-color: #e50914;
     --text-default-color: white;
 

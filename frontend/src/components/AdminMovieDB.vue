@@ -4,24 +4,16 @@ import { onMounted, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import MoviesList from './MoviesList.vue';
-import { getMovie, getMoviesAll } from '@/api/movies';
-import { getTheatres } from '@/api/theatres';
+import { getMovie, getMoviesAllAdmin } from '@/api/movies';
 import {useAuth0} from "@auth0/auth0-vue";
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 
 const movieResults = ref([]);
-const theatresResults = ref(null)
 
-
-const fetchTheatres = async () => {
-    const token = await getAccessTokenSilently();
-    theatresResults.value = await getTheatres(token);
-}
-
-async function fetchMovies() { 
+async function fetchMovies() {
     try {
-      movieResults.value = await getMoviesAll();
+      movieResults.value = await getMoviesAllAdmin();
 
       for(const movie of movieResults.value) {
         movie.isAdded = true;
@@ -40,7 +32,6 @@ async function fetchMovies() {
 
 onMounted(async () => {
   await fetchMovies();
-  await fetchTheatres();
 
 })
 
@@ -51,7 +42,7 @@ onMounted(async () => {
     
     <div class="movie-database">
     <h1>Movie Database</h1>
-    <MoviesListAdmin v-if="movieResults" :movies="movieResults" :theatres="theatresResults" @update="fetchMovies"/>
+    <MoviesListAdmin v-if="movieResults" :movies="movieResults"  @update="fetchMovies"/>
     </div>
 
 </template>

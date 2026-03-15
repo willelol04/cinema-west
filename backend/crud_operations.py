@@ -135,7 +135,7 @@ def delete_user(user, session):
         print(e)
         raise
 
-def add_user(user: validation.UserAuth, session):
+def add_user(user, session):
     try:
         session.execute(insert(User).values(sub=user.sub, nickname=user.nickname, email=user.email, is_admin=user.is_admin))
         return user
@@ -205,23 +205,13 @@ def get_movies_schedule(session):
         tomorrow_start = today_start + timedelta(hours=24)
         tomorrow_end = today_end + timedelta(hours=24)
 
-        todays_screenings = session.execute(select(Screening).where(Screening.start_time >= today_start).where(Screening.start_time <= today_end).options(selectinload(Screening.movie))).scalars().all()
-        todays_movies = [screening.movie for screening in todays_screenings]
+        todays_movies = session.execute(select(Movie).join(Screening).where(Screening.start_time >= today_start).where(Screening.start_time <= today_end).distinct()).scalars().all()
 
-        tomorrows_screenings = session.execute(select(Screening).where(Screening.start_time >= tomorrow_start).where(Screening.start_time <= tomorrow_end).options(selectinload(Screening.movie))).scalars().all()
-        tomorrows_movies = [screening.movie for screening in tomorrows_screenings]
-        
-        upcoming_movies = get_movies_upcoming(session)
+        tomorrows_movies = session.execute(select(Movie).join(Screening).where(Screening.start_time >= tomorrow_start).where(Screening.start_time <= tomorrow_end).distinct()).scalars().all()
+
+        upcoming_movies = session.execute(select(Movie).where(Movie.release_date > func.now())).scalars().all()
 
         return {"today": todays_movies, "tomorrow": tomorrows_movies, "upcoming": upcoming_movies}
-    except Exception as e:
-        print(e)
-        raise
-
-def get_movies_upcoming(session):
-    try:
-        result = session.execute(select(Movie).where(Movie.release_date > func.now())).scalars().all()
-        return result
     except Exception as e:
         print(e)
         raise

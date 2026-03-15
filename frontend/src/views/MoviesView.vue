@@ -42,11 +42,17 @@ async function updateMovies(sortData) {
 onMounted(fetchMovies);
 </script>
 <template>
-  <MoviesList :filter="true" @update="updateMovies" :movies="movieResults" />
+  <main>
+    <MoviesList :filter="true" @update="updateMovies" :movies="movieResults" />
+  </main>
 
 </template>
 <style scoped>
   h1 {
     text-align: center;
+  }
+
+  main {
+    background-color: var(--main-bg);
   }
 </style>

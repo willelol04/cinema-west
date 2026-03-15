@@ -4,15 +4,12 @@ import { onMounted } from 'vue';
 import LogoutButton from './LogoutButton.vue';
 
 import { useAuth0, User } from '@auth0/auth0-vue';
-import { deleteUser } from '@/api/users';
+import { deleteUser as deleteUserReq } from '@/api/users';
 
 const { isAuthenticated, user, isLoading, logout, error, getAccessTokenSilently } = useAuth0();
 
 const props = defineProps({
-    user: {
-        Type: Object,
-        default: {email: 'hej', sub: 'yes'},
-    },
+    user: Object,
     isMyProfile: {
         Type: Boolean,
         default: false,
@@ -20,21 +17,24 @@ const props = defineProps({
 })
 
 
-const deleteUserSelf = async () => {
+const deleteUser = async () => {
     if(confirm("Are you sure you want to delete account?")) {
-        if(isAuthenticated?.value === true && user?.value) {
-            try {
-                console.log("usr: ", user)
-                const token = await getAccessTokenSilently();
-                await deleteUser({sub: user.value.sub}, token);
-                if(props.isMyProfile === true) {
-                    logout();
+        try {
+            const token = await getAccessTokenSilently();
+            await deleteUserReq({sub: props.user.sub}, token);
+            if(props.isMyProfile === true) {
+              logout({
+                logoutParams: {
+                  returnTo: window.location.origin
                 }
-            } catch(e) {
-                alert(`Error: ${e}`)
-                console.log(e)
-            } 
+              });
+
+            }
+        } catch(e) {
+            alert(`Error: ${e}`)
+            console.log(e)
         }
+
     }
 }
 
@@ -50,7 +50,7 @@ const deleteUserSelf = async () => {
     <div class="right">
         <h2 class="user-name">{{ props.user.email }}</h2>
         <LogoutButton v-if="props.isMyProfile" class="profile-logout" />
-        <button class="delete-acc" @click="deleteUserSelf()" value="Delete account">Delete Account</button>
+        <button class="delete-acc" @click="deleteUser()" value="Delete account">Delete Account</button>
     </div>
     </div>
 

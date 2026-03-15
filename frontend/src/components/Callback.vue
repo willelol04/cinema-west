@@ -18,7 +18,7 @@ onMounted(async () => {
 
  } catch(e) {
   alert(`${e}`);
-  router.push('/');
+  router.replace('/');
  }
 });
 

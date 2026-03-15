@@ -13,6 +13,7 @@ const BookingPaymentView = () => import('@/views/BookingPaymentView.vue')
 
 
 const Callback = () => import('@/components/Callback.vue')
+const LoginCallback = () => import('@/components/LoginCallback.vue')
 const AdminDiscovery = () => import('@/components/AdminDiscovery.vue')
 const AdminMovieDB = () => import('@/components/AdminMovieDB.vue')
 const AdminScreenings = () => import('@/components/AdminScreenings.vue')
@@ -43,6 +44,11 @@ const router = createRouter({
             path: '/callback',
             name: 'redirect-callback',
             component: Callback,
+        },
+        {
+          path: '/logining',
+          name: 'login-callback',
+          component: LoginCallback,
         },
         {
             path: '/about',

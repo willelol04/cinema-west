@@ -1,1 +1,0 @@
-import{o as t,u as s,x as o}from"./index-zlLb8uVL.js";const n={__name:"Callback",setup(a){const r=s();return o(),t(async()=>{try{const e=sessionStorage.getItem("redirect_url");if(sessionStorage.removeItem("redirect_url"),e.startsWith("/"))r.push(e);else throw new Error("Illegal redirect URL")}catch(e){alert(`${e}`),r.push("/")}}),(e,u)=>null}};export{n as default};

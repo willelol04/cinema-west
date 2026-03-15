@@ -19,7 +19,6 @@ const props = defineProps({
         type: String,
         default: 'Movies',
     },
-    theatres: Array,
     movies: Array,
     limit: {
         type: Number,
