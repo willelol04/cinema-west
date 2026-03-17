@@ -15,7 +15,7 @@ defineProps({
 </script>
 
 <template v-if="movie">
-    <main
+    <section
     :style="{
     backgroundImage: `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`,
     backgroundSize: 'cover',
@@ -32,8 +32,8 @@ defineProps({
             <h2 v-if="movie.release_date" class="movie-title">{{ movie.title}} ({{ format(movie.release_date, "yyyy")}})</h2>
             <div class="movie-info" ><h3>Length: </h3><span v-if="movie.runtime > 0">{{ Math.floor(movie.runtime / 60) }}h {{ movie.runtime - Math.floor(movie.runtime / 60)*60 }}min</span><span v-else>N/A</span></div>
             <div class="movie-info" v-if="movie.genres && movie.genres.length > 0"><h3 >Genres: </h3><span v-for="(genre, index) in movie.genres.slice(0, movie.genres.length - 1)">{{ genre.name }} | </span><span>{{movie.genres[movie.genres.length -1].name}}</span></div>
-            <div class="movie-info" ><h3>Rating: </h3><span v-if="movie.runtime > 0">{{movie.rating ? movie.rating : 'N/A'}}</span></div>
-            <div class="movie-info" ><h3>Language</h3><span v-if="movie.runtime > 0">{{ movie.language }}</span></div>
+            <div class="movie-info" ><h3>Rating: </h3><span>{{movie.rating ? movie.rating : 'N/A'}}</span></div>
+            <div class="movie-info" ><h3>Language</h3><span >{{ movie.language }}</span></div>
           </div>
           <div class="movie-description"><h3>Description:</h3><span>{{ movie.overview }}</span></div>
           <div class="movie-screenings">
@@ -46,14 +46,15 @@ defineProps({
           </div>
         </div>
       </div>
-    </main>
+    </section>
 
 
 </template>
 
 <style scoped>
-main {
+section {
   padding: 20px 200px;
+  flex: 1;
 
 }
 
@@ -91,8 +92,8 @@ main {
     border: 3px solid var(--default-border-bg);
     border-radius: 5px;
     transition: 250ms;
-    width: 100%;
-    padding: 30px;
+    padding: 15px;
+    width: 200px;
 
 }
 
@@ -118,29 +119,39 @@ main {
 }
 
 .screenings {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    display: flex;
     width: 100%;
+    align-items: stretch;
+    justify-content: start;
     gap: 20px;
-    
-}
+    flex-wrap: wrap;
 
-@media screen and (max-width: 768px) {
-    .screenings {
-        grid-template-columns: repeat(2, 1fr);
-    }
 }
 
 @media screen and (max-width: 1200px) {
-    main {
-      padding: 50px;
+  section {
+    padding: 10px;
 
-    }
+  }
+  .screening {
+    width: 120px;
+  }
+
+}
+@media screen and (max-width: 768px) {
+
+
     .movie-container {
         flex-direction: column;
         justify-content: start;
         align-items: center;
     }
+
+  section {
+    padding: 50px;
+
+  }
+
 
 
 
@@ -153,10 +164,7 @@ main {
     }
     
     
-    .screening {
-        width: 100%;
-    }
-    
+
 }
 
 </style>

@@ -50,11 +50,20 @@ onMounted( async () => {await fetchMovies({title: null, genre: null, rating: nul
 <style scoped>
   h1 {
     text-align: left;
+    margin-bottom: 10px;
+
   }
 
   main {
     background-color: var(--main-bg);
-    padding: 20px 200px;
     text-align: center;
+    padding: 20px 200px;
+    flex: 1;
+  }
+
+  @media screen and (max-width: 1200px) {
+    main {
+      padding: 10px;
+    }
   }
 </style>

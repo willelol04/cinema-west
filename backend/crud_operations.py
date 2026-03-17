@@ -95,7 +95,7 @@ def get_user_by_sub(sub, session):
         if user:
             return user
         else: 
-            raise EntityNotFoundError(f"User with id {user} not found.")
+            raise EntityNotFoundError(f"User with id {sub} not found.")
     except Exception as e:
         raise
 
@@ -108,7 +108,7 @@ def get_users_all(session):
 
 def search_user(query, session):
     try:
-        results = session.execute(select(User).where(User.nickname.contains(query), User.is_admin != True).options(selectinload(User.bookings).selectinload(Booking.tickets), selectinload(User.bookings).selectinload(Booking.screening).selectinload(Screening.movie))).scalars().all()
+        results = session.execute(select(User).where(User.email.contains(query), User.is_admin != True).options(selectinload(User.bookings).selectinload(Booking.tickets), selectinload(User.bookings).selectinload(Booking.screening).selectinload(Screening.movie))).scalars().all()
         print(results)
         return results
     except Exception as e:
@@ -139,6 +139,13 @@ def add_user(user, session):
     try:
         session.execute(insert(User).values(sub=user.sub, nickname=user.nickname, email=user.email, is_admin=user.is_admin))
         return user
+    except Exception as e:
+        print("--Error--", e)
+        raise
+
+def patch_current_user_role(sub, is_admin, session):
+    try:
+        return session.execute(update(User).where(User.sub==sub).values(is_admin=is_admin))
     except Exception as e:
         print("--Error--", e)
         raise
@@ -174,6 +181,8 @@ def delete_theatre(screening, session):
 def get_movie(id, session):
     try:
         result = session.execute(select(Movie).where(Movie.id==id).options(selectinload(Movie.screenings), selectinload(Movie.genres))).scalars().first()
+        if not result:
+            raise EntityNotFoundError(f"No movie with id:{id}")
         return result
     except Exception as e:
         print(e)

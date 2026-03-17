@@ -153,26 +153,21 @@ onMounted(async () => {
 
 <style scoped>
 
-.pi-play-circle {
-  font-size: 48px;
-  color: blue;
-  background-color: white;
-  border-radius: 50%;
-}
 
 .booking-details {
   width: 100%;
   margin: 0 auto;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  text-align: center;
   padding: 50px 20px;
   border-radius: 10px;
   border: 2px solid var(--default-border-bg);
-  background: #1a1a1a;
+  background: var(--primary-bg);
   margin-top: 50px;
 
+}
+.booking-details > * {
+  flex: 1;
 }
 
 .booking-info {
@@ -185,13 +180,13 @@ onMounted(async () => {
 
 h3 {
     text-align: center;
-    font-size: 32px;
+    font-size: 24px;
 }
 .seat-grid {
     width: fit-content;
     display: grid;
     justify-items: center;;
-    overflow-x: scroll;
+    overflow-x: auto;
     scrollbar-gutter: stable;
     padding: 20px;
     gap: 40px 2px;
@@ -222,16 +217,19 @@ main {
     margin: 0 auto;
     font-size: 24px;
     text-align: center;
-    padding-top: 30px;
-  padding-bottom: 30px;
+    height: 180px;
     grid-column: 1 / -1;
     width: 100%;
   clip-path: polygon(
       0% 0%,
       100% 0%,
-      99% 100%,
-      1% 100%
+      98% 100%,
+      2% 100%
   );
+  box-shadow: -1px 0px 40px 6px rgba(255,255,255,0.45) inset;
+  -webkit-box-shadow: -1px 0px 40px 6px rgba(255,255,255,0.45) inset;
+  -moz-box-shadow: -1px 0px 40px 6px rgba(255,255,255,0.45) inset;
+
 
 }
 
@@ -310,7 +308,8 @@ input[type="submit"] {
     border-radius: 7px;
     padding: 20px;
     transition: 300ms;
-    font-size: 24px;
+    font-size: 16px;
+
 }
 
 input[type="submit"]:hover { 
@@ -338,7 +337,6 @@ input[type="submit"]:hover {
       flex-direction: column;
       justify-content: start;
       gap: 20px;
-      align-items: stretch;
       padding: 20px;
     }
 

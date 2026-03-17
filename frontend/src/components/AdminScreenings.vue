@@ -8,6 +8,7 @@ import { addScreening } from '@/api/screenings';
 import router from '@/router';
 import BeatLoader from "vue-spinner/src/BeatLoader.vue";
 
+import {format} from 'date-fns'
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
     
 const movieResults = ref([]);
@@ -70,7 +71,7 @@ const deleteTime = (ind) => {
     screening.start_times.splice(ind, 1);
 }
 
-onMounted(async () => {fetchComplete.value = false; await fetchMovies; await fetchTheatres(); fetchComplete.value = true });
+onMounted(async () => {fetchComplete.value = false; await fetchMovies(); await fetchTheatres(); fetchComplete.value = true });
 </script>
 
 
@@ -78,33 +79,39 @@ onMounted(async () => {fetchComplete.value = false; await fetchMovies; await fet
     <div class="add-screening" >
     <h1>New Screening</h1>
     <form v-if="fetchComplete" method="POST" @submit.prevent="addScreeningUpdate">
-        <div class="grid" >
         <label for="movies">Movie:</label>
+      <span>
         <select v-model="screening.movie_id" id="movies" required>
             <option :value="null" selected>Select a Movie</option>
             <option v-for="(movie,ind) in movieResults" :value="movie.id">{{ movie.title }}</option>
         </select>
+
+      </span>
 
 
         <label for="time">Time:</label>
         <span>
         <input type="datetime-local" v-model="start_time" id="time">
         <button type="button" @click="addStartTime()">Add time</button>
-        <div class="screening_times">
-            <div class="time" v-for="(time, ind) in screening.start_times">{{ time }}<button type="button" @click="deleteTime(ind)"><i class="pi pi-times"></i></button></div>
-        </div>
-
         </span>
+        <span>
+        <div class="screening_times">
+            <h3>Added times:</h3>
+            <div class="time" v-for="(time, ind) in screening.start_times"><button type="button" @click="deleteTime(ind)">{{ format(time, 'yyyy-MM-dd, HH:mm') }}<i class="pi pi-times"></i></button></div>
+        </div>
+        </span>
+
         <label for="theatres">Theatre:</label>
+      <span>
         <select v-model="screening.theatre_id" id="theatres" required>
             <option :value="null" selected>Select a Theatre</option>
             <option v-for="theatre in theatreResults" :value="theatre.id">{{ theatre.name }}</option>
         </select>
-          <span class="buttons">
+      </span>
+        <span>
             <input type="submit" value="Add screening">
             <input type="button" @click="resetScreening" value="Reset">
-          </span>
-        </div>
+        </span>
     </form>
     <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
 
@@ -114,7 +121,6 @@ onMounted(async () => {fetchComplete.value = false; await fetchMovies; await fet
 <style scoped>
 
 .add-screening {
-    width: 60%;
     text-align: center;
     margin: 0 auto;
 }
@@ -122,20 +128,20 @@ onMounted(async () => {fetchComplete.value = false; await fetchMovies; await fet
 form {
     width: 100%;
     display: block;
-    text-align: center;
+    text-align: left;
 
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 9fr;
-    gap: 8px 5px;
+.time {
+  display: inline-block;
+}
+
+.pi {
+  margin-left: 20px;
 }
 
 label {
-    padding: 10px;
-    padding-left: 0px;
-    text-align: left;
+  display: block;
 }
 
 input, select, option, button {
@@ -144,6 +150,7 @@ input, select, option, button {
     border-radius: 3px;
     background-color: var(--secondary-bg);
     transition: 300ms;
+    width: 100%;
 }
 
 input:hover, select:hover, button:hover, option:hover {
@@ -151,18 +158,19 @@ input:hover, select:hover, button:hover, option:hover {
     background-color: #494949;
 }
 
-.buttons {
-    grid-column: span 2;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
+span {
+  display: block;
+  width: 100%;
+  margin-bottom: 32px;
 }
 
 span > input, span > button {
-    width: 50%;
+  width: 50%;
 }
 
+label, h3 {
+  font-size: 24px;
+  font-weight: 200;
+}
 
 </style>

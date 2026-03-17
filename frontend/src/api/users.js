@@ -4,6 +4,10 @@ export async function getUser(userAuth0Id, token) {
     return await authenticatedFetch(`/api/auth0/users/${userAuth0Id}`, token);
 }
 
+export async function getCurrentUser(token) {
+  return await authenticatedFetch(`/api/me`, token);
+}
+
 
 export async function addUser(user, token) {
     return await authenticatedFetch("/api/users", token, {
@@ -19,6 +23,12 @@ export async function deleteUser(user,  token) {
         });
 }
 
+export async function patchCurrentUserRole(user,  token) {
+  return await authenticatedFetch("/api/me/role", token, {
+    method: "PATCH",
+    body: JSON.stringify(user)
+  });
+}
 
 export async function searchUsers(query, token) {
     return await authenticatedFetch(`/api/users/search/${query}`, token);

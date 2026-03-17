@@ -94,7 +94,7 @@ def integrity_error(request: Request, exc: crud_operations.DatabaseError):
 
 @app.exception_handler(crud_operations.EntityNotFoundError)
 def integrity_error(request: Request, exc: crud_operations.EntityNotFoundError):
-    return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND,
     content={"detail": str(exc), "error_type": "entity_not_found_error"}
     )
 
@@ -195,9 +195,21 @@ def add_user(user: validation.UserAdd, session: Session = Depends(crud_operation
     crud_operations.add_user(user, session)
     return user
 
+@app.patch("/api/me/role", status_code=status.HTTP_200_OK)
+def patch_current_user_role(user: validation.CurrentUserPatchRole, current_user = Depends(verify_user), session: Session = Depends(crud_operations.create_session)):
+    crud_operations.patch_current_user_role(current_user.sub, user.is_admin, session)
+    return user
+
 @app.get("/api/users/{id}", dependencies=[Depends(auth0.require_auth())])
 def get_user(id,session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_user_by_id(id, session)
+
+@app.get("/api/me")
+def get_current_user(claims: dict = Depends(auth0.require_auth()), session: Session = Depends(crud_operations.create_session)):
+    try:
+        return crud_operations.get_user_by_sub(claims.sub, session)
+    except crud_operations.EntityNotFoundError:
+        return None
 
 @app.get("/api/users/search/{query}", dependencies=[Depends(require_admin)], response_model=List[validation.UserAdmin])
 def search_user(query, session: Session = Depends(crud_operations.create_session)):

@@ -147,7 +147,6 @@ const payBooking = async () => {
 <style scoped>
 
 main {
-    padding: 20px 200px;
     width: 100%;
     margin: 0 auto;
     min-height: 73vh;
@@ -215,6 +214,11 @@ form {
 }
 
 @media screen and (max-width:1200px) {
+
+    main {
+      padding: 10px;
+    }
+
     .booking-confirmation {
         width: 100%;
     }

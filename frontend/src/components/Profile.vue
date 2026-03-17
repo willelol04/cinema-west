@@ -16,6 +16,7 @@ const props = defineProps({
     }
 })
 
+const emit = defineEmits(['delete']);
 
 const deleteUser = async () => {
     if(confirm("Are you sure you want to delete account?")) {
@@ -30,6 +31,7 @@ const deleteUser = async () => {
               });
 
             }
+            emit('delete');
         } catch(e) {
             alert(`Error: ${e}`)
             console.log(e)

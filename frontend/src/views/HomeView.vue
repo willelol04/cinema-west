@@ -27,9 +27,9 @@ const fetchComplete = ref(false)
 <template>
   <main v-if="fetchComplete">
   <Hero :upcomingMovies="schedule.upcoming"/>
-  <div class="hr"></div>
+    <div v-if="schedule.today.length > 0 " class="hr"></div>
   <MoviesList class="movieslist" v-if="schedule.today.length > 0 " :scroll="true" :movies="schedule.today" title="Playing Today:" :showTimes="false" />
-  <div class="hr"></div>
+    <div v-if="schedule.tomorrow.length > 0 " class="hr"></div>
   <MoviesList class="movieslist" v-if="schedule.tomorrow.length > 0 " :scroll="true" :movies="schedule.tomorrow" title="Playing Tomorrow:" :showTimes="false" />
 
   </main>
@@ -45,15 +45,26 @@ const fetchComplete = ref(false)
 }
     
     
-.fetch-loading {
-    margin: 0 auto;
-    text-align: center;
-    color: #bdc7bf;
-    padding: 100px;
-}
 
 main {
-  background-color: var(--primary-bg);
+  background-color: var(--main-bg);
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-    
+
+.movieslist {
+  margin-bottom: 50px;
+  padding: 20px 200px;
+}
+
+@media screen and (max-width: 1200px) {
+  .movieslist {
+    padding: 10px;
+  }
+}
+
+
 </style>

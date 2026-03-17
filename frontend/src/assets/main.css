@@ -17,6 +17,19 @@ button:hover, a:hover {
 
 body {
     background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+
 }
 
 
@@ -35,7 +48,6 @@ ul {
     --default-border-bg: #404040;
 
 }
-
 .fetch-loading {
     margin: 0 auto;
     text-align: center;

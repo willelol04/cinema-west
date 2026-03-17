@@ -37,23 +37,46 @@ watch(
 
 <template>
   <form method="GET" @submit.prevent>
-    <label for="search"></label>
-    <input type="search" v-model="search_field" id="search" :placeholder="props.header">
+    <label for="search">
+      <i class="pi pi-search"></i>
+      <input type="search" v-model="search_field" id="search" :placeholder="props.header">
+    </label>
   </form>
 </template>
 
 <style scoped>
 
+form {
+  text-align: center;
+}
 input {
-  padding: 10px;
-  background: var(--secondary-bg);
   color: white;
-  height: 50px;
   vertical-align: middle;
-  border: 1px solid var(--default-border-bg);
   border-radius: 7px;
   margin: 0;
   width: 100%;
+  padding: 10px;
+  padding-left: 40px;
+}
+
+label {
+  display: inline-block;
+  width: 100%;
+  background: var(--secondary-bg);
+  border: 1px solid var(--default-border-bg);
+  border-radius: 7px;
+  position: relative;
+}
+
+.pi-search {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 10px;
+  margin: 0;
+
 
 }
+
+
 </style>

@@ -276,12 +276,5 @@ section {
     color: var(--text-default-color);
 }
 
-@media only screen and (max-width: 1208px) {
-    section {
-        width: 100%;
-        padding: 10px;
-    }
 
-    
-}
 </style>

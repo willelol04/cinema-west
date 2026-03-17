@@ -149,6 +149,8 @@ const deleteScreeningUpdate = async (screening) => {
 
 <style scoped>
 
+
+
 .pi-image {
     text-align: center;
     vertical-align: center;
@@ -221,7 +223,7 @@ section {
 
 .pi-trash, .pi-plus-circle, .pi-chevron-circle-left, .pi-chevron-circle-right {
     font-size: 2rem;
-    background-color: #2b2b2b;
+    background-color: none;
     color: white;
     border-radius: 100%;
     font-weight: 100;
@@ -350,16 +352,26 @@ section {
     display: grid;
     grid-template-columns: 1fr 7fr 1fr;
     grid-template-rows: auto;
-
-
 }
 
 .movie-poster {
     border-radius: 10px; 
-    width: 100%;
-    height: auto;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
     display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media screen and (max-width: 768px) {
+
+  section {
+    padding: 50px;
+  }
+  .movie-card {
+    grid-template-columns: 1fr;
+  }
+
 }
 </style>

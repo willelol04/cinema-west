@@ -42,7 +42,7 @@ onMounted(async () => {
 
 
 <template>
-    
+
     <div class="movie-database">
     <h1>Movie Database</h1>
     <MoviesListAdmin v-if="movieResults && fetchComplete" :movies="movieResults"  @update="fetchMovies"/>
@@ -54,7 +54,6 @@ onMounted(async () => {
 
 <style scoped>
   .movie-database {
-    width: 100%;
     text-align: center;
   }
 </style>

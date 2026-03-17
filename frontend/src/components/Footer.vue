@@ -37,18 +37,15 @@
 footer {
     width: 100%;
     display: flex;
+    min-height: 150px;
     justify-content: space-between;
     flex-direction: row;
     align-items: center;
-    padding-left: 200px;
-    padding-right: 200px;
-    padding-top: 20px;
-    padding-bottom: 50px;
+    padding: 20px 200px;
     border-top: 1px solid var(--default-border-bg);
     border-bottom: 1px solid var(--default-border-bg);
+    background-color: var(--primary-bg);
     font-size: 16px;
-    bottom: 0;
-    text-align: left;
 }
 
 

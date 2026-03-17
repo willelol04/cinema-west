@@ -189,7 +189,7 @@ section {
 
 .pi {
     font-size: 2rem;
-    background-color: var(--secondary-bg);
+    background-color: none;
     color: white;
     border-radius: 100%;
     font-weight: 100;
@@ -325,10 +325,11 @@ section {
 
 .movie-poster {
     border-radius: 10px; 
-    width: 100%;
-    height: auto;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
     display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 </style>

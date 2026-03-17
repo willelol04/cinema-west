@@ -39,15 +39,16 @@ const isActive = (currentRoutePath) => {
 <style scoped>
 
 .main-content {
-    padding: 20px 200px;
+  width: 1000px;
+  margin: 0 auto;
 }
 
 main {
     width: 100%;
-    min-height: 700px;
-    display: grid;
-    grid-template-columns: 1fr 9fr;
+    padding: 20px;
     background-color: var(--main-bg);
+    min-height: 70vh;
+    margin: 0 auto;
 }
 
 
@@ -64,78 +65,114 @@ i {
 
 
 .dashboard-menu {
-    width: 300px;
-    left: 0;
+    width: 1000px;
     text-align: center;
-    border-right: 1px solid #404040;
-    height: 100%;
     background-color: var(--primary-bg);
+    margin: 0 auto;
+    border-radius: 7px;
+    margin-bottom: 50px;
+    border: 1px solid var(--default-border-bg);
+
 }
 
 
 ul {
     width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
 }
 
 
+.main-content {
+}
 
 
 li a {
     width: 100%;
     display: block;
-    border-right: 2px solid transparent;
 }
-    
+
 .dashboard-item {
     width: 100%;
-    border-bottom: 1px solid #bbb4b4;
     padding: 20px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     transition: 300ms;
     opacity: 50%;
+    border-radius: 0;
 
 }
 
+.dashboard-menu ul li:first-child .dashboard-item {
+
+  border-bottom-left-radius: 7px;
+}
+
+.dashboard-menu ul li:last-child .dashboard-item {
+
+  border-bottom-right-radius: 7px;
+}
 .dashboard-item:hover {
 
     opacity: 100%;
 }
     
 .activeNavLink {
-    border-right: 2px solid #e50914;
+    border-bottom: 2px solid #e50914;
     opacity: 100%;
 
 }
-    
-    
+
+@media screen and (max-width: 1200px) {
+
+  .main-content {
+    width: 100%;
+  }
+
+  .dashboard-menu {
+    width: 50%;
+    left: auto;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  ul {
+    grid-template-columns: 1fr;
+  }
+}
 
 
 @media screen and (max-width: 768px) {
-    main {
-        display: block;
-    }
-    
+  main {
+    padding: 10px;
+  }
+
     section {
         padding: 0;
     }
     
     .dashboard-menu {
-        width: 100%;
+        width: 50%;
         left: auto;
         margin: 0 auto;
         text-align:left;
     }
+
+    ul {
+      grid-template-columns: 1fr;
+    }
+
     
     a {
         text-overflow: clip;
     }
 
     .activeNavLink {
-        border-bottom: 2px solid #e50914;
-        border-right: none;
+        border-bottom: none;
+        border-right: 2px solid #e50914;
         opacity: 100%;
 
     }
@@ -143,7 +180,17 @@ li a {
     .main-content {
         padding: 10px;
     }
-    
+
+  .dashboard-menu ul li:first-child .dashboard-item {
+
+    border-top-right-radius: 7px;
+  }
+
+  .dashboard-menu ul li:last-child .dashboard-item {
+
+    border-bottom-right-radius: 7px;
+  }
+
     
 }
 
@@ -152,5 +199,5 @@ li a {
 
 
 
-
 </style>
+

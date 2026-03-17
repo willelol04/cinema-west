@@ -154,6 +154,9 @@ class PaymentRequest(BaseModel):
 class UserRemove(BaseModel):
     sub: str
 
+class CurrentUserPatchRole(BaseModel):
+    is_admin: bool
+
 class UserAdmin(BaseModel):
     sub: str
     id: int

@@ -24,9 +24,19 @@ onMounted(fetchMovie);
 </script>
 
 <template>
+  <main>
     <MovieDetails v-if="fetchComplete" :movie="movieResults" />
     <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
+  </main>
 </template>
 
 <style scoped>
+
+main {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 </style>

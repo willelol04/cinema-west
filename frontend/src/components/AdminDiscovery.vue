@@ -46,6 +46,7 @@ const updateMovie = (movie) => {
 <template>
     
     <div class="search-movies">
+      <h1>Discover Movies on TMDB:</h1>
     <Search :header="`Search Movies on TMDB:`" :searchFunction="fetchMovieResults"/>
     <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieResults"  @update="updateMovie"/>
     <BeatLoader v-if="!fetchComplete" class="fetch-loading" :color="'#bdc7bf'"/>
@@ -55,7 +56,10 @@ const updateMovie = (movie) => {
 </template>
 
 <style scoped>
-
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
 .fetch-loading {
     margin-top: 200px;

@@ -6,40 +6,36 @@ import { RouterView } from 'vue-router';
 import { Auth0Plugin, useAuth0, User } from '@auth0/auth0-vue';
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently, checkSession } = useAuth0();
 
-import { getUser, addUser } from './api/users';
+import { getCurrentUser, addUser, patchCurrentUserRole } from './api/users';
 
 const checkedUser = ref(false);
 
-const userExists = async (userAuthId) => {
-    try {
-        const token = await getAccessTokenSilently();
-        const user = await getUser(userAuthId, token);
-        console.log("user:", user);
-
-        if(user) {
-          return true;
-        } else {
-          return false;
-        }
-    } catch(e) {
-        console.log("error fetching user");
-    }
-
-}
 
 watch(
   () => (user.value),
-  async (currUser) => {
-    if(currUser && currUser.sub && !checkedUser.value) {
+  async (Auth0User) => {
+    if(Auth0User && Auth0User.sub && !checkedUser.value) {
+        console.log("asdfasdfasdfasfd")
         checkedUser.value = true;
-        if(! await userExists(currUser.sub)) {
-          const token = await getAccessTokenSilently();
-          await addUser({sub: currUser.sub, email:currUser.email, nickname: currUser.nickname, is_admin: currUser['http://localhost:8000/roles'].includes('admin')}, token);
+        const token = await getAccessTokenSilently();
+        const Auth0UserIsAdmin = Auth0User['http://localhost:8000/roles'].includes('admin')
+        const dbUser = await getCurrentUser(token);
+
+        console.log("user is", Auth0User.sub)
+        console.log("user is ", dbUser)
+        console.log("user is admin: ", Auth0UserIsAdmin)
+
+
+
+        if(!dbUser) {
+          await addUser({sub: Auth0User.sub, email:Auth0User.email, nickname: Auth0User.nickname, is_admin: Auth0UserIsAdmin}, token);
         } else {
           console.log("user exists, woo!");
-
+          if(Auth0UserIsAdmin !== dbUser.is_admin) {
+            await patchCurrentUserRole({is_admin: Auth0UserIsAdmin}, token);
+          }
         }
-    } 
+    }
   }
 )
 

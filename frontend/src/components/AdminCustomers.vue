@@ -55,7 +55,7 @@ const cancelBooking = async (booking) => {
 
    <div class="customer-results" v-if="fetchComplete">
     <div class="customer" v-for="customer in customerResults">
-    <Profile class="profile" v-if="fetchComplete"  :user="{email: customer.email, sub: customer.sub}"/>
+    <Profile class="profile" v-if="fetchComplete"  @delete="fetchCustomerResults" :user="{email: customer.email, sub: customer.sub}"/>
     <h3>Bookings:</h3>
     <ul class="bookings">
         <li class="booking" v-for="booking in customer.bookings"><span class="booking-name"> {{ booking.tickets.length}} tickets to {{ booking.screening.movie.title }}, Booking ID:{{ booking.id }}</span><button @click="cancelBooking(booking)" class="delete-booking"><i class="pi pi-times"></i>Cancel</button></li>
@@ -81,6 +81,7 @@ const cancelBooking = async (booking) => {
 
 h1 {
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .booking {
@@ -97,7 +98,7 @@ h1 {
 .bookings {
     width: 100%;
     height: 200px;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding: 10px;
 }
 
@@ -167,6 +168,10 @@ input[type="search"] {
 }
       
 @media screen and (max-width: 1200px) {
+    .customer {
+      width: 100%;
+    }
+
     .customer-results {
         justify-content: center;
         align-items: center;

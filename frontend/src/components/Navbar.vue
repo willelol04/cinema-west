@@ -45,7 +45,7 @@ watch(
 </script>
 
 <template>
-        <nav>
+        <nav id="nav">
         <div class="top">
             <h1><RouterLink to="/"><img src="../public/favicon.ico" style="vertical-align: middle; margin-right: 15px;" height="50"><span class="logo-text">cinema west</span></RouterLink></h1>
         <div class="nav-dropdown first">
@@ -91,7 +91,7 @@ nav ul li {
 
 .activeNavLink {
     color: var(--selected-default-color);
-    border-bottom: 2px solid red;
+    border-bottom: 2px solid var(--selected-default-color);
     transition: 300ms;
 }
 

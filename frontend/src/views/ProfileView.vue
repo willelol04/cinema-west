@@ -44,6 +44,8 @@ const goToBooking = (bookingId) => {
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' })
       }
+
+      showAlert.value = false;
 }
 
 const cancelBooking = async (booking) => {
@@ -65,6 +67,7 @@ const cancelBooking = async (booking) => {
      <div v-if="bookingsFetchComplete && isAuthenticated" class="my-profile">
        <Profile class="profile-info" :isMyProfile="true" :user="{email: user.email, sub: user.sub}"/>
        <div v-if="showAlert" class="new-booking-alert"><button @click="showAlert=false" class="close-alert-btn"><i class="pi pi-times"></i></button>Alert: You have a new booking added to your account! <button class="go-to-booking-btn" @click="goToBooking(route.query.bookingId)" > Go to booking</button></div>
+       <h1>My bookings</h1>
        <div class="bookings">
          <BookingCard class="booking" v-for="(booking, ind) in bookings" @delete="cancelBooking(booking)" :booking="booking"/>
        </div>
@@ -79,6 +82,7 @@ const cancelBooking = async (booking) => {
 <style scoped>
 main {
   background-color: var(--main-bg);
+  flex: 1;
 }
 
 .my-profile {
@@ -147,6 +151,9 @@ main {
         justify-content: center;
         text-align: middle;
     }
+}
+h1 {
+  margin-bottom: 10px;
 }
 
 </style>
