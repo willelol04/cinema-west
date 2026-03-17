@@ -44,9 +44,13 @@ async function fetchBooking() {
         }
 
     } catch(e) {
-        console.log(e);
-        alert("Something went wrong.", e.detail);
-        router.push("/");
+        if(e.error_type === "entity_not_found_error") {
+          router.push("/");
+        }
+        else {
+          console.log(e);
+          alert("Something went wrong.", e.detail);
+        }
     }
 }
 
@@ -122,7 +126,7 @@ const payBooking = async () => {
     <main>
       <NavigateBackButton v-if="fetchComplete" :target="`/booking/`+bookingResult.screening_id" text="Go Back To Booking">
       </NavigateBackButton>
-    <div class="booking-confirmation">
+    <div v-if="!paymentComplete" class="booking-confirmation">
         <h1>Payment Information</h1>
         <form v-if="fetchComplete" @submit.prevent="payBooking()">
             <label for="social-security-nr">Social security number:</label>
@@ -136,6 +140,7 @@ const payBooking = async () => {
         </form>
         <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
     </div>
+      <div v-else>Payment already processed.</div>
     </main>
 </template>
 

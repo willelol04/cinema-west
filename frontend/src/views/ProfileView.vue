@@ -6,6 +6,7 @@ import { useAuth0, User } from '@auth0/auth0-vue';
 
 import {useRoute, useRouter} from 'vue-router';
 import { deleteBooking, getMyBookings } from '@/api/bookings'
+import BeatLoader from "vue-spinner/src/BeatLoader.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -13,10 +14,13 @@ const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useA
 
 const bookings = ref([])
 const showAlert = ref(false);
-const fetchBookings = async () => { 
+const bookingsFetchComplete = ref(true)
+const fetchBookings = async () => {
     try {
+    bookingsFetchComplete.value = false;
     const token = await getAccessTokenSilently();
     bookings.value = await getMyBookings(token);
+    bookingsFetchComplete.value = true;
 
     } catch(e) {
         alert(e);
@@ -58,13 +62,15 @@ const cancelBooking = async (booking) => {
 <template>
 
    <main>
-     <div class="my-profile">
-       <Profile class="profile-info" v-if="isAuthenticated" :isMyProfile="true" :user="{email: user.email, sub: user.sub}"/>
+     <div v-if="bookingsFetchComplete && isAuthenticated" class="my-profile">
+       <Profile class="profile-info" :isMyProfile="true" :user="{email: user.email, sub: user.sub}"/>
        <div v-if="showAlert" class="new-booking-alert"><button @click="showAlert=false" class="close-alert-btn"><i class="pi pi-times"></i></button>Alert: You have a new booking added to your account! <button class="go-to-booking-btn" @click="goToBooking(route.query.bookingId)" > Go to booking</button></div>
        <div class="bookings">
          <BookingCard class="booking" v-for="(booking, ind) in bookings" @delete="cancelBooking(booking)" :booking="booking"/>
        </div>
      </div>
+     <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
+
    </main>
 
 

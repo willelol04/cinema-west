@@ -4,21 +4,15 @@ import { getMoviesAll } from '@/api/movies';
 import MoviesList from '@/components/MoviesList.vue';
 import Sort from '@/components/Sort.vue';
 import { onMounted, ref } from 'vue';
+import BeatLoader from "vue-spinner/src/BeatLoader.vue";
 
 const movieResults = ref([]);
-const fetchComplete = ref(false);
+const fetchComplete = ref(true);
 
-async function fetchMovies() {
-    try {
-      movieResults.value = await getMoviesAll();
-      console.log(movieResults.value);
 
-    } catch(e) {
-      console.log(e)
-    }
-}
 
-async function updateMovies(sortData) {
+async function fetchMovies(sortData) {
+    fetchComplete.value = false
     const searchParams = new URLSearchParams();
     if(sortData.title !== null) {
       searchParams.append('title', sortData.title)
@@ -36,23 +30,31 @@ async function updateMovies(sortData) {
 
     } catch(e) {
       console.log(e)
+    } finally {
+      fetchComplete.value = true
     }
 }
 
-onMounted(fetchMovies);
+onMounted( async () => {await fetchMovies({title: null, genre: null, rating: null})});
+
 </script>
 <template>
   <main>
-    <MoviesList :filter="true" @update="updateMovies" :movies="movieResults" />
+    <h1>Movies</h1>
+    <Sort @update="fetchMovies"/>
+    <MoviesList v-if="fetchComplete" :movies="movieResults" />
+    <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
   </main>
 
 </template>
 <style scoped>
   h1 {
-    text-align: center;
+    text-align: left;
   }
 
   main {
     background-color: var(--main-bg);
+    padding: 20px 200px;
+    text-align: center;
   }
 </style>

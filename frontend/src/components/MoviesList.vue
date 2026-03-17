@@ -10,15 +10,9 @@ const emit = defineEmits(['update'])
 const start_ind = ref(0);
 const showScroll = ref(null);
 
-const props = defineProps({title: {
-        type: String,
-        default: 'Movies',
-    },
+const props = defineProps({
+    title: String,
     movies: Array,
-    filter: {
-        type: Boolean,
-        default: false,
-    },
     limit: {
         type: Number,
         default: 200,
@@ -95,9 +89,6 @@ const scrollRight = () => {
 }
 
 
-const emitUpdate = (sortData) => {
-    emit('update', sortData)
-}
 
 console.log(props.movies);
     
@@ -106,13 +97,12 @@ console.log(props.movies);
 <template>
     <section>
     <div class="movies-header">
-    <h1 class="title">{{ props.title }}</h1>
+    <h1 v-if="props.title" class="title">{{ props.title }}</h1>
     <div v-if="props.scroll && showScroll === true" class="scroll">
         <button class="scroll-left scroll-button" :disabled="!canScrollLeft()"  @click="scrollLeft()" ><i class="pi pi-chevron-circle-left" ></i></button>
         <button class="scroll-right scroll-button"  :disabled="!canScrollRight()" @click="scrollRight()" ><i class="pi pi-chevron-circle-right" ></i></button>
     </div>
     </div>
-    <Sort v-if="props.filter" @update="emitUpdate"/>
         <TransitionGroup name="list" tag="div" :style="`grid-template-columns: repeat(${columns}, minmax(100px, 1fr));`" class="movies-container">
         <div class="movie-card" v-for="(movie, index) in visibleMovies" :key="movie">
         <RouterLink class="movie-link" :to="`/movies/`+ (movie.id ? movie.id : index) ">
@@ -170,8 +160,6 @@ console.log(props.movies);
     justify-content: space-between;
     align-items: center;
     vertical-align: middle;
-    margin-bottom: 25px;
-    margin-top: 40px;
 }
 
 
@@ -180,7 +168,6 @@ section {
     display: block;
     margin: 0 auto;
     width: 100%;
-    padding: 20px 200px;
 }
 
 .pi {

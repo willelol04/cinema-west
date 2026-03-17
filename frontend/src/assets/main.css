@@ -35,3 +35,10 @@ ul {
     --default-border-bg: #404040;
 
 }
+
+.fetch-loading {
+    margin: 0 auto;
+    text-align: center;
+    color: #bdc7bf;
+    padding: 100px;
+}

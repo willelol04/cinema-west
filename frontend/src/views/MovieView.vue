@@ -4,13 +4,18 @@ import { useRoute } from 'vue-router';
 import { onMounted, ref } from 'vue';
 import { getMovie } from '@/api/movies';
 
+import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
+
 const movieResults = ref({});
+const fetchComplete = ref(true)
 
 const route = useRoute();
 
 async function fetchMovie() {
+    fetchComplete.value = false;
     movieResults.value = await getMovie(route.params.id);
     console.log(movieResults.value);
+    fetchComplete.value = true;
 }
 
 onMounted(fetchMovie);
@@ -19,7 +24,8 @@ onMounted(fetchMovie);
 </script>
 
 <template>
-    <MovieDetails :movie="movieResults" />
+    <MovieDetails v-if="fetchComplete" :movie="movieResults" />
+    <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
 </template>
 
 <style scoped>

@@ -7,6 +7,7 @@ import { format, formatDistance, formatRelative, subDays } from 'date-fns';
 import {getScreening} from '@/api/screenings';
 import {addBooking} from '@/api/bookings';
 import NavigateBackButton from "@/components/NavigateBackButton.vue";
+import BeatLoader from "vue-spinner/src/BeatLoader.vue";
 
 
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
@@ -14,14 +15,17 @@ const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useA
 const screeningResult = ref(null);
 const checkedSeats = ref([]);
 const booked_seat_ids = ref([])
+const fetchComplete = ref(true)
 
 const route = useRoute();
 const router = useRouter();
 let ws = null;
 
 async function fetchScreening() {
+    fetchComplete.value = false
     screeningResult.value = await getScreening(route.params.id);
     booked_seat_ids.value = screeningResult.value.booked_seat_ids;
+    fetchComplete.value = true
 
 }
 
@@ -93,7 +97,7 @@ onMounted(async () => {
           <NavigateBackButton v-if="screeningResult" :target="`/movies/`+screeningResult.movie.id" text="Go Back to Movie Details">
           </NavigateBackButton>
 
-          <div v-if="screeningResult" class="booking">
+          <div v-if="fetchComplete && screeningResult" class="booking">
             <form method="POST" @submit.prevent="bookTickets()" action="#">
               <h3>{{ screeningResult.movie.title }} - {{ format(screeningResult.start_time, "EEEE, MMMM do HH:mm") }}</h3>
               <div :style="`grid-template-columns: repeat(${screeningResult.theatre.seats_per_row}, 1fr)`" class="seat-grid">
@@ -128,6 +132,7 @@ onMounted(async () => {
               </div>
             </form>
           </div>
+          <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
         </main>
 </template>
 <style>

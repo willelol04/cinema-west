@@ -62,7 +62,6 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(50))
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    tickets: Mapped[List["Ticket"]] = relationship(cascade="all, delete-orphan")
     bookings: Mapped[List["Booking"]] = relationship(cascade="all, delete-orphan")
 
     __table_args__ = (UniqueConstraint("sub", name="unique_auth0_id"),)
@@ -131,20 +130,18 @@ class Booking(Base):
 class Ticket(Base):
     __tablename__ = "ticket"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     booking_id: Mapped[int] = mapped_column(ForeignKey("booking.id", ondelete="CASCADE"))
     screening_id: Mapped[int] = mapped_column(ForeignKey("screening.id"))
     seat_id: Mapped[str] = mapped_column(String(10))
     theatre_id: Mapped[int] = mapped_column(Integer)
-    status: Mapped[str] = mapped_column(String(20), default='pending')
-    
+
     seat: Mapped[Seat] = relationship()
     booking: Mapped[Booking] = relationship()
     screening: Mapped[Screening] = relationship(back_populates="tickets",)
     
     __table_args__ = (
-        UniqueConstraint("screening_id", "seat_id", name="yes"), 
+        UniqueConstraint("screening_id", "seat_id", name="unique_seat_per_screening"),
         ForeignKeyConstraint(
             ["seat_id", "theatre_id"], ["seat.id", "seat.theatre_id"]
         ),

@@ -10,9 +10,11 @@ const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useA
 
 
 const movieResults = ref([]);
+const fetchComplete = ref(true)
 
 async function fetchMovies() {
     try {
+      fetchComplete.value = false;
       movieResults.value = await getMoviesAllAdmin();
 
       for(const movie of movieResults.value) {
@@ -24,6 +26,7 @@ async function fetchMovies() {
         }
 
       }
+      fetchComplete.value = true;
 
     } catch(e) {
     console.log(e);
@@ -42,7 +45,8 @@ onMounted(async () => {
     
     <div class="movie-database">
     <h1>Movie Database</h1>
-    <MoviesListAdmin v-if="movieResults" :movies="movieResults"  @update="fetchMovies"/>
+    <MoviesListAdmin v-if="movieResults && fetchComplete" :movies="movieResults"  @update="fetchMovies"/>
+    <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
     </div>
 
 </template>

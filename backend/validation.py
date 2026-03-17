@@ -83,7 +83,6 @@ class TicketBase(BaseModel):
     id: int
 
 class TicketResponse(TicketBase):
-    status: str
     booking: BookingTicketResponse
     screening: ScreeningResponse
     seat: SeatResponse

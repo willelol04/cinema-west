@@ -50,6 +50,7 @@ const cancelBooking = async (booking) => {
 <template>
     
     <div class="search-customers">
+      <h1>Customers</h1>
       <Search :header="`Search Customers:`" :searchFunction="fetchCustomerResults"/>
 
    <div class="customer-results" v-if="fetchComplete">
@@ -77,6 +78,10 @@ const cancelBooking = async (booking) => {
 
 
 <style scoped>
+
+h1 {
+  text-align: center;
+}
 
 .booking {
     width: 100%;

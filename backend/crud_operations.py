@@ -67,7 +67,7 @@ def add_booking(user, booking: validation.BookingAdd, session):
             created_tickets = []
             booking_id = session.execute(insert(Booking).values(user_id=user.id, screening_id=booking.screening_id, total_price=100*len(booking.seats)).returning(Booking.id)).scalar()
             for seat in booking.seats:
-                t = Ticket(user_id=user.id, booking_id=booking_id, screening_id=booking.screening_id, seat_id=seat["id"], theatre_id=seat["theatre_id"])
+                t = Ticket(booking_id=booking_id, screening_id=booking.screening_id, seat_id=seat["id"], theatre_id=seat["theatre_id"])
                 created_tickets.append(t)
             session.add_all(created_tickets)
             session.flush()
@@ -263,7 +263,7 @@ def add_movie(movie, session):
 def get_screening(id, session):
     try:
         screening = session.execute(select(Screening).where(Screening.id==id).options(selectinload(Screening.movie), selectinload(Screening.theatre).selectinload(Theatre.seats))).scalars().first()
-        screening.booked_seat_ids = session.execute(select(Ticket.seat_id).where(Ticket.screening_id==id, Ticket.status!="cancelled")).scalars().all()
+        screening.booked_seat_ids = session.execute(select(Ticket.seat_id).where(Ticket.screening_id==id)).scalars().all()
         return screening
     except Exception as e:
         print(e)

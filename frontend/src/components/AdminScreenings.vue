@@ -6,11 +6,13 @@ import { getMoviesAll } from '@/api/movies';
 import { getTheatres } from '@/api/theatres';
 import { addScreening } from '@/api/screenings';
 import router from '@/router';
+import BeatLoader from "vue-spinner/src/BeatLoader.vue";
 
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
     
 const movieResults = ref([]);
 const theatreResults = ref([]);
+const fetchComplete = ref(true);
 const start_time = ref(null)
 const screening = reactive({
     movie_id: null,
@@ -68,16 +70,15 @@ const deleteTime = (ind) => {
     screening.start_times.splice(ind, 1);
 }
 
-onMounted(fetchMovies);
-onMounted(fetchTheatres);
+onMounted(async () => {fetchComplete.value = false; await fetchMovies; await fetchTheatres(); fetchComplete.value = true });
 </script>
 
 
 <template>
-    <div class="add-screening">
-    <form method="POST" @submit.prevent="addScreeningUpdate">
+    <div class="add-screening" >
     <h1>New Screening</h1>
-        <div class="grid">
+    <form v-if="fetchComplete" method="POST" @submit.prevent="addScreeningUpdate">
+        <div class="grid" >
         <label for="movies">Movie:</label>
         <select v-model="screening.movie_id" id="movies" required>
             <option :value="null" selected>Select a Movie</option>
@@ -105,9 +106,10 @@ onMounted(fetchTheatres);
           </span>
         </div>
     </form>
-        
+    <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
+
     </div>
-    
+
 </template>
 <style scoped>
 
