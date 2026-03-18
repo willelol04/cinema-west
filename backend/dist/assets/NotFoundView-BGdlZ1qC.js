@@ -1,0 +1,1 @@
+import{_ as t,c as o,b as a,d as s,w as n,h as r,R as u,a as d,x as _}from"./index-Dlj3yUM6.js";const c={__name:"NotFoundView",setup(l){return(p,e)=>(d(),o("section",null,[e[1]||(e[1]=a("h2",null,"404 Page not found",-1)),s(r(u),{to:"/"},{default:n(()=>[...e[0]||(e[0]=[_("Go back to home",-1)])]),_:1})]))}},i=t(c,[["__scopeId","data-v-67e65121"]]);export{i as default};

@@ -6,14 +6,9 @@ const { loginWithRedirect, isLoading } = useAuth0()
 
 
 onMounted(async () => {
-    loginWithRedirect();
+  loginWithRedirect();
 })
-
 </script>
-<template>
+<template></template>
 
-</template>
-
-<style scoped>
-
-</style>
+<style scoped></style>

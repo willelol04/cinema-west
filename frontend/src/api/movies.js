@@ -1,5 +1,12 @@
 import { authenticatedFetch, normalFetch } from "./general";
 
+export function getMovieSchedule() {
+
+    const error_message = "Failed fetching movie schedule";
+    const success_message = "Successfully fetching movie schedule";
+
+    return normalFetch("/api/movies/schedule", error_message, success_message);
+}
 
 export function getMovie(id) {
     return normalFetch(`/api/movies/id/${id}`);
@@ -13,9 +20,6 @@ export function getMoviesAllAdmin() {
   return normalFetch("/api/admin/movies");
 }
 
-export function getMovieSchedule() {
-    return normalFetch("/api/movies/schedule");
-}
 
 export function deleteMovie(movie, token) {
     return authenticatedFetch("/api/movies", token, {

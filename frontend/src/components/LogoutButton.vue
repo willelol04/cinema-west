@@ -13,17 +13,13 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <button
-    @click="handleLogout"
-    class="button logout"
-    :disabled="isLoading"
-  >
+  <button @click="handleLogout" class="button logout" :disabled="isLoading">
     {{ isLoading ? 'Loading...' : 'Log Out' }}
   </button>
 </template>
 
 <style scoped>
 button {
-    font-size: 18px;
+  font-size: 18px;
 }
 </style>

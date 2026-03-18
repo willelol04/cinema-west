@@ -14,59 +14,62 @@ const {successToast, errorToast} = useAppToast();
 
 
 async function fetchMovies(sortData) {
-    const searchParams = new URLSearchParams();
+  const searchParams = new URLSearchParams();
 
-    if(sortData.title !== null) {
-      searchParams.append('title', sortData.title)
-    }
-    if(sortData.genre !== null) {
-      searchParams.append('genre', sortData.genre)
-    }
-    if(sortData.rating !== null) {
-      searchParams.append('rating', sortData.rating)
-    }
-    try {
-      fetchComplete.value = false
-      movieResults.value = await normalFetch(`/api/movies?${searchParams}`);
-      console.log(movieResults.value);
-      console.log(searchParams)
+  if(sortData.title !== null) {
+    searchParams.append('title', sortData.title)
+  }
+  if(sortData.genre !== null) {
+    searchParams.append('genre', sortData.genre)
+  }
+  if(sortData.rating !== null) {
+    searchParams.append('rating', sortData.rating)
+  }
+  try {
+    fetchComplete.value = false
+    movieResults.value = await normalFetch(`/api/movies?${searchParams}`);
+    console.log(movieResults.value);
+    console.log(searchParams)
 
-    } catch(e) {
-      errorToast("Error fetching movies from database.")
-    } finally {
-      fetchComplete.value = true
-    }
+  } catch(e) {
+    errorToast("Error fetching movies from database. Try refreshing the page.")
+  } finally {
+    fetchComplete.value = true
+  }
 }
 
 onMounted( async () => {await fetchMovies({title: null, genre: null, rating: null})});
-
 </script>
 <template>
   <main>
-    <h1>Movies</h1>
-    <Sort @update="fetchMovies"/>
-    <MoviesList v-if="movieResults" :movies="movieResults" />
-    <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-if="!fetchComplete" />
+    <Sort @update="fetchMovies" />
+    <MoviesList v-if="movieResults" title="Movies" :movies="movieResults" />
+    <BeatLoader
+        class="fetch-loading"
+        :color="'#bdc7bf'"
+        v-if="!fetchComplete"
+    />
   </main>
-
 </template>
 <style scoped>
-  h1 {
-    text-align: left;
-    margin-bottom: 10px;
+h1 {
+  text-align: left;
+  margin-bottom: 10px;
+}
 
-  }
+main {
+  background-color: var(--main-bg);
+  text-align: center;
+  padding: 20px 200px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
+@media screen and (max-width: 1200px) {
   main {
-    background-color: var(--main-bg);
-    text-align: center;
-    padding: 20px 200px;
-    flex: 1;
+    padding: 10px;
   }
-
-  @media screen and (max-width: 1200px) {
-    main {
-      padding: 10px;
-    }
-  }
+}
 </style>

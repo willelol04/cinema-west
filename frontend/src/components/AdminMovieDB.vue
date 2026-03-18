@@ -15,39 +15,39 @@ const movieResults = ref([]);
 const fetchComplete = ref(true)
 
 async function fetchMovies() {
-    try {
-      fetchComplete.value = false;
-      movieResults.value = await getMoviesAllAdmin();
+  try {
+    fetchComplete.value = false;
+    movieResults.value = await getMoviesAllAdmin();
 
-    } catch(e) {
-    errorToast(`Error fetching movies.`)
-    }
-    finally {
-      fetchComplete.value = true;
-    }
+  } catch(e) {
+    errorToast("Error fetching movies. Try refreshing the page.")
+  }
+  finally {
+    fetchComplete.value = true;
+  }
 }
 
 onMounted(async () => {
   await fetchMovies();
 
 })
-
 </script>
 
-
 <template>
-
-    <div class="movie-database">
+  <div class="movie-database">
     <h1>Movie Database</h1>
-    <MoviesListAdmin v-if="movieResults && fetchComplete" :movies="movieResults"  action="delete" @update="fetchMovies"/>
+    <MoviesListAdmin
+        v-if="movieResults && fetchComplete"
+        :movies="movieResults"
+        action="delete"
+        @update="fetchMovies"
+    />
     <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
-    </div>
-
+  </div>
 </template>
 
-
 <style scoped>
-  .movie-database {
-    text-align: center;
-  }
+.movie-database {
+  text-align: center;
+}
 </style>

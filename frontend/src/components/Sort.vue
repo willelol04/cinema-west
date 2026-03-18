@@ -12,30 +12,30 @@ const fetchComplete = ref(false)
 const emit = defineEmits(['update'])
 
 const sortData = reactive({
-    title: null,
-    genre: null,
-    rating: null,
+  title: null,
+  genre: null,
+  rating: null,
 });
 
 
 const resetSortData = () => {
-    sortData.title = null;
-    sortData.genre = null;
-    sortData.rating = null;
+  sortData.title = null;
+  sortData.genre = null;
+  sortData.rating = null;
 }
 
 async function fetchFilters() {
-    try {
+  try {
     fetchComplete.value = false;
     filters.value = await normalFetch("/api/filters");
     console.log(filters.value);
-    } catch(e){
-      errorToast("Error fetching sort filters.")
+  } catch(e){
+    errorToast("Error fetching sort filters. Try refreshing the page.")
 
-    }
-    finally {
-      fetchComplete.value = true;
-    }
+  }
+  finally {
+    fetchComplete.value = true;
+  }
 }
 
 
@@ -45,48 +45,54 @@ async function fetchFilters() {
 onMounted(async () => await fetchFilters())
 
 const debounceUpdateData = debounce((newValue) => {
-    console.log(newValue)
-    emit('update', sortData)
-  
+  console.log(newValue)
+  emit('update', sortData)
+
 }, 300)
 
 watch(sortData, debounceUpdateData, {deep: true})
-
 </script>
 <template>
   <div v-if="filters" class="sort-container">
     <input
-      type="search"
-      class="search-input"
-      placeholder="Search movies..."
-      v-model="sortData.title"
+        type="search"
+        class="search-input"
+        placeholder="Search movies..."
+        v-model="sortData.title"
     />
 
     <select class="genre-select" v-model="sortData.genre">
       <option :value="null">All genres</option>
-      <option v-for="(genre, ind) in filters.genres" :value="genre.id">{{ genre.name }}</option>
+      <option v-for="(genre, ind) in filters.genres" :value="genre.id">
+        {{ genre.name }}
+      </option>
     </select>
 
     <select class="rating-select" v-model="sortData.rating">
       <option :value="null">All ratings</option>
-      <option v-for="(rating, ind) in filters.ratings" :value="rating">{{ rating }}</option>
+      <option v-for="(rating, ind) in filters.ratings" :value="rating">
+        {{ rating }}
+      </option>
     </select>
-    <input class="reset-button" type="button" value="Reset" @click="resetSortData">
+    <input
+        class="reset-button"
+        type="button"
+        value="Reset"
+        @click="resetSortData"
+    />
   </div>
 </template>
 
-<script setup>
-
-</script>
+<script setup></script>
 
 <style scoped>
 .sort-container {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  align-items:center;
+  align-items: center;
   max-width: 600px;
-  justify-content: start; 
+  justify-content: start;
 }
 
 .search-input {
@@ -111,7 +117,7 @@ select option {
   background-color: var(--secondary-bg);
   color: var(--text-default-color);
 }
-    
+
 .reset-button {
   padding: 0.5rem;
   border-radius: 4px;
@@ -121,17 +127,15 @@ select option {
 }
 
 .reset-button:hover {
-    cursor: pointer;
-    opacity: 60%;
-
+  cursor: pointer;
+  opacity: 60%;
 }
 
 option {
-    border-radius: 0;
+  border-radius: 0;
 }
 
-
-@media screen and (max-width:768px) {
+@media screen and (max-width: 768px) {
   .sort-container {
     justify-content: space-between;
   }
@@ -141,5 +145,4 @@ option {
     width: 100%;
   }
 }
-
 </style>

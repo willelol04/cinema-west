@@ -9,9 +9,6 @@ export async function authenticatedFetch(url, token, options = {}) {
         }
     });
 
-    if(promise.status === 404) {
-      return null
-    }
 
     if(!promise.ok) {
       throw await promise.json()
@@ -29,9 +26,7 @@ export async function normalFetch(url, options = {}) {
         }
     })
 
-  if(promise.status === 404) {
-    return null
-  }
+
 
   if(!promise.ok) {
     throw await promise.json()

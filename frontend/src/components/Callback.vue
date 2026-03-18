@@ -8,23 +8,18 @@ const route = useRoute();
 
 onMounted(async () => {
   try {
-  const redirectUrl = sessionStorage.getItem('redirect_url')
-  sessionStorage.removeItem('redirect_url');
-  if(redirectUrl?.startsWith('/')) {
-    await router.push(redirectUrl);
-  } else {
+    const redirectUrl = sessionStorage.getItem('redirect_url')
+    sessionStorage.removeItem('redirect_url');
+    if(redirectUrl?.startsWith('/')) {
+      await router.push(redirectUrl);
+    } else {
+      await router.replace('/');
+    }
+  } catch(e) {
     await router.replace('/');
   }
- } catch(e) {
-    await router.replace('/');
- }
 });
-
 </script>
-<template>
+<template></template>
 
-</template>
-
-<style scoped>
-
-</style>
+<style scoped></style>

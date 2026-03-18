@@ -6,12 +6,12 @@ import { onMounted, ref } from 'vue';
 const Router = useRouter();
 
 const props = defineProps({
-    upcomingMovies: Array,
+  upcomingMovies: Array,
 });
-    
+
 const goToMovie = (slide) => {
-    const movie_id = props.upcomingMovies[slide.index].id;
-    Router.push(`/movies/${movie_id}`);
+  const movie_id = props.upcomingMovies[slide.index].id;
+  Router.push(`/movies/${movie_id}`);
 }
 
 
@@ -24,12 +24,12 @@ const updateColumns = () => {
 
   if (width < 768) {
     carousel.value = {
-    space: 175,
-    display: 3,
-    controlsVisible: false,
-    clickable: true,
-    width: 217,
-    height: 326,
+      space: 175,
+      display: 3,
+      controlsVisible: false,
+      clickable: true,
+      width: 217,
+      height: 326,
     };
   }
   else carousel.value = {
@@ -39,85 +39,96 @@ const updateColumns = () => {
     clickable: true,
     width: 500,
     height: 326,
-    
+
   };
-    
+
 }
 
 onMounted(() => {
   updateColumns();
   window.addEventListener("resize", updateColumns);
 });
-
 </script>
 
 <template>
-    <section>
-    <h1 style="text-align: center;">Coming soon</h1>
- <Carousel3d class="carousel" :space="carousel.space" :display="carousel.display" :autoplay-timeout="10000" :autoplay="true" :controls-visible="carousel.controlsVisible" :onMainSlideClick="goToMovie" :clickable="carousel.clickable" :width="carousel.width" :height="carousel.height">
-    <Slide v-for="(movie, ind) in props.upcomingMovies" class="slide" :index="ind" :key="movie.id">
-    <div class="upcoming-movie">
-    <img :src="(movie.poster_path ? `https://image.tmdb.org/t/p/original`+movie.poster_path : `https://placehold.co/400x600/000000/000000/png`)" height="326" width="auto">
-    <div class="right">
-        <h3 class="upcoming-movie-title">{{ movie.title }}</h3>
-        <br>
-        <h4 class="upcoming-movie-date">{{ format(movie.release_date, 'MMMM do yyyy') }}</h4>
-        <br>
-        <p class="upcoming-movie-overview">{{ movie.overview.length < 200 ? movie.overview : movie.overview.slice(0,200)+"..." }} </p>
-    </div>
-    </div>
-    </Slide>
-
-
-  </Carousel3d>
+  <section>
+    <h1 style="text-align: center">Coming soon</h1>
+    <Carousel3d
+        class="carousel"
+        :space="carousel.space"
+        :display="carousel.display"
+        :autoplay-timeout="10000"
+        :autoplay="true"
+        :controls-visible="carousel.controlsVisible"
+        :onMainSlideClick="goToMovie"
+        :clickable="carousel.clickable"
+        :width="carousel.width"
+        :height="carousel.height"
+    >
+      <Slide
+          v-for="(movie, ind) in props.upcomingMovies"
+          class="slide"
+          :index="ind"
+          :key="movie.id"
+      >
+        <div class="upcoming-movie">
+          <img
+              :src="(movie.poster_path ? `https://image.tmdb.org/t/p/original`+movie.poster_path : `https://placehold.co/400x600/000000/000000/png`)"
+              height="326"
+              width="auto"
+          />
+          <div class="right">
+            <h3 class="upcoming-movie-title">{{ movie.title }}</h3>
+            <br />
+            <h4 class="upcoming-movie-date">
+              {{ format(movie.release_date, 'MMMM do yyyy') }}
+            </h4>
+            <br />
+            <p class="upcoming-movie-overview">
+              {{ movie.overview.length < 200 ? movie.overview : movie.overview.slice(0,200)+"..." }}
+            </p>
+          </div>
+        </div>
+      </Slide>
+    </Carousel3d>
   </section>
 </template>
 
 <style scoped>
-
-
 section {
-    padding: 20px 10vw;
-    background-color: var(--main-bg);
+  padding: 20px 10vw;
+  background-color: var(--main-bg);
 }
 
-
-.slide, .current {
-    background-color: var(--secondary-bg);
+.slide,
+.current {
+  background-color: var(--secondary-bg);
   border-radius: 5px;
-    transition: 300ms;
+  transition: 300ms;
 }
 
 .slide:hover {
-    cursor:pointer;
+  cursor: pointer;
 }
 
 .upcoming-movie {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
-
 
 .right {
-    padding: 20px;
+  padding: 20px;
 }
 
-
- 
 .upcoming-movie-date {
-    opacity: 80%;
-    font-weight: 200;
+  opacity: 80%;
+  font-weight: 200;
 }
-
 
 @media screen and (max-width: 768px) {
-    section {
-        padding: 0;
-    }
+  section {
+    padding: 0;
+  }
 }
-
-
-
 </style>

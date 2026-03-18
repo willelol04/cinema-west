@@ -25,19 +25,19 @@ async function movieIsAdded(id) {
 }
 
 async function fetchMovieResults() {
-    fetchComplete.value = false;
-    const token = await getAccessTokenSilently();
-    try {
-      movieResults.value = (await searchMovies(route.query.q, token)).results;
-    } catch(e) {
-      errorToast(`Error fetching results from TMDB.`)
-    }
-    try {
-      addedMovies.value = await getMoviesAll();
-    } catch(e) {
-      errorToast(`Error fetching movies from database.`)
-    }
-    fetchComplete.value = true;
+  fetchComplete.value = false;
+  const token = await getAccessTokenSilently();
+  try {
+    movieResults.value = (await searchMovies(route.query.q, token)).results;
+  } catch(e) {
+    errorToast("Error fetching results from TMDB. Try refreshing the page.")
+  }
+  try {
+    addedMovies.value = await getMoviesAll();
+  } catch(e) {
+    errorToast("Error fetching movies from database. Try refreshing the page.")
+  }
+  fetchComplete.value = true;
 
 }
 
@@ -52,21 +52,34 @@ const movieDisplay = computed(() => {
     return []
   }
 })
-
-
 </script>
 
-
 <template>
-
   <div class="search-movies">
     <h1>Discover Movies on TMDB:</h1>
-    <Search :header="`Search Movies on TMDB:`" :searchFunction="fetchMovieResults"/>
-    <MoviesListAdmin v-if="fetchComplete && route.query.q" :title="`Resultat för: `+ (route.query.q ? route.query.q : '')" :movies="movieDisplay"  action="add" @update="fetchMovieResults"/>
-    <BeatLoader v-if="!fetchComplete" class="fetch-loading" :color="'#bdc7bf'"/>
-    <div v-if="fetchComplete && movieResults?.length === 0 && route.query.q" class="empty">No results were found</div>
+    <Search
+        :header="`Search Movies on TMDB:`"
+        :searchFunction="fetchMovieResults"
+    />
+    <MoviesListAdmin
+        v-if="fetchComplete && route.query.q"
+        :title="`Resultat för: `+ (route.query.q ? route.query.q : '')"
+        :movies="movieDisplay"
+        action="add"
+        @update="fetchMovieResults"
+    />
+    <BeatLoader
+        v-if="!fetchComplete"
+        class="fetch-loading"
+        :color="'#bdc7bf'"
+    />
+    <div
+        v-if="fetchComplete && movieResults?.length === 0 && route.query.q"
+        class="empty"
+    >
+      No results were found
+    </div>
   </div>
-
 </template>
 
 <style scoped>
@@ -93,28 +106,23 @@ input {
   border: 1px solid var(--default-border-bg);
   border-radius: 7px;
   margin: 0;
-
 }
-
 
 form {
   margin-bottom: 50px;
 }
 
-
 input[type="search"] {
   width: 30%;
   font-size: 16px;
-  font-family:sans-serif;
+  font-family: sans-serif;
   border-radius: 7px;
   font-weight: 100;
-
 }
 
 @media screen and (max-width: 1200px) {
   input[type="search"] {
     width: 90%;
   }
-
 }
 </style>

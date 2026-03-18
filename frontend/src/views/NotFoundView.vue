@@ -1,40 +1,37 @@
 <script setup>
 import { RouterLink } from 'vue-router';
-
 </script>
 
 <template>
-    <section>
-        <h2>404 Page not found</h2>
-        <RouterLink to="/">Go back to home</RouterLink>
-    </section>
-
+  <main>
+    <h2>404 Page not found</h2>
+    <RouterLink to="/">Go back to home</RouterLink>
+  </main>
 </template>
 
 <style scoped>
-
-section {
-    padding: 20px 200px;
-    width: 100%;
-    margin: 0 auto;
-    text-align: center;
+main {
+  padding: 20px 200px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  flex: 1;
 }
 
 a {
-    padding: 5px 10px;
-    display: block;
-    width: fit-content;
-    margin: 0 auto;
-    margin-top: 30px;
-    border-radius: 5px;
-    background-color: #e50914;
-    color: white;
-    transition: 300ms;
+  padding: 5px 10px;
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  margin-top: 30px;
+  border-radius: 5px;
+  background-color: #e50914;
+  color: white;
+  transition: 300ms;
 }
 
 a:hover {
-    color: #e50914; 
-    background-color: rgb(233, 222, 222);
+  color: #e50914;
+  background-color: rgb(233, 222, 222);
 }
-
 </style>

@@ -14,22 +14,22 @@ watch(
   () => (user.value),
   async (Auth0User) => {
     if(Auth0User && Auth0User.sub && !checkedUser.value) {
-        console.log("asdfasdfasdfasfd")
         checkedUser.value = true;
         const token = await getAccessTokenSilently();
         const Auth0UserIsAdmin = Auth0User['http://localhost:8000/roles'].includes('admin')
-        const dbUser = await getCurrentUser(token);
+        let dbUser;
+        try {
+            dbUser = await getCurrentUser(token);
+         } catch {
+           dbUser = null
+         }
 
-        console.log("user is", Auth0User.sub)
-        console.log("user is ", dbUser)
-        console.log("user is admin: ", Auth0UserIsAdmin)
 
 
 
         if(!dbUser) {
           await addUser({sub: Auth0User.sub, email:Auth0User.email, nickname: Auth0User.nickname, is_admin: Auth0UserIsAdmin}, token);
         } else {
-          console.log("user exists, woo!");
           if(Auth0UserIsAdmin !== dbUser.is_admin) {
             await patchCurrentUserRole({is_admin: Auth0UserIsAdmin}, token);
           }
@@ -51,15 +51,30 @@ const toast = useToast();
 <template>
   <Navbar id="routerView"  />
   <RouterView />
+  <Toast position="bottom-center" id="toast"/>
   <Footer  />
-  <Toast position="bottom-right" appendTo="router-container"/>
 
 </template>
 
 
-<style scoped>
+<style>
+
+#toast {
+  margin-bottom: 150px;
+  width: 70vw;
+}
 
 
+@media screen and (max-width: 768px) {
+  #toast {
+    display: block;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
+    text-align: center;
+  }
+}
 
 
 </style>

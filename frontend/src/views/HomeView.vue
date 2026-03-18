@@ -18,38 +18,36 @@ const fetchComplete = ref(true)
       fetchComplete.value = false;
       schedule.value = await getMovieSchedule();
     } catch(e) {
-      errorToast("Error fetching movie schedule");
+      errorToast("Error fetching movie schedule Try refreshing the page.");
     } finally {
       fetchComplete.value = true;
     }
-  
-} 
+}
 
- 
+
  onMounted(fetchMovies)
- 
+
 </script>
 <template>
-  <main v-if="fetchComplete">
-  <Hero v-if="schedule" :upcomingMovies="schedule.upcoming"/>
-    <div v-if="schedule?.today.length > 0 " class="hr"></div>
+  <main>
+  <Hero v-if="schedule?.upcoming.length > 0" :upcomingMovies="schedule.upcoming"/>
+    <div v-if="schedule?.upcoming.length > 0 " class="hr"></div>
   <MoviesList class="movieslist" v-if="schedule?.today.length > 0 " :scroll="true" :movies="schedule.today" title="Playing Today:" :showTimes="false" />
     <div v-if="schedule?.tomorrow.length > 0 " class="hr"></div>
   <MoviesList class="movieslist" v-if="schedule?.tomorrow.length > 0 " :scroll="true" :movies="schedule.tomorrow" title="Playing Tomorrow:" :showTimes="false" />
-
+    <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-if="!fetchComplete"/>
   </main>
-  <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
 
 </template>
 <style scoped>
 
 .hr {
-  width: 100%; 
-  margin: 0 auto; 
+  width: 100%;
+  margin: 0 auto;
   border: 1px solid #2b2b2b
 }
-    
-    
+
+
 
 main {
   background-color: var(--main-bg);
@@ -58,10 +56,10 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 50px;
 }
 
 .movieslist {
-  margin-bottom: 50px;
   padding: 20px 200px;
 }
 

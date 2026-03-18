@@ -39,13 +39,17 @@ watch(
   <form method="GET" @submit.prevent>
     <label for="search">
       <i class="pi pi-search"></i>
-      <input type="search" v-model="search_field" id="search" :placeholder="props.header">
+      <input
+          type="search"
+          v-model="search_field"
+          id="search"
+          :placeholder="props.header"
+      />
     </label>
   </form>
 </template>
 
 <style scoped>
-
 form {
   text-align: center;
 }
@@ -74,9 +78,5 @@ label {
   top: 0;
   padding: 10px;
   margin: 0;
-
-
 }
-
-
 </style>
