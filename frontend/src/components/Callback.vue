@@ -11,13 +11,12 @@ onMounted(async () => {
   const redirectUrl = sessionStorage.getItem('redirect_url')
   sessionStorage.removeItem('redirect_url');
   if(redirectUrl?.startsWith('/')) {
-    router.push(redirectUrl);
+    await router.push(redirectUrl);
   } else {
-    router.replace('/');
+    await router.replace('/');
   }
-
  } catch(e) {
-  alert(`${e}`);
+    await router.replace('/');
  }
 });
 

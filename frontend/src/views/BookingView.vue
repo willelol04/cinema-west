@@ -10,6 +10,9 @@ import NavigateBackButton from "@/components/NavigateBackButton.vue";
 import BeatLoader from "vue-spinner/src/BeatLoader.vue";
 
 
+const {successToast, errorToast} = useAppToast();
+import {useAppToast} from "@/use/useToast.js";
+
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const screeningResult = ref(null);
@@ -22,11 +25,19 @@ const router = useRouter();
 let ws = null;
 
 async function fetchScreening() {
+  try {
     fetchComplete.value = false
     screeningResult.value = await getScreening(route.params.id);
     booked_seat_ids.value = screeningResult.value.booked_seat_ids;
+
+  } catch (e) {
+    errorToast("Error fetching booking data.")
+
+  }
+  finally {
     fetchComplete.value = true
 
+  }
 }
 
 const bookTickets = async () => {
@@ -35,8 +46,7 @@ const bookTickets = async () => {
         const token = await getAccessTokenSilently();
         const bookingId = await addBooking({seats: checkedSeats.value, screening_id: screeningResult.value.id}, token);
 
-        console.log(bookingId);
-        if(bookingId) {
+          if(bookingId && ws.readyState === WebSocket.OPEN) {
           try {
             ws.send(JSON.stringify({type: "update", msg: "booking issued."}))
           } catch(e) {
@@ -46,17 +56,20 @@ const bookTickets = async () => {
         }
 
 
-        console.log("Sent")
 
         if(bookingId) {
-            router.push(`/payment/${bookingId}`)
+            await router.push(`/payment/${bookingId}`)
         }
             
         } catch(e) {
-            checkedSeats.value = [];
-            await fetchScreening();
-            alert(`Error: ${e}`)
-            console.log(e)
+          console.log(e?.error_type);
+            if(e?.error_type === 'conflict' ) {
+              errorToast(e.detail)
+              checkedSeats.value = [];
+              await fetchScreening();
+            } else {
+              errorToast("Error booking seats.")
+            }
         }
 
     }
@@ -66,39 +79,36 @@ const bookTickets = async () => {
 onBeforeUnmount(() => {
     if(ws) {
       ws.close()
-      console.log("closing surely.")
     }
 })
 
 
 onMounted(async () => {
+
     await fetchScreening();
 
-    ws = new WebSocket(`/api/ws/${screeningResult.value.id}`);
-    ws.onmessage = async (event) => {
-      if (ws !== null) {
-        console.log(JSON.parse(event.data))
-      }
+    if(screeningResult.value) {
+      console.log(screeningResult)
+        ws = new WebSocket(`/api/ws/${screeningResult.value.id}`);
 
+        ws.onmessage = async (event) => {
+          if(JSON.parse(event.data)?.type === 'update') {
+            booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids
+            checkedSeats.value = checkedSeats.value.filter((seat) => !booked_seat_ids.value.includes(seat.id))
+          }
 
-      if(JSON.parse(event.data)?.type === 'update') {
-        booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids
-        checkedSeats.value = checkedSeats.value.filter((seat) => !booked_seat_ids.value.includes(seat.id))
-      }
-
-
-    };
+        }
+    }
 
 });
 </script>
 
 <template>
         <main>
-          <NavigateBackButton v-if="screeningResult" :target="`/movies/`+screeningResult.movie.id" text="Go Back to Movie Details">
-          </NavigateBackButton>
-
           <div v-if="fetchComplete && screeningResult" class="booking">
-            <form method="POST" @submit.prevent="bookTickets()" action="#">
+            <NavigateBackButton :target="`/movies/`+screeningResult.movie.id" text="Go Back to Movie Details">
+            </NavigateBackButton>
+            <form  method="POST" @submit.prevent="bookTickets()" action="#">
               <h3>{{ screeningResult.movie.title }} - {{ format(screeningResult.start_time, "EEEE, MMMM do HH:mm") }}</h3>
               <div :style="`grid-template-columns: repeat(${screeningResult.theatre.seats_per_row}, 1fr)`" class="seat-grid">
                 <div class="screen" :style="{
@@ -131,8 +141,8 @@ onMounted(async () => {
 
               </div>
             </form>
+            <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-if="!fetchComplete" />
           </div>
-          <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
         </main>
 </template>
 <style>
@@ -153,6 +163,9 @@ onMounted(async () => {
 
 <style scoped>
 
+main {
+  flex: 1;
+}
 
 .booking-details {
   width: 100%;
@@ -210,6 +223,7 @@ main {
     background: var(--secondary-bg);
     border-radius: 10px;
     padding: 30px;
+    text-align: center;
 }
 
 .screen {
@@ -324,13 +338,17 @@ input[type="submit"]:hover {
 
 @media only screen and (max-width: 1200px) {
     main {
-        padding: 50px;
+        padding: 20px;
+    }
+
+    .booking {
+      padding: 10px;
     }
 
     .seat-grid {
       width: 100%;
       gap: 30px 1px;
-      padding: 10px;
+      padding: 20px;
     }
 
     .booking-details {

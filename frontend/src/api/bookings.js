@@ -14,7 +14,7 @@ export async function deleteBooking(booking, token) {
 }
 
 export async function getMyBookings(token) {
-    return await authenticatedFetch("/api/my-bookings", token);
+    return await authenticatedFetch("/api/me/bookings", token);
 
 }
 

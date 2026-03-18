@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink } from 'vue-router';
-import { ref, computed, onMounted } from 'vue';
+import {ref, computed, onMounted, onBeforeMount} from 'vue';
 import MoviesView from '@/views/MoviesView.vue';
 
 import Sort from '@/components/Sort.vue';
@@ -41,7 +41,7 @@ const updateColumns = () => {
 
 }
 
-onMounted(() => {
+onBeforeMount(() => {
   updateColumns();
   window.addEventListener("resize", updateColumns);
 });

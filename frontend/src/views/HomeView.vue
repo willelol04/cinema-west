@@ -5,17 +5,22 @@ import { ref, onMounted } from 'vue';
 import { ConfirmPopupStyle } from 'primevue';
 import { format, formatDistance, formatRelative, subDays } from 'date-fns';
 import { getMovieSchedule } from '@/api/movies';
-  
+
+import {useAppToast} from "@/use/useToast.js";
+const {successToast, errorToast} = useAppToast();
+
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
-const schedule = ref([]) 
-const fetchComplete = ref(false)
+const schedule = ref(null)
+const fetchComplete = ref(true)
 
  const fetchMovies = async () => {
     try {
+      fetchComplete.value = false;
       schedule.value = await getMovieSchedule();
-      fetchComplete.value = true;
     } catch(e) {
-      console.log(e);
+      errorToast("Error fetching movie schedule");
+    } finally {
+      fetchComplete.value = true;
     }
   
 } 
@@ -26,11 +31,11 @@ const fetchComplete = ref(false)
 </script>
 <template>
   <main v-if="fetchComplete">
-  <Hero :upcomingMovies="schedule.upcoming"/>
-    <div v-if="schedule.today.length > 0 " class="hr"></div>
-  <MoviesList class="movieslist" v-if="schedule.today.length > 0 " :scroll="true" :movies="schedule.today" title="Playing Today:" :showTimes="false" />
-    <div v-if="schedule.tomorrow.length > 0 " class="hr"></div>
-  <MoviesList class="movieslist" v-if="schedule.tomorrow.length > 0 " :scroll="true" :movies="schedule.tomorrow" title="Playing Tomorrow:" :showTimes="false" />
+  <Hero v-if="schedule" :upcomingMovies="schedule.upcoming"/>
+    <div v-if="schedule?.today.length > 0 " class="hr"></div>
+  <MoviesList class="movieslist" v-if="schedule?.today.length > 0 " :scroll="true" :movies="schedule.today" title="Playing Today:" :showTimes="false" />
+    <div v-if="schedule?.tomorrow.length > 0 " class="hr"></div>
+  <MoviesList class="movieslist" v-if="schedule?.tomorrow.length > 0 " :scroll="true" :movies="schedule.tomorrow" title="Playing Tomorrow:" :showTimes="false" />
 
   </main>
   <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />

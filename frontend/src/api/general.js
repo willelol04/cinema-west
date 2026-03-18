@@ -9,11 +9,16 @@ export async function authenticatedFetch(url, token, options = {}) {
         }
     });
 
-    if(!promise.ok) {
-        throw await promise.json();
+    if(promise.status === 404) {
+      return null
     }
-    
-    return await promise.json();
+
+    if(!promise.ok) {
+      throw await promise.json()
+    }
+
+
+    return await promise.json()
 }
 
 export async function normalFetch(url, options = {}) {
@@ -23,10 +28,15 @@ export async function normalFetch(url, options = {}) {
             "Content-Type": "application/json",
         }
     })
-    
-    if(!promise.ok) {
-        throw await promise.json()
-    }
-    
-    return await promise.json()
+
+  if(promise.status === 404) {
+    return null
+  }
+
+  if(!promise.ok) {
+    throw await promise.json()
+  }
+
+
+  return await promise.json()
 }

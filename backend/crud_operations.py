@@ -32,6 +32,8 @@ def create_session():
                 session.rollback()
                 print(e)
                 raise
+            finally:
+                session.close()
 
 
 
@@ -181,6 +183,7 @@ def delete_theatre(screening, session):
 def get_movie(id, session):
     try:
         result = session.execute(select(Movie).where(Movie.id==id).options(selectinload(Movie.screenings), selectinload(Movie.genres))).scalars().first()
+        print(result)
         if not result:
             raise EntityNotFoundError(f"No movie with id:{id}")
         return result
@@ -259,10 +262,17 @@ def add_movie(movie, session):
         for genre in movie["genres"]:
             print(genre)
             session.execute(insert(movie_genre).values(genre_id=genre["id"], movie_id=movie["id"]))
+
+    except IntegrityError as e:
+        print(e)
+        raise DatabaseConflictError("Conflict occured while deleting movie.") from e
+    except SQLAlchemyError as e:
+        print(e)
+        raise DatabaseError("Database query Failed. Cannot delete admin from API endpoint.") from e
     except Exception as e:
         print(e)
         raise
-    
+
     
     
 

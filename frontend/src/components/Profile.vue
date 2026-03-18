@@ -6,6 +6,9 @@ import LogoutButton from './LogoutButton.vue';
 import { useAuth0, User } from '@auth0/auth0-vue';
 import { deleteUser as deleteUserReq } from '@/api/users';
 
+import {useAppToast} from "@/use/useToast.js";
+const {successToast, errorToast} = useAppToast();
+
 const { isAuthenticated, user, isLoading, logout, error, getAccessTokenSilently } = useAuth0();
 
 const props = defineProps({
@@ -33,7 +36,7 @@ const deleteUser = async () => {
             }
             emit('delete');
         } catch(e) {
-            alert(`Error: ${e}`)
+            successToast("Error deleting account.")
             console.log(e)
         }
 

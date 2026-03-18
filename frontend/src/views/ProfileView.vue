@@ -12,39 +12,41 @@ const route = useRoute();
 const router = useRouter();
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
+import {useAppToast} from "@/use/useToast.js";
+const {successToast, errorToast} = useAppToast();
+
 const bookings = ref([])
 const showAlert = ref(false);
-const bookingsFetchComplete = ref(true)
+const fetchComplete = ref(true)
 const fetchBookings = async () => {
     try {
-    bookingsFetchComplete.value = false;
+    fetchComplete.value = false;
     const token = await getAccessTokenSilently();
     bookings.value = await getMyBookings(token);
-    bookingsFetchComplete.value = true;
 
     } catch(e) {
-        alert(e);
-    }    
+        errorToast("Error fetching my bookings.")
+    }
+    finally {
+      fetchComplete.value = true;
+    }
+
 }
 
 
 onMounted(async () => {
     await fetchBookings();
-
     await nextTick();
-
     if(route.query.state=='new-booking' && route.query.bookingId) {
         showAlert.value = true;
     }
 })
 
 const goToBooking = (bookingId) => {
-    console.log(bookingId);
     const element = document.querySelector(`#booking-${bookingId}`)
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' })
       }
-
       showAlert.value = false;
 }
 
@@ -52,11 +54,9 @@ const cancelBooking = async (booking) => {
     try {
         const token = await getAccessTokenSilently();
         const result = await deleteBooking({id: booking.id, screening_id: booking.screening_id}, token)
-        console.log(result);
         fetchBookings();
     } catch (e) {
-        console.log(e);
-        alert("Something went wrong: " + e.message);
+        errorToast("Error cancelling booking.");
     }
 };
 </script>
@@ -64,7 +64,7 @@ const cancelBooking = async (booking) => {
 <template>
 
    <main>
-     <div v-if="bookingsFetchComplete && isAuthenticated" class="my-profile">
+     <div v-if="fetchComplete && isAuthenticated" class="my-profile">
        <Profile class="profile-info" :isMyProfile="true" :user="{email: user.email, sub: user.sub}"/>
        <div v-if="showAlert" class="new-booking-alert"><button @click="showAlert=false" class="close-alert-btn"><i class="pi pi-times"></i></button>Alert: You have a new booking added to your account! <button class="go-to-booking-btn" @click="goToBooking(route.query.bookingId)" > Go to booking</button></div>
        <h1>My bookings</h1>
@@ -72,7 +72,7 @@ const cancelBooking = async (booking) => {
          <BookingCard class="booking" v-for="(booking, ind) in bookings" @delete="cancelBooking(booking)" :booking="booking"/>
        </div>
      </div>
-     <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
+     <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-if="!fetchComplete" />
 
    </main>
 

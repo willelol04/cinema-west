@@ -5,7 +5,6 @@ import { onMounted, watch, ref, reactive } from 'vue';
 import { RouterView } from 'vue-router';
 import { Auth0Plugin, useAuth0, User } from '@auth0/auth0-vue';
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently, checkSession } = useAuth0();
-
 import { getCurrentUser, addUser, patchCurrentUserRole } from './api/users';
 
 const checkedUser = ref(false);
@@ -41,17 +40,25 @@ watch(
 
 onMounted(checkSession);
 
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast();
+
+
 </script>
 
 <template>
-  <Navbar />
+  <Navbar id="routerView"  />
   <RouterView />
-  <Footer />
+  <Footer  />
+  <Toast position="bottom-right" appendTo="router-container"/>
 
 </template>
 
 
 <style scoped>
+
 
 
 

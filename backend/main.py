@@ -206,10 +206,7 @@ def get_user(id,session: Session = Depends(crud_operations.create_session)):
 
 @app.get("/api/me")
 def get_current_user(claims: dict = Depends(auth0.require_auth()), session: Session = Depends(crud_operations.create_session)):
-    try:
-        return crud_operations.get_user_by_sub(claims.sub, session)
-    except crud_operations.EntityNotFoundError:
-        return None
+    return crud_operations.get_user_by_sub(claims.sub, session)
 
 @app.get("/api/users/search/{query}", dependencies=[Depends(require_admin)], response_model=List[validation.UserAdmin])
 def search_user(query, session: Session = Depends(crud_operations.create_session)):
@@ -313,9 +310,6 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
 
 # Tickets
 
-@app.get("/api/my-bookings", response_model=List[validation.BookingResponse])
-def get_user_bookings(user = Depends(verify_user), session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
-    return crud_operations.get_user_bookings(user, session)
 
 #EVENT FUNCTIONS
 @app.on_event("startup")
@@ -435,6 +429,9 @@ def get_filters(session: Session = Depends(crud_operations.create_session)):
 
 
 
+@app.get("/api/me/bookings", response_model=List[validation.BookingResponse])
+def get_user_bookings(user = Depends(verify_user), session: Session = Depends(crud_operations.create_session), claims: dict = Depends(auth0.require_auth())):
+    return crud_operations.get_user_bookings(user, session)
 
 
 app.mount("/static", StaticFiles(directory="dist"), name="static")

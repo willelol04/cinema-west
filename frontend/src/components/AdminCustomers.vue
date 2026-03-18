@@ -1,5 +1,5 @@
 <script setup>
-import MoviesListAdmin from '@/components/MoviesListAdminDiscovery.vue';
+import MoviesListAdmin from '@/components/MoviesListAdmin.vue';
 import Profile from '@/components/Profile.vue';
 import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -19,6 +19,8 @@ const customerResults = ref([]);
 const route = useRoute();
 const router = useRouter();
 
+import {useAppToast} from "@/use/useToast.js";
+const {successToast, errorToast} = useAppToast();
 
 async function fetchCustomerResults() { 
     fetchComplete.value = false;
@@ -26,21 +28,27 @@ async function fetchCustomerResults() {
         const token = await getAccessTokenSilently();
         customerResults.value = await searchUsers(route.query.q, token);
 
-        fetchComplete.value = true;
 
     } catch(e) {
-        console.log(e);
-    } 
+        errorToast("Error fetching customers from database.")
+    }
+    finally {
+      fetchComplete.value = true;
+    }
 }
 
 
 const cancelBooking = async (booking) => {
     try {
-        const token = await getAccessTokenSilently();
-        await deleteBooking({id: booking.id, screening_id: booking.screening.id}, token)
-        await fetchCustomerResults();
+        if (confirm("Do you want to cancel the booking?")) {
+          const token = await getAccessTokenSilently();
+          await deleteBooking({id: booking.id, screening_id: booking.screening.id}, token)
+          await fetchCustomerResults();
+          successToast("Booking cancelled.")
+        }
     } catch (e) {
         console.log(e);
+        errorToast("Error cancelling booking.")
     }
 };
 

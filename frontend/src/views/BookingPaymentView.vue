@@ -124,9 +124,9 @@ const payBooking = async () => {
 
 <template>
     <main>
+    <div v-if="!paymentComplete" class="booking-confirmation">
       <NavigateBackButton v-if="fetchComplete" :target="`/booking/`+bookingResult.screening_id" text="Go Back To Booking">
       </NavigateBackButton>
-    <div v-if="!paymentComplete" class="booking-confirmation">
         <h1>Payment Information</h1>
         <form v-if="fetchComplete" @submit.prevent="payBooking()">
             <label for="social-security-nr">Social security number:</label>
@@ -149,8 +149,9 @@ const payBooking = async () => {
 main {
     width: 100%;
     margin: 0 auto;
-    min-height: 73vh;
     background-color: var(--main-bg);
+    flex: 1;
+    padding: 20px 0px;
 }
 
 .fetch-loading {

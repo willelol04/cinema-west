@@ -133,15 +133,29 @@ li a {
   }
 
   .dashboard-menu {
-    width: 50%;
+    width: 100%;
     left: auto;
     margin: 0 auto;
     text-align: left;
+    gap: 0;
   }
 
-  ul {
-    grid-template-columns: 1fr;
+  i {
+    margin-left: 0;
   }
+  ul {
+    gap: 0;
+  }
+  .dashboard-item {
+    flex-direction: column-reverse;
+    text-align: center;
+    margin: 0;
+    justify-content: center;
+    font-size: 11px;
+    height: 100%;
+  }
+
+
 }
 
 
@@ -154,28 +168,16 @@ li a {
         padding: 0;
     }
     
-    .dashboard-menu {
-        width: 50%;
-        left: auto;
-        margin: 0 auto;
-        text-align:left;
-    }
 
-    ul {
-      grid-template-columns: 1fr;
-    }
+
+
 
     
     a {
         text-overflow: clip;
     }
 
-    .activeNavLink {
-        border-bottom: none;
-        border-right: 2px solid #e50914;
-        opacity: 100%;
 
-    }
     
     .main-content {
         padding: 10px;

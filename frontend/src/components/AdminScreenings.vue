@@ -8,6 +8,9 @@ import { addScreening } from '@/api/screenings';
 import router from '@/router';
 import BeatLoader from "vue-spinner/src/BeatLoader.vue";
 
+import {useAppToast} from "@/use/useToast.js";
+const {successToast, errorToast} = useAppToast();
+
 import {format} from 'date-fns'
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
     
@@ -26,7 +29,7 @@ const fetchMovies = async () => {
     try {
         movieResults.value = await getMoviesAll();
     } catch (e) {
-        console.log(e)
+        errorToast("Error fetching movies. Try refreshing the page.")
     }
 }
 
@@ -35,7 +38,7 @@ const fetchTheatres = async () => {
         const token = await getAccessTokenSilently();
         theatreResults.value = await getTheatres(token);
     } catch(e) {
-        console.log(e);
+        errorToast("Error fetching theatres. Try refreshing the page.")
     }
 }
 
@@ -53,9 +56,11 @@ const addScreeningUpdate = async () => {
             await addScreening(screening, token);
             alert("Screening(s) added.");
             resetScreening();
+            successToast("Screening added to database.")
 
         } catch(e) {
             console.log(e);
+            errorToast("Error adding screening. Try refreshing the page.")
         }
     } 
 

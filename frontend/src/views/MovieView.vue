@@ -6,16 +6,24 @@ import { getMovie } from '@/api/movies';
 
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 
-const movieResults = ref({});
+const movieResults = ref(null);
 const fetchComplete = ref(true)
+
+import {useAppToast} from "@/use/useToast.js";
+const {successToast, errorToast} = useAppToast();
 
 const route = useRoute();
 
 async function fetchMovie() {
-    fetchComplete.value = false;
-    movieResults.value = await getMovie(route.params.id);
-    console.log(movieResults.value);
-    fetchComplete.value = true;
+    try {
+      fetchComplete.value = false;
+      movieResults.value = await getMovie(route.params.id);
+      console.log(movieResults.value);
+    } catch (e) {
+      errorToast("Erroring fetching movie from database.")
+    } finally {
+      fetchComplete.value = true;
+    }
 }
 
 onMounted(fetchMovie);
@@ -25,8 +33,8 @@ onMounted(fetchMovie);
 
 <template>
   <main>
-    <MovieDetails v-if="fetchComplete" :movie="movieResults" />
-    <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
+    <MovieDetails v-if="movieResults" :movie="movieResults" />
+    <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-if="!fetchComplete" />
   </main>
 </template>
 

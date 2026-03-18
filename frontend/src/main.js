@@ -11,6 +11,7 @@ import { Carousel3dPlugin } from '@nanoandrew4/vue3-carousel-3d';
 
 import { createAuth0 } from '@auth0/auth0-vue';
 
+import ToastService from 'primevue/toastservice';
 
 import router from './router';
 
@@ -45,6 +46,7 @@ app.use(PrimeVue, {
  });
 
 
+app.use(ToastService);
 app.use(Carousel3dPlugin);
 
 app.use(router);

@@ -6,14 +6,16 @@ import Sort from '@/components/Sort.vue';
 import { onMounted, ref } from 'vue';
 import BeatLoader from "vue-spinner/src/BeatLoader.vue";
 
-const movieResults = ref([]);
+const movieResults = ref(null);
 const fetchComplete = ref(true);
 
+import {useAppToast} from "@/use/useToast.js";
+const {successToast, errorToast} = useAppToast();
 
 
 async function fetchMovies(sortData) {
-    fetchComplete.value = false
     const searchParams = new URLSearchParams();
+
     if(sortData.title !== null) {
       searchParams.append('title', sortData.title)
     }
@@ -24,12 +26,13 @@ async function fetchMovies(sortData) {
       searchParams.append('rating', sortData.rating)
     }
     try {
+      fetchComplete.value = false
       movieResults.value = await normalFetch(`/api/movies?${searchParams}`);
       console.log(movieResults.value);
       console.log(searchParams)
 
     } catch(e) {
-      console.log(e)
+      errorToast("Error fetching movies from database.")
     } finally {
       fetchComplete.value = true
     }
@@ -42,8 +45,8 @@ onMounted( async () => {await fetchMovies({title: null, genre: null, rating: nul
   <main>
     <h1>Movies</h1>
     <Sort @update="fetchMovies"/>
-    <MoviesList v-if="fetchComplete" :movies="movieResults" />
-    <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
+    <MoviesList v-if="movieResults" :movies="movieResults" />
+    <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-if="!fetchComplete" />
   </main>
 
 </template>

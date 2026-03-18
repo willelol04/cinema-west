@@ -5,6 +5,8 @@ import {ref, onMounted, reactive, watch} from 'vue';
 import {debounce} from 'lodash';
 import { normalFetch } from '@/api/general';
 
+import {useAppToast} from "@/use/useToast.js";
+const {successToast, errorToast} = useAppToast();
 const filters = ref(null)
 const fetchComplete = ref(false)
 const emit = defineEmits(['update'])
@@ -26,11 +28,13 @@ async function fetchFilters() {
     try {
     fetchComplete.value = false;
     filters.value = await normalFetch("/api/filters");
-    fetchComplete.value = true;
     console.log(filters.value);
     } catch(e){
-       alert(e) 
-       fetchComplete.value = false;
+      errorToast("Error fetching sort filters.")
+
+    }
+    finally {
+      fetchComplete.value = true;
     }
 }
 
@@ -50,7 +54,7 @@ watch(sortData, debounceUpdateData, {deep: true})
 
 </script>
 <template>
-  <div v-if="fetchComplete" class="sort-container">
+  <div v-if="filters" class="sort-container">
     <input
       type="search"
       class="search-input"
