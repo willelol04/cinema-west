@@ -12,6 +12,7 @@ import BeatLoader from "vue-spinner/src/BeatLoader.vue";
 
 const {successToast, errorToast} = useAppToast();
 import {useAppToast} from "@/use/useToast.js";
+import LoginButton from "@/components/LoginButton.vue";
 
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
@@ -158,6 +159,7 @@ onMounted(async () => {
             <span>{{checkedSeats.length * 100}}SEK</span>
           </div>
           <input v-if="isAuthenticated" type="submit" value="Go to payment" />
+          <LoginButton v-else type="submit" value="Log in to order tickets" />
         </div>
       </form>
       <BeatLoader

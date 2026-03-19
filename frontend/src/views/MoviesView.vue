@@ -42,8 +42,9 @@ onMounted( async () => {await fetchMovies({title: null, genre: null, rating: nul
 </script>
 <template>
   <main>
+    <h1 v-if="movieResults">Movies</h1>
     <Sort @update="fetchMovies" />
-    <MoviesList v-if="movieResults" title="Movies" :movies="movieResults" />
+    <MoviesList v-if="movieResults" :movies="movieResults" />
     <BeatLoader
         class="fetch-loading"
         :color="'#bdc7bf'"

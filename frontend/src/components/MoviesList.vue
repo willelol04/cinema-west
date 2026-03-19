@@ -217,7 +217,7 @@ section {
 
 .movie-card img {
   width: 100%;
-  border-radius: 16px;
+  border-radius: 10px;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
 }
@@ -241,7 +241,7 @@ section {
 .movie-card {
   background-color: var(--secondary-bg);
   border: 1px solid var(--default-border-bg);
-  border-radius: 16px;
+  border-radius: 10px;
   transition: 300ms;
   position: relative;
 }
@@ -289,4 +289,6 @@ section {
   transition: 300ms;
   color: var(--text-default-color);
 }
+
+
 </style>

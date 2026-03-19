@@ -25,22 +25,28 @@ async function movieIsAdded(id) {
 }
 
 async function fetchMovieResults() {
-  fetchComplete.value = false;
-  const token = await getAccessTokenSilently();
-  try {
-    movieResults.value = (await searchMovies(route.query.q, token)).results;
-  } catch(e) {
-    errorToast("Error fetching results from TMDB. Try refreshing the page.")
+  if(route.query.q) {
+    fetchComplete.value = false;
+    const token = await getAccessTokenSilently();
+    try {
+      movieResults.value = (await searchMovies(route.query.q, token)).results;
+    } catch(e) {
+      errorToast("Error fetching results from TMDB. Try refreshing the page.")
+    }
+    try {
+      addedMovies.value = await getMoviesAll();
+    } catch(e) {
+      errorToast("Error fetching movies from database. Try refreshing the page.")
+    }
+    fetchComplete.value = true;
+
   }
-  try {
-    addedMovies.value = await getMoviesAll();
-  } catch(e) {
-    errorToast("Error fetching movies from database. Try refreshing the page.")
-  }
-  fetchComplete.value = true;
 
 }
 
+const handleAdd = (movie) => {
+  addedMovies.value.push(movie)
+};
 
 const movieDisplay = computed(() => {
   if (movieResults.value && addedMovies) {
@@ -66,7 +72,7 @@ const movieDisplay = computed(() => {
         :title="`Resultat för: `+ (route.query.q ? route.query.q : '')"
         :movies="movieDisplay"
         action="add"
-        @update="fetchMovieResults"
+        @add="handleAdd"
     />
     <BeatLoader
         v-if="!fetchComplete"
@@ -84,7 +90,6 @@ const movieDisplay = computed(() => {
 
 <style scoped>
 h1 {
-  text-align: center;
   margin-bottom: 20px;
 }
 

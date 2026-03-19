@@ -1,1 +1,0 @@
-import{N as e}from"./index-Dlj3yUM6.js";function c(){const r=e();return{successToast:s=>{r.add({severity:"success",summary:"Success",detail:s,life:3e3})},errorToast:s=>{r.add({severity:"error",summary:"Error",detail:s,life:3e3})}}}export{c as u};

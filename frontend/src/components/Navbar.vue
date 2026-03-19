@@ -71,11 +71,6 @@ watch(
         <ul
             :class="[returnDropDownState() ? 'displayDropdown' : '', 'dropdown-list']"
         >
-          <li
-              v-if="user && user['http://localhost:8000/roles']?.includes('admin')"
-          >
-            <RouterLink class="nav-item" to="/admin/discover">Admin</RouterLink>
-          </li>
           <li>
             <RouterLink class="nav-item" to="/profile">My profile</RouterLink>
           </li>
@@ -107,6 +102,13 @@ watch(
             to="/about"
         >About</RouterLink
         >
+      </li>
+      <li
+          v-if="user && user['http://localhost:8000/roles']?.includes('admin')"
+      >
+        <RouterLink
+            :class="[isActive('admin-screenings', 'admin-customers', 'admin-database', 'admin-discover') ? 'activeNavLink' : '', 'nav-item']"
+            class="nav-item" to="/admin/discover">Admin</RouterLink>
       </li>
     </ul>
   </nav>

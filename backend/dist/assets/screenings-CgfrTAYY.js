@@ -1,1 +1,0 @@
-import{n as i,H as a}from"./index-Dlj3yUM6.js";function n(t){return i(`/api/screenings/${t}`)}function s(t,e){return a("/api/screenings",e,{method:"POST",body:JSON.stringify({movie_id:t.movie_id,theatre_id:t.theatre_id,start_times:t.start_times})})}export{s as a,n as g};

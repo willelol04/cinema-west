@@ -51,7 +51,7 @@ const toast = useToast();
 <template>
   <Navbar id="routerView"  />
   <RouterView />
-  <Toast position="bottom-center" id="toast"/>
+  <Toast position="bottom-right" id="toast"/>
   <Footer  />
 
 </template>
@@ -61,12 +61,12 @@ const toast = useToast();
 
 #toast {
   margin-bottom: 150px;
-  width: 70vw;
 }
 
 
 @media screen and (max-width: 768px) {
   #toast {
+    width: 70vw;
     display: block;
     position: relative;
     margin-left: auto;

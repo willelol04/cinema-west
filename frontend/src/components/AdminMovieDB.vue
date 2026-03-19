@@ -27,6 +27,13 @@ async function fetchMovies() {
   }
 }
 
+const handleDelete = (movie) => {
+  if(movieResults.value) {
+    movieResults.value = movieResults.value.filter(m => m.id !== movie.id )
+
+  }
+};
+
 onMounted(async () => {
   await fetchMovies();
 
@@ -35,19 +42,17 @@ onMounted(async () => {
 
 <template>
   <div class="movie-database">
-    <h1>Movie Database</h1>
     <MoviesListAdmin
         v-if="movieResults && fetchComplete"
         :movies="movieResults"
+        title="Movie Database"
         action="delete"
-        @update="fetchMovies"
+        @delete="handleDelete"
     />
     <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
   </div>
 </template>
 
 <style scoped>
-.movie-database {
-  text-align: center;
-}
+
 </style>

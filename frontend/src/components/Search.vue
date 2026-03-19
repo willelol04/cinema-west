@@ -19,8 +19,13 @@ const route = useRoute();
 const router = useRouter();
 const debounceUpdateData = debounce((newValue) => {
   console.log(newValue)
+  const query = { ...route.query }
   if (search_field.value) {
     router.push({query: {q: search_field.value}});
+  }
+  else {
+    router.push({route: route.fullPath});
+
   }
 
 }, 300)
@@ -29,7 +34,7 @@ watch(search_field, debounceUpdateData, {deep: true})
 
 watch(
     () => route.query.q,
-    async () => {if(route.query.q) await props.searchFunction()},
+    async () => {await props.searchFunction()},
     {immediate: true},
 
 )

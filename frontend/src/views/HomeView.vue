@@ -31,7 +31,7 @@ const fetchComplete = ref(true)
 <template>
   <main>
   <Hero v-if="schedule?.upcoming.length > 0" :upcomingMovies="schedule.upcoming"/>
-    <div v-if="schedule?.upcoming.length > 0 " class="hr"></div>
+    <div v-if="schedule?.today.length > 0 " class="hr"></div>
   <MoviesList class="movieslist" v-if="schedule?.today.length > 0 " :scroll="true" :movies="schedule.today" title="Playing Today:" :showTimes="false" />
     <div v-if="schedule?.tomorrow.length > 0 " class="hr"></div>
   <MoviesList class="movieslist" v-if="schedule?.tomorrow.length > 0 " :scroll="true" :movies="schedule.tomorrow" title="Playing Tomorrow:" :showTimes="false" />

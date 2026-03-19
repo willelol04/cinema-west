@@ -25,7 +25,7 @@ const isActive = (currentRoutePath) => {
           <RouterLink
               :class="[isActive('/admin/database') ? 'activeNavLink' : '', 'dashboard-item']"
               to="/admin/database"
-          >Database<i class="pi pi-database"></i
+          >Our Movies<i class="pi pi-database"></i
           ></RouterLink>
         </li>
         <li>
@@ -56,7 +56,7 @@ const isActive = (currentRoutePath) => {
 }
 
 main {
-  width: 100%;
+  width: 100vw;
   padding: 20px;
   background-color: var(--main-bg);
   min-height: 70vh;
@@ -105,24 +105,17 @@ li a {
   justify-content: center;
   align-items: center;
   transition: 300ms;
-  opacity: 50%;
+  opacity: 30%;
   border-radius: 10px;
-  background-color: var(--primary-bg)
+  border: 1px solid #706d6d;
+  background-color: var(--secondary-bg)
 }
 
-.dashboard-menu ul li:first-child .dashboard-item {
-  border-bottom-left-radius: 7px;
-}
-
-.dashboard-menu ul li:last-child .dashboard-item {
-  border-bottom-right-radius: 7px;
-}
 .dashboard-item:hover {
   opacity: 100%;
 }
 
 .activeNavLink {
-  border-bottom: 2px solid #e50914;
   opacity: 100%;
 }
 

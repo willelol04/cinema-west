@@ -93,13 +93,17 @@ const cancelBooking = async (booking) => {
     <BeatLoader
         class="fetch-loading"
         :color="'#bdc7bf'"
-        v-if="!fetchComplete"
+        v-else
     />
   </main>
 </template>
 
 <style scoped>
 main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   background-color: var(--main-bg);
   flex: 1;
 }

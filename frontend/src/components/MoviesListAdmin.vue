@@ -14,13 +14,10 @@ import {useAppToast} from "@/use/useToast.js";
 const start_ind = ref(0);
 const fetchComplete = ref(false);
 
-const emit = defineEmits("update")
+const emit = defineEmits(["add", "delete"])
 
 const props = defineProps({
-  title: {
-    type: String,
-    default: 'Movies',
-  },
+  title:  String,
   movies: Array,
   action: String,
   limit: {
@@ -77,7 +74,7 @@ const addMovieUpdate = async (movie) => {
     if (confirm("Add this movie?")) {
       const token = await getAccessTokenSilently();
       await addMovie({id: movie.id}, token);
-      emit('update', movie)
+      emit('add', movie)
       successToast("Movie added to database")
     }
   } catch (e) {
@@ -91,7 +88,7 @@ const deleteMovieUpdate = async (movie) => {
     if(confirm("Delete this movie?")) {
       const token = await getAccessTokenSilently();
       await deleteMovie({id: movie.id}, token);
-      emit('update', movie);
+      emit('delete', movie);
       successToast("Movie deleted from database.")
     }
   } catch (e) {
@@ -104,7 +101,7 @@ const deleteMovieUpdate = async (movie) => {
 <template>
   <section>
     <div class="movies-header">
-      <h1 class="title">{{ props.title }}</h1>
+      <h1 class="title">{{ props.title ? props.title : '' }}</h1>
       <div v-if="movies.length > display" class="scroll">
         <button
             class="scroll-left scroll-button"
@@ -167,9 +164,6 @@ const deleteMovieUpdate = async (movie) => {
   margin-top: 50px;
 }
 
-h1 {
-  font-size: 24px;
-}
 
 .list-enter-active,
 .list-leave-active {
@@ -237,8 +231,9 @@ section {
 .movies-container,
 .movies-grid {
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin: 0 auto;
   gap: 30px;
   padding-top: 10px;
@@ -347,17 +342,26 @@ section {
   object-fit: cover;
 }
 
+.scroll {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+}
 @media screen and (max-width: 1200px) {
   .movie-card {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    width: 70%;
   }
 
   .movie-details {
-    padding: 30px;
+    padding: 10px;
   }
 
   .movie-actions {
     padding: 10px;
+    border-radius: 10px;
   }
 }
 </style>

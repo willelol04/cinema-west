@@ -4,6 +4,10 @@ export function getScreening(id) {
     return normalFetch(`/api/screenings/${id}`);
 }
 
+export function getScreenings(id) {
+    return normalFetch(`/api/screenings`);
+}
+
 export function deleteScreening(screening, token) {
     return authenticatedFetch("/api/screenings", token, {
         method: "DELETE",

@@ -230,8 +230,8 @@ def get_screening(id, session: Session = Depends(crud_operations.create_session)
     return crud_operations.get_screening(id, session)
 
 @app.get("/api/screenings")
-def get_screenings_all(session: Session = Depends(crud_operations.create_session)):
-    return crud_operations.get_screenings_all(session)
+def get_screenings_all(title : str | None = None, session: Session = Depends(crud_operations.create_session)):
+    return crud_operations.get_screenings_all(title, session)
 
 # Genre
 

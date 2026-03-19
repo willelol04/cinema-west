@@ -88,7 +88,6 @@ const cancelBooking = async (booking) => {
 <style scoped>
 
 h1 {
-  text-align: center;
   margin-bottom: 20px;
 }
 
@@ -118,17 +117,13 @@ h1 {
 
 .customer-results {
   width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: start;
-  justify-content: start;
-  flex-wrap: wrap;
-  gap: 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px 25px;
 
 }
 
 .customer {
-  width: 500px;
   border: 1px solid var(--default-border-bg);
   border-radius: 10px;
   padding: 20px;
@@ -162,14 +157,6 @@ form {
 }
 
 
-input[type="search"] {
-  width: 400px;
-  font-size: 16px;
-  font-family:sans-serif;
-  border-radius: 7px;
-  font-weight: 100;
-
-}
 
 .booking-name {
   width: 100%;
@@ -181,19 +168,13 @@ input[type="search"] {
   }
 
   .customer-results {
+    display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 
   }
 
-  input[type="search"] {
-    width: 90%;
-  }
-
-  input[type="submit"] {
-    width: 10%;
-  }
 
 }
 
