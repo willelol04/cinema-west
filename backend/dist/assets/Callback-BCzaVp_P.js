@@ -1,0 +1,1 @@
+import{o as r,u as a,y as s}from"./index-B7kt78RD.js";const n={__name:"Callback",setup(o){const t=a();return s(),r(async()=>{try{const e=sessionStorage.getItem("redirect_url");sessionStorage.removeItem("redirect_url"),e?.startsWith("/")?await t.push(e):await t.replace("/")}catch{await t.replace("/")}}),(e,c)=>null}};export{n as default};

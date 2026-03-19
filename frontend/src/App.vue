@@ -51,7 +51,7 @@ const toast = useToast();
 <template>
   <Navbar id="routerView"  />
   <RouterView />
-  <Toast position="bottom-right" id="toast"/>
+  <Toast position="top-center" id="toast"/>
   <Footer  />
 
 </template>

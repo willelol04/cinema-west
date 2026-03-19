@@ -45,9 +45,9 @@ const bookTickets = async () => {
   if(checkedSeats.value.length > 0) {
     try {
       const token = await getAccessTokenSilently();
-      const bookingId = await addBooking({seats: checkedSeats.value, screening_id: screeningResult.value.id}, token);
+      const booking = await addBooking({seats: checkedSeats.value, screening_id: screeningResult.value.id}, token);
 
-      if(bookingId && ws.readyState === WebSocket.OPEN) {
+      if(booking && ws.readyState === WebSocket.OPEN) {
         try {
           ws.send(JSON.stringify({type: "update", msg: "booking issued."}))
         } catch(e) {
@@ -58,8 +58,8 @@ const bookTickets = async () => {
 
 
 
-      if(bookingId) {
-        await router.push(`/payment/${bookingId}`)
+      if(booking) {
+        await router.push(`/payment/${booking.id}`)
       }
 
     } catch(e) {

@@ -89,9 +89,7 @@ const movieDisplay = computed(() => {
 </template>
 
 <style scoped>
-h1 {
-  margin-bottom: 20px;
-}
+
 
 .fetch-loading {
   margin-top: 200px;
@@ -100,6 +98,8 @@ h1 {
 
 h1 {
   display: block;
+  margin-top: 24px;
+  margin-bottom: 24px;
 }
 
 input {

@@ -23,17 +23,20 @@ import {useAppToast} from "@/use/useToast.js";
 const {successToast, errorToast} = useAppToast();
 
 async function fetchCustomerResults() {
-  fetchComplete.value = false;
-  try {
-    const token = await getAccessTokenSilently();
-    customerResults.value = await searchUsers(route.query.q, token);
+  if(route.query.q) {
+
+    fetchComplete.value = false;
+    try {
+      const token = await getAccessTokenSilently();
+      customerResults.value = await searchUsers(route.query.q, token);
 
 
-  } catch(e) {
-    errorToast("Error fetching customers from database. Try refreshing the page.")
-  }
-  finally {
-    fetchComplete.value = true;
+    } catch(e) {
+      errorToast("Error fetching customers from database. Try refreshing the page.")
+    }
+    finally {
+      fetchComplete.value = true;
+    }
   }
 }
 
@@ -88,7 +91,8 @@ const cancelBooking = async (booking) => {
 <style scoped>
 
 h1 {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  margin-top: 24px;
 }
 
 .booking {

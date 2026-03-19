@@ -8,8 +8,8 @@ import {useAuth0} from "@auth0/auth0-vue";
 
 '../use/useToast.js';
 const { isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
-const {successToast, errorToast} = useAppToast();
 import {useAppToast} from "@/use/useToast.js";
+const {successToast, errorToast} = useAppToast();
 
 const start_ind = ref(0);
 const fetchComplete = ref(false);
@@ -201,7 +201,8 @@ const deleteMovieUpdate = async (movie) => {
   justify-content: space-between;
   align-items: center;
   vertical-align: middle;
-  margin-bottom: 50px;
+  margin-top: 24px;
+  margin-bottom: 24px;
 }
 
 section {
@@ -348,7 +349,7 @@ section {
   flex-wrap: nowrap;
   align-items: center;
 }
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 768px) {
   .movie-card {
     display: flex;
     flex-direction: column;
@@ -362,6 +363,12 @@ section {
   .movie-actions {
     padding: 10px;
     border-radius: 10px;
+  }
+
+  .movies-header {
+    width: 70%;
+    margin: 0 auto;
+    font-size: 14px;
   }
 }
 </style>

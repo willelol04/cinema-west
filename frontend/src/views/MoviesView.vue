@@ -65,7 +65,7 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
 }
 
 @media screen and (max-width: 1200px) {

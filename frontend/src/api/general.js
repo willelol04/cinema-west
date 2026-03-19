@@ -10,6 +10,10 @@ export async function authenticatedFetch(url, token, options = {}) {
     });
 
 
+    if(promise.status == 204) {
+        return null
+    }
+
     if(!promise.ok) {
       throw await promise.json()
     }
@@ -25,6 +29,11 @@ export async function normalFetch(url, options = {}) {
             "Content-Type": "application/json",
         }
     })
+
+
+if(promise.status == 204) {
+    return null
+}
 
 
 

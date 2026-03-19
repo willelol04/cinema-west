@@ -44,13 +44,7 @@ async function fetchBooking() {
     }
 
   } catch(e) {
-    if(e.error_type === "entity_not_found_error") {
       router.push("/");
-    }
-    else {
-      console.log(e);
-      alert("Something went wrong.", e.detail);
-    }
   }
 }
 
@@ -106,17 +100,14 @@ const payBooking = async () => {
       return;
     }
 
-    const result = await res.json();
-    console.log(result);
     setTimeout(() => {
       fetchComplete.value = true
       paymentComplete.value = true;
       router.push({path: "/profile", query: {state: "new-booking", bookingId: route.params.id}});
 
     }, 1500)
-    //alert("Payment successful!");
   } catch (e) {
-    console.log(e);
+    console.log(e)
     alert("Something went wrong: " + e.message);
   }
 };

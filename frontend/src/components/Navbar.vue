@@ -128,15 +128,17 @@ nav ul li {
   width: 100%;
 }
 
-.activeNavLink {
-  color: var(--selected-default-color);
-  border-bottom: 2px solid var(--selected-default-color);
-  transition: 300ms;
-}
 
 .nav-item {
   transition: 300ms;
   width: 100%;
+  border-bottom: 2px solid transparent;
+}
+
+.activeNavLink {
+  color: var(--selected-default-color);
+  border-bottom: 2px solid var(--selected-default-color);
+  transition: 300ms;
 }
 
 .nav-item:hover,

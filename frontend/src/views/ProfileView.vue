@@ -103,7 +103,7 @@ main {
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   background-color: var(--main-bg);
   flex: 1;
 }

@@ -130,7 +130,7 @@ onMounted(async () => {fetchComplete.value = false; await fetchMovies(); await f
         :header="`Search screenings by movie title`"
         :searchFunction="fetchScreenings"
     />
-    <button  @click="displayForm = true"><i class="pi pi-plus-circle"></i>Add screening</button>
+    <button class="add-screening-btn" @click="displayForm = true"><i class="pi pi-plus-circle"></i> Add screening</button>
     <table  v-if="fetchComplete" class="screenings-table">
       <thead>
       <tr>
@@ -329,6 +329,8 @@ tr {
 }
 
 h1 {
+  display: block;
+  margin-top: 24px;
   margin-bottom: 24px;
 }
 
@@ -348,5 +350,14 @@ h1 {
   }
 
 
+}
+
+.add-screening-btn {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  justify-content: space-between;
 }
 </style>
