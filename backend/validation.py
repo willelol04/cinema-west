@@ -99,15 +99,6 @@ class SeatResponse(SeatBase):
 
 # -- Booking --
 
-class BookingBase(BaseModel):
-    id: int
-    user_id: int
-    screening_id: int
-    total_price: float
-    status: str
-    created_at: datetime
-    expires_at: datetime
-
 class ScreeningYesResponse(BaseModel):
     id: int
     start_time: datetime

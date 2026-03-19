@@ -178,17 +178,16 @@ def get_theatres_all(session: Session = Depends(crud_operations.create_session))
 
 # POST-REQUESTS
 
-@app.post("/api/movies", dependencies=[Depends(require_admin), ], status_code=status.HTTP_201_CREATED)
+@app.post("/api/movies" , dependencies=[Depends(require_admin), ], status_code=status.HTTP_201_CREATED)
 async def add_movie(movie: validation.MovieBase, session: Session = Depends(crud_operations.create_session)):
     url = f"/movie/{movie.id}?append_to_response=release_dates"
     params = {"append_to_response": "releases"}
     movie_res = await getFromTMDB(url, params)
-    print(movie_res)
     return crud_operations.add_movie(movie_res, session)
 
-@app.delete("/api/movies", dependencies=[Depends(require_admin)])
+@app.delete("/api/movies", dependencies=[Depends(require_admin)], status_code=204)
 def delete_movie(movie: validation.MovieBase,session: Session = Depends(crud_operations.create_session)):
-    return crud_operations.delete_movie(movie, session)
+    crud_operations.delete_movie(movie, session)
 
 @app.post("/api/users", status_code=status.HTTP_201_CREATED, dependencies=[Depends(auth0.require_auth())])
 def add_user(user: validation.UserAdd, session: Session = Depends(crud_operations.create_session)):
@@ -216,14 +215,13 @@ def search_user(query, session: Session = Depends(crud_operations.create_session
 def get_auth_user(sub, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.get_user_by_sub(sub, session)
 
-@app.post("/api/screenings", dependencies=[Depends(require_admin)], status_code=status.HTTP_201_CREATED)
+@app.post("/api/screenings", response_model=List[validation.ScreeningBase], dependencies=[Depends(require_admin)], status_code=status.HTTP_201_CREATED)
 def add_screening(screening: validation.ScreeningAdd, session: Session = Depends(crud_operations.create_session)):
-    crud_operations.add_screening(screening, session)
-    return screening
+    return crud_operations.add_screening(screening, session)
 
-@app.delete("/api/screenings", status_code=status.HTTP_200_OK, dependencies=[Depends(require_admin)])
+@app.delete("/api/screenings", status_code=204, dependencies=[Depends(require_admin)])
 def delete_screening(screening: validation.ScreeningBase, session: Session = Depends(crud_operations.create_session)):
-    return crud_operations.delete_screening(screening, session)
+    crud_operations.delete_screening(screening, session)
 
 @app.get("/api/screenings/{id}")
 def get_screening(id, session: Session = Depends(crud_operations.create_session)):
@@ -247,23 +245,22 @@ def get_genres_all(session: Session = Depends(crud_operations.create_session)):
     
 # Booking
 
-@app.post("/api/bookings", status_code=status.HTTP_201_CREATED)
+@app.post("/api/bookings", response_model=validation.BookingResponse, status_code=status.HTTP_201_CREATED)
 def add_booking(booking: validation.BookingAdd, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
     return crud_operations.add_booking(user, booking, session)
 
-@app.delete("/api/bookings")
+@app.delete("/api/bookings", status_code=204)
 async def delete_booking(booking: validation.BookingRemove, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
-    ret = crud_operations.delete_booking(booking, session, user)
+    crud_operations.delete_booking(booking, session, user)
     booked_seat_ids = crud_operations.get_screening(booking.screening_id, session).booked_seat_ids
     await manager.broadcast_screening_json(booking.screening_id, {"type": "update", "screening_id": booking.screening_id, "booked_seat_ids": booked_seat_ids})
-    return ret
-    
 
-@app.get("/api/bookings/{id}", response_model=validation.BookingBase)
+
+@app.get("/api/bookings/{id}", response_model=validation.BookingResponse)
 def get_booking(id, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
     return crud_operations.get_booking(user, id, session)
 
-@app.post("/api/pay-booking")
+@app.post("/api/pay-booking", status_code=204)
 async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
     """
     async with httpx.AsyncClient() as client:
@@ -301,12 +298,7 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
 
     
     
-    return crud_operations.confirm_booking(user, data.booking_id, session)
-        
-
-
-
-    return transaction_res.json()
+    crud_operations.confirm_booking(user, data.booking_id, session)
 
 # Tickets
 
@@ -315,15 +307,18 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
 @app.on_event("startup")
 async def startup():
     genres = await get_genres()
-    #crud_operations.post_genres(genres)
+    #crud_operations.add_genres(genres)
 
 
 
 # screenings
 
+"""
 @app.patch("/api/screenings", dependencies=[Depends(require_admin)])
 def patch_screening(screening: validation.ScreeningPatchRequest, session: Session = Depends(crud_operations.create_session)):
     return crud_operations.patch_screening(screening, session)
+
+"""
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -345,7 +340,6 @@ async def websocket(websocket: WebSocket, screening_id: int):
 
     except Exception as e:
         raise e
-
 
     try:
         while True:
@@ -391,15 +385,13 @@ async def get_management_token():
 
 
 
-@app.delete("/api/auth0/users")
+@app.delete("/api/auth0/users", status_code=204)
 async def delete_user(user: validation.UserRemove, session: Session = Depends(crud_operations.create_session), db_user = Depends(verify_user)):
 
     delete_user_obj = crud_operations.get_user_by_sub(user.sub, session)
 
     if not delete_user_obj:
         raise crud_operations.EntityNotFoundError(f"User with sub {user.sub} not found.")
-
-    print(delete_user_obj.email)
 
     if delete_user_obj.is_admin == True:
         raise crud_operations.DatabaseError("Database query Failed. Cannot delete admin from API endpoint.")
@@ -408,19 +400,16 @@ async def delete_user(user: validation.UserRemove, session: Session = Depends(cr
         raise crud_operations.AuthorizationError(db_user.id)
 
     async with httpx.AsyncClient() as client:
-        try:
-            token = await get_management_token()
-            await client.delete(
-                f"https://{auth0_domain}/api/v2/users/{user.sub}",
-                headers={
-                    "Authorization": f"Bearer {token}"
-                }
-            )
-        except Exception as e:
-            print(e)
+        token = await get_management_token()
+        await client.delete(
+            f"https://{auth0_domain}/api/v2/users/{user.sub}",
+            headers={
+                "Authorization": f"Bearer {token}"
+            }
+        )
 
     
-    return crud_operations.delete_user(user, session)
+    crud_operations.delete_user(user, session)
 
 
 @app.get("/api/filters", response_model=validation.Filters)
