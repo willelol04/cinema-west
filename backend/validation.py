@@ -93,6 +93,9 @@ class TicketResponse(TicketBase):
 class SeatBase(BaseModel):
     id: str
 
+class SeatModel(SeatBase):
+    theatre_id: int
+
 class SeatResponse(SeatBase):
     theatre: Theatre
 
@@ -118,7 +121,7 @@ class BookingResponse(BaseModel):
     screening: ScreeningYesResponse
 
 class BookingAdd(BaseModel):
-    seats: list
+    seats: list[dict]
     screening_id: int
 
 class BookingRemove(BaseModel):

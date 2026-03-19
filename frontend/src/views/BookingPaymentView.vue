@@ -1,13 +1,15 @@
 <script setup>
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import { routeLocationKey, useRoute, useRouter } from 'vue-router';
+import { watch, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import {useAuth0} from "@auth0/auth0-vue";
 import { getBooking, deleteBooking } from '@/api/bookings';
 import NavigateBackButton from "@/components/NavigateBackButton.vue";
 const {isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
-const timer = ref(300);
+let timerIntervalId;
+const timer = ref(null);
+const paymentProcessActive = ref(false);
 
 const route = useRoute();
 const router = useRouter();
@@ -17,7 +19,12 @@ const fetchComplete = ref(false);
 const paymentComplete = ref(false);
 
 const decrementTimer = () => {
-  timer.value--;
+  if(!paymentProcessActive.value) {
+    timer.value--;
+    if(timer.value <= 0) {
+      router.push('/')
+    }
+  }
 }
 
 
@@ -60,9 +67,14 @@ const cancelBooking = async () => {
 };
 
 
+watch(bookingResult, (newVal) => {
+  if(newVal && newVal.expires_at) {
+    timer.value =  Math.floor(( new Date(bookingResult.value.expires_at + "Z").getTime()  -  Date.now()) / 1000)
+    timerIntervalId = setInterval(decrementTimer, 1000);
+  }
+})
 onMounted(async () => {
   console.log(route.params.id);
-  setInterval(decrementTimer, 1000);
   await fetchBooking();
 })
 
@@ -70,6 +82,8 @@ onBeforeUnmount(async () => {
   if(!paymentComplete.value && bookingResult.value) {
     await cancelBooking();
   }
+
+  clearInterval(timerIntervalId)
 });
 
 
@@ -77,6 +91,7 @@ onBeforeUnmount(async () => {
 
 const payBooking = async () => {
   try {
+    paymentProcessActive.value = true;
     fetchComplete.value = false;
     const token = await getAccessTokenSilently();
     const res = await fetch("/api/pay-booking", {
@@ -110,18 +125,23 @@ const payBooking = async () => {
     console.log(e)
     alert("Something went wrong: " + e.message);
   }
+  finally {
+    paymentProcessActive.value = false;
+  }
 };
 </script>
 
 <template>
   <main>
     <div v-if="!paymentComplete" class="booking-confirmation">
+      <span>
       <NavigateBackButton
           v-if="fetchComplete"
           :target="`/booking/`+bookingResult.screening_id"
           text="Go Back To Booking"
       >
       </NavigateBackButton>
+      </span>
       <h1>Payment Information</h1>
       <form v-if="fetchComplete" @submit.prevent="payBooking()">
         <label for="social-security-nr">Social security number:</label>
@@ -141,6 +161,7 @@ const payBooking = async () => {
         <label for="account">Account ID</label>
         <input type="text" id="account" v-model="formData.account" required />
         <p>Total price: <br />{{ formData.amount }} SEK</p>
+        <h3 class="timer-header"><i class="pi pi-clock"></i>Pay within: {{timer}}s</h3>
         <button type="submit">Submit payment</button>
       </form>
       <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-else />
@@ -150,6 +171,14 @@ const payBooking = async () => {
 </template>
 
 <style scoped>
+
+.timer-header {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  i {
+    margin-right: 8px;
+  }
+}
 main {
   width: 100%;
   margin: 0 auto;

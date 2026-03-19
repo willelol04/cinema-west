@@ -1,15 +1,13 @@
+from __future__ import annotations
 from fastapi import FastAPI, HTTPException, Request, Depends, status, WebSocket
 from fastapi_plugin.fast_api_client import Auth0FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
 import httpx
-from datetime import datetime, timezone
-from pydantic import BaseModel
 from typing import Optional, List
 import asyncio
-import aiomysql
-import json
+from contextlib import asynccontextmanager
 
 
 import crud_operations
@@ -20,7 +18,7 @@ from fastapi import Depends
 
 from fastapi.responses import JSONResponse
 
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy.orm import Session
 import atexit
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -30,11 +28,30 @@ from fastapi.staticfiles import StaticFiles
 
 manager = websocket.ConnectionManager()
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(crud_operations.clean_pending_bookings, 'interval', minutes=5)
-scheduler.start()
-atexit.register(lambda: scheduler.shutdown())
-app = FastAPI()
+
+#EVENT FUNCTIONS
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    #genres = await get_genres()
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(clean_pending_bookings, 'interval', seconds=10)
+    scheduler.start()
+    atexit.register(lambda: scheduler.shutdown())
+    yield
+    #crud_operations.add_genres(genres)
+
+
+async def clean_pending_bookings():
+    screenings_to_update = crud_operations.clean_pending_bookings()
+    print("\n\n\n")
+    print(screenings_to_update)
+    print("\n\n\n")
+    with Session(engine) as session:
+        for screening_id in screenings_to_update:
+            booked_seat_ids = crud_operations.get_screening(screening_id, session).booked_seat_ids
+            await manager.broadcast_screening_json(screening_id, booked_seat_ids)
+
+app = FastAPI(lifespan=lifespan)
 
 
 roles_string = 'http://localhost:8000/roles'
@@ -58,6 +75,7 @@ tmdb_headers = {
     "accept": "application/json",
     "Authorization": f"Bearer {tmdb_key}"
 }
+
 
 tmdb_client = httpx.AsyncClient(headers=tmdb_headers, base_url="https://api.themoviedb.org/3")
 
@@ -246,15 +264,17 @@ def get_genres_all(session: Session = Depends(crud_operations.create_session)):
 # Booking
 
 @app.post("/api/bookings", response_model=validation.BookingResponse, status_code=status.HTTP_201_CREATED)
-def add_booking(booking: validation.BookingAdd, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
-    return crud_operations.add_booking(user, booking, session)
+async def add_booking(booking: validation.BookingAdd, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
+    added_booking = crud_operations.add_booking(user, booking, session)
+    booked_seat_ids = crud_operations.get_screening(booking.screening_id, session).booked_seat_ids
+    await manager.broadcast_screening_json(booking.screening_id,  booked_seat_ids)
+    return added_booking
 
 @app.delete("/api/bookings", status_code=204)
 async def delete_booking(booking: validation.BookingRemove, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
     crud_operations.delete_booking(booking, session, user)
     booked_seat_ids = crud_operations.get_screening(booking.screening_id, session).booked_seat_ids
-    await manager.broadcast_screening_json(booking.screening_id, {"type": "update", "screening_id": booking.screening_id, "booked_seat_ids": booked_seat_ids})
-
+    await manager.broadcast_screening_json(booking.screening_id, booked_seat_ids)
 
 @app.get("/api/bookings/{id}", response_model=validation.BookingResponse)
 def get_booking(id, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
@@ -295,19 +315,11 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
             raise HTTPException(status_code=400, detail=transaction_res.json())
     
     """
-
-    
-    
     crud_operations.confirm_booking(user, data.booking_id, session)
 
 # Tickets
 
 
-#EVENT FUNCTIONS
-@app.on_event("startup")
-async def startup():
-    genres = await get_genres()
-    #crud_operations.add_genres(genres)
 
 
 
@@ -332,7 +344,7 @@ async def shutdown():
 async def websocket(websocket: WebSocket, screening_id: int):
     print("\n\n\n\n\n", websocket.path_params, "\n\n\n\n\n")
     try:
-        await manager.connect(websocket)
+        await manager.connect(websocket, screening_id)
         await manager.broadcast_json({"type": "ping", "msg": "joined", "screening_id": screening_id})
         with Session(engine) as session:
             booked_seat_ids = crud_operations.get_screening(int(websocket.path_params['screening_id']), session).booked_seat_ids
@@ -347,9 +359,9 @@ async def websocket(websocket: WebSocket, screening_id: int):
             print("\n\n\n\n", "Thank you", data, "\n\n\n\n")
             with Session(engine) as session:
                 booked_seat_ids = crud_operations.get_screening(int(websocket.path_params['screening_id']), session).booked_seat_ids
-            await manager.broadcast_screening_json(screening_id, {"type":"update", "screening_id": screening_id, "booked_seat_ids": booked_seat_ids})
+            await manager.broadcast_screening_json(screening_id, booked_seat_ids)
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        manager.disconnect(websocket, screening_id)
         await manager.broadcast_json({"type": "ping", "msg": "left", "screening_id": screening_id})
 
 

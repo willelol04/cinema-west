@@ -1,0 +1,1 @@
+import{O as e}from"./index-CLSP_i-_.js";function c(){const r=e();return{successToast:s=>{r.add({severity:"success",summary:"Success",detail:s,life:3e3})},errorToast:s=>{r.add({severity:"error",summary:"Error",detail:s,life:3e3})}}}export{c as u};

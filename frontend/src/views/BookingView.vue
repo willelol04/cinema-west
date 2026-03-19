@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, defineProps, onMounted, ref, onBeforeUnmount, watch} from 'vue'; // probably want to use ref instead
+import { reactive, onMounted, ref, onBeforeUnmount, watch} from 'vue'; // probably want to use ref instead
 import MovieDetails from '@/components/MovieDetails.vue';
 import { useRoute, useRouter } from 'vue-router';
 import {useAuth0} from "@auth0/auth0-vue";
@@ -20,6 +20,7 @@ const screeningResult = ref(null);
 const checkedSeats = ref([]);
 const booked_seat_ids = ref([])
 const fetchComplete = ref(true)
+let leaving = false;
 
 const route = useRoute();
 const router = useRouter();
@@ -47,17 +48,6 @@ const bookTickets = async () => {
       const token = await getAccessTokenSilently();
       const booking = await addBooking({seats: checkedSeats.value, screening_id: screeningResult.value.id}, token);
 
-      if(booking && ws.readyState === WebSocket.OPEN) {
-        try {
-          ws.send(JSON.stringify({type: "update", msg: "booking issued."}))
-        } catch(e) {
-          alert(e, "WS not found");
-        }
-
-      }
-
-
-
       if(booking) {
         await router.push(`/payment/${booking.id}`)
       }
@@ -78,7 +68,8 @@ const bookTickets = async () => {
 }
 
 onBeforeUnmount(() => {
-  if(ws) {
+  leaving = true;
+  if(ws !== null) {
     ws.close()
   }
 })
@@ -92,13 +83,22 @@ onMounted(async () => {
     console.log(screeningResult)
     ws = new WebSocket(`/api/ws/${screeningResult.value.id}`);
 
-    ws.onmessage = async (event) => {
-      if(JSON.parse(event.data)?.type === 'update') {
-        booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids
-        checkedSeats.value = checkedSeats.value.filter((seat) => !booked_seat_ids.value.includes(seat.id))
+    ws.onerror = () => {
+      if(!leaving) {
+        errorToast("You are experiencing issues with the WebSocket connection. Try refreshing the page.")
+      }
+    };
+
+
+      ws.onmessage = async (event) => {
+        if(JSON.parse(event.data)?.type === 'update') {
+          booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids
+          checkedSeats.value = checkedSeats.value.filter((seat) => !booked_seat_ids.value.includes(seat.id))
+        }
+
       }
 
-    }
+
   }
 
 });

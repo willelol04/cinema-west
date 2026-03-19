@@ -64,7 +64,7 @@ class BookingAlreadyPaidError(Exception):
         return f"Booking has already been paid for."
 
 
-def add_booking(user, booking: validation.BookingAdd, session):
+def add_booking(user, booking, session):
         try:
             created_tickets = []
             booking_id = session.execute(insert(Booking).values(user_id=user.id, screening_id=booking.screening_id, total_price=100*len(booking.seats)).returning(Booking.id)).scalar()
@@ -175,7 +175,7 @@ def get_movies_schedule(session):
 
     tomorrows_movies = session.execute(select(Movie).join(Screening).where(Screening.start_time >= tomorrow_start).where(Screening.start_time <= tomorrow_end).distinct()).scalars().all()
 
-    upcoming_movies = session.execute(select(Movie).where(Movie.release_date > func.now())).scalars().all()
+    upcoming_movies = session.execute(select(Movie).where(Movie.release_date > datetime.now(timezone.utc))).scalars().all()
 
     return {"today": todays_movies, "tomorrow": tomorrows_movies, "upcoming": upcoming_movies}
 
@@ -314,8 +314,10 @@ def get_selected_seats(id: object, session: object) -> Any:
 def clean_pending_bookings():
     with Session(engine) as session:
         try:
-            session.execute(delete(Booking).where(Booking.expires_at <= func.now(), Booking.status=="pending"))
+            screenings_to_update = session.execute(select(Screening.id).join(Booking).where(Booking.expires_at <= datetime.now(timezone.utc), Booking.status=="pending").distinct()).scalars().all()
+            session.execute(delete(Booking).where(Booking.expires_at <= datetime.now(timezone.utc), Booking.status=="pending"))
             session.commit()
+            return screenings_to_update
         except SQLAlchemyError as e:
             session.rollback()
             raise DatabaseError("Database query failed. Could not clean pending tickets.") from e
