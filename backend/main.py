@@ -32,13 +32,14 @@ manager = websocket.ConnectionManager()
 #EVENT FUNCTIONS
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    #genres = await get_genres()
     scheduler = AsyncIOScheduler()
     scheduler.add_job(clean_pending_bookings, 'interval', seconds=10)
     scheduler.start()
     atexit.register(lambda: scheduler.shutdown())
     yield
-    #crud_operations.add_genres(genres)
+    print("\n\nclosing tmdb_client\n\n")
+    await tmdb_client.aclose()
+    print("closed tmdb")
 
 
 async def clean_pending_bookings():
@@ -282,6 +283,7 @@ def get_booking(id, session: Session = Depends(crud_operations.create_session), 
 
 @app.post("/api/pay-booking", status_code=204)
 async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
+    DARWIN_BASE = "https://darwinbank.duckdns.org/"
     """
     async with httpx.AsyncClient() as client:
         token_res = await client.post(
@@ -332,14 +334,6 @@ def patch_screening(screening: validation.ScreeningPatchRequest, session: Sessio
 
 """
 
-@app.on_event("shutdown")
-async def shutdown():
-    print("\n\nclosing tmdb_client\n\n")
-    await tmdb_client.aclose()
-    print("closed tmdb")
-
-
-
 @app.websocket("/api/ws/{screening_id}")
 async def websocket(websocket: WebSocket, screening_id: int):
     print("\n\n\n\n\n", websocket.path_params, "\n\n\n\n\n")
@@ -370,7 +364,6 @@ async def websocket(websocket: WebSocket, screening_id: int):
 
 
 
-DARWIN_BASE = "https://darwinbank.duckdns.org/api"
 
 
 

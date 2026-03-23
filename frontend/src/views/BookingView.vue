@@ -159,7 +159,7 @@ onMounted(async () => {
             <span>{{checkedSeats.length * 100}}SEK</span>
           </div>
           <input v-if="isAuthenticated" type="submit" value="Go to payment" />
-          <LoginButton v-else type="submit" value="Log in to order tickets" />
+          <LoginButton v-else value="Log in to order tickets" />
         </div>
       </form>
       <BeatLoader

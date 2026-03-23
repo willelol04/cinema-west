@@ -45,7 +45,7 @@ class MovieBase(BaseModel):
 
 class MovieDisplay(MovieBase):
     title: str
-    poster_path: str
+    poster_path: Optional[str]
 
 class MovieDisplayDetailed(MovieDisplay):
     release_date: datetime
