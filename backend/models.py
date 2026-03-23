@@ -40,6 +40,9 @@ class Movie(Base):
     rating: Mapped[str] = mapped_column(String(20), nullable=True)
     language: Mapped[str] = mapped_column(String(10))
 
+    created_at: Mapped[datetime] = mapped_column(DateTime, default= lambda: datetime.now(timezone.utc))
+    #
+
     screenings: Mapped[List["Screening"]] = relationship(back_populates="movie", order_by="Screening.start_time", cascade="all, delete-orphan")
 
     genres: Mapped[List["Genre"]] = relationship(secondary=movie_genre, back_populates="movies")

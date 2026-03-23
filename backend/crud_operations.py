@@ -159,7 +159,7 @@ def get_movies_all(title, genre, rating, session):
     if genre:
         stmt = stmt.join(Movie.genres).where(Genre.id == genre)
 
-    result = session.execute(stmt.options(selectinload(Movie.screenings).selectinload(Screening.theatre))).scalars().all()
+    result = session.execute(stmt.options(selectinload(Movie.screenings).selectinload(Screening.theatre)).order_by(Movie.created_at.desc())).scalars().all()
 
     return result
 
