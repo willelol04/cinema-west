@@ -96,7 +96,7 @@ const payBooking = async () => {
     paymentProcessActive.value = true;
     fetchComplete.value = false;
     const token = await getAccessTokenSilently();
-    const res = await authenticatedFetch("/api/pay-booking", token, {
+    await authenticatedFetch("/api/pay-booking", token, {
       method: "POST",
       body: JSON.stringify({
         booking_id: Number(route.params.id),
@@ -107,10 +107,6 @@ const payBooking = async () => {
       }),
     });
 
-    if (!res.ok) {
-      errorToast("Payment failed")
-      return;
-    }
 
     setTimeout(() => {
       fetchComplete.value = true
@@ -119,7 +115,7 @@ const payBooking = async () => {
 
     }, 1500)
   } catch (e) {
-    alert("Something went wrong: " + e.message);
+    errorToast("Payment failed")
   }
   finally {
     paymentProcessActive.value = false;
