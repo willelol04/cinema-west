@@ -6,6 +6,7 @@ import {useAuth0} from "@auth0/auth0-vue";
 import { getBooking, deleteBooking } from '@/api/bookings';
 import NavigateBackButton from "@/components/NavigateBackButton.vue";
 import {useAppToast} from "@/use/useToast.js";
+import {authenticatedFetch} from "@/api/general.js";
 
 const {isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
@@ -64,7 +65,7 @@ const cancelBooking = async () => {
     const token = await getAccessTokenSilently();
     await deleteBooking({id: bookingResult.value.id, screening_id: bookingResult.value.screening_id}, token);
   } catch (e) {
-    alert("Something went wrong: " + e.message);
+    errorToast("Booking cancellation failed")
   }
 };
 
@@ -95,12 +96,8 @@ const payBooking = async () => {
     paymentProcessActive.value = true;
     fetchComplete.value = false;
     const token = await getAccessTokenSilently();
-    const res = await fetch("/api/pay-booking", {
+    const res = await authenticatedFetch("/api/pay-booking", token, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
       body: JSON.stringify({
         booking_id: Number(route.params.id),
         username: formData.ssn,

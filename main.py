@@ -13,6 +13,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 from backend import crud_operations
 from backend import validation
 from backend import websocket
+from backend.crud_operations import EntityNotFoundError
 from backend.models import engine
 from backend.tmdb import tmdb_client, get_from_TMDB
 
@@ -104,11 +105,11 @@ async def get_movie_details(id):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000", "http://localhost:8000", "https://cinema-west-88b7c1e1406a.herokuapp.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
+    expose_headers=[],
 )
 
 @app.exception_handler(crud_operations.DatabaseConflictError)

@@ -23,5 +23,4 @@ export async function addBooking(booking, token) {
         method: "POST",
         body: JSON.stringify(booking)
     });
-
 }

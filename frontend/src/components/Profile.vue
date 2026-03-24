@@ -105,6 +105,9 @@ const deleteUser = async () => {
     border: 1px solid var(--text-default-color);
 }
 
+.right h2{
+  word-break: break-all;
+}
 
 .user-name {
     margin-bottom: 10px;

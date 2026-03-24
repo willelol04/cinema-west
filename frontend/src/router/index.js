@@ -27,8 +27,8 @@ const LoginGuard = async (to, from) => {
     }
 
     if(! (isAuthenticated.value)) {
-        return {name: from.name};
-    } 
+        return from.name ? { name: from.name } : { name: 'home' };
+    }
                 
 }
 
@@ -94,7 +94,7 @@ const router = createRouter({
             beforeEnter: [LoginGuard, (to, from) => {
                 const { user, isLoading } = useAuth0();
                 if(! (user.value['http://localhost:8000/roles'].includes('admin'))) {
-                    return {name: from.name};
+                    return from.name ? { name: from.name } : { name: 'home' };
                 } 
                 
             }

@@ -349,11 +349,12 @@ def confirm_booking(user, booking_id, session):
 def delete_booking(booking, session, user):
     try:
         booking_to_delete = session.get(Booking, booking.id)
+        if not booking_to_delete:
+            raise EntityNotFoundError(f"No booking with id:{booking.id}")
+
         if not (booking_to_delete.user_id == user.id or user.is_admin):
             raise AuthorizationError(user.id)
 
-        if not booking_to_delete:
-            raise EntityNotFoundError(f"No booking with id:{booking.id}")
 
         session.delete(booking_to_delete)
 
