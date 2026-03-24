@@ -8,14 +8,12 @@ import {getScreening} from '@/api/screenings';
 import {addBooking} from '@/api/bookings';
 import NavigateBackButton from "@/components/NavigateBackButton.vue";
 import BeatLoader from "vue-spinner/src/BeatLoader.vue";
-
-
-const {successToast, errorToast} = useAppToast();
 import {useAppToast} from "@/use/useToast.js";
 import LoginButton from "@/components/LoginButton.vue";
 
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
+const {successToast, errorToast} = useAppToast();
 const screeningResult = ref(null);
 const checkedSeats = ref([]);
 const booked_seat_ids = ref([])
@@ -63,7 +61,6 @@ const bookTickets = async () => {
     }
 
   }
-
 }
 
 onBeforeUnmount(() => {

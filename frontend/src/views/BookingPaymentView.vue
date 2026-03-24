@@ -5,8 +5,11 @@ import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import {useAuth0} from "@auth0/auth0-vue";
 import { getBooking, deleteBooking } from '@/api/bookings';
 import NavigateBackButton from "@/components/NavigateBackButton.vue";
+import {useAppToast} from "@/use/useToast.js";
+
 const {isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
+const {successToast, errorToast} = useAppToast();
 let timerIntervalId;
 const timer = ref(null);
 const paymentProcessActive = ref(false);
@@ -107,8 +110,7 @@ const payBooking = async () => {
     });
 
     if (!res.ok) {
-      const err = await res.json();
-      alert(`[${err.error_type}: ${err.detail}]`);
+      errorToast("Payment failed")
       return;
     }
 
