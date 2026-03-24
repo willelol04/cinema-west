@@ -9,13 +9,13 @@ from contextlib import asynccontextmanager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy.orm import Session
 
-import crud_operations
-import validation
-import websocket
-from models import engine
-from tmdb import tmdb_client, get_genres, get_from_TMDB
+from . import crud_operations
+from . import validation
+from . import websocket
+from .models import engine
+from .tmdb import tmdb_client, get_from_TMDB
 
-from fastapi import HTTPException, Request, status
+from fastapi import Request, status
 from fastapi_plugin.fast_api_client import Auth0FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Depends

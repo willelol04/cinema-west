@@ -1,23 +1,13 @@
-
-import sqlalchemy
-import asyncio
-import aiomysql
-import pymysql
 from typing import List
-from typing import Optional
-from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table, ForeignKeyConstraint, func, cast, Float
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
+from sqlalchemy import Column, Integer, String, Date, DateTime, Boolean, create_engine, ForeignKey, UniqueConstraint, Table, ForeignKeyConstraint, func, cast, Float
+
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
-from sqlalchemy.orm import selectinload
 from datetime import timedelta, date, datetime, timezone
 from dotenv import load_dotenv
 import os
-
-import validation as validation
 
 load_dotenv()
 STACKHERO_MARIADB_DATABASE_URL = os.getenv('STACKHERO_MARIADB_DATABASE_URL')

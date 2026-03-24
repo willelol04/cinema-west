@@ -1,28 +1,14 @@
-import sqlalchemy
 import asyncio
-import aiomysql
-import pymysql
-from typing import List, Any
-from typing import Optional
-from sqlalchemy import Column, insert, Integer, String, Date, DateTime, Boolean, create_engine, text, ForeignKey, UniqueConstraint, Engine, select, Table, update, delete
-from sqlalchemy.exc import SQLAlchemyError
+from typing import Any
+from sqlalchemy import insert, select, update, delete
 from sqlalchemy.orm import Session
-from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import selectinload, joinedload
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError, NoResultFound
-from sqlalchemy import func, text
+from sqlalchemy.orm import selectinload
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from datetime import timedelta, datetime, timezone
 
-from models import engine, Base, movie_genre, Movie, User, Genre, Theatre, Ticket, Screening, Seat, Booking
-import validation
+from .models import engine, Base, movie_genre, Movie, User, Genre, Theatre, Ticket, Screening, Seat, Booking
 
-from tmdb import get_genres
-
-from contextlib import contextmanager
-
+from .tmdb import get_genres
 
 def create_session():
     with Session(engine) as session:
