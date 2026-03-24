@@ -9,11 +9,11 @@ from contextlib import asynccontextmanager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy.orm import Session
 
-from . import crud_operations
-from . import validation
-from . import websocket
-from .models import engine
-from .tmdb import tmdb_client, get_from_TMDB
+from .backend import crud_operations
+from .backend import validation
+from .backend import websocket
+from .backend.models import engine
+from .backend.tmdb import tmdb_client, get_from_TMDB
 
 from fastapi import Request, status
 from fastapi_plugin.fast_api_client import Auth0FastAPI
@@ -320,7 +320,7 @@ async def serve_spa(full_path: str):
     if os.path.isfile(file_path):
         return FileResponse(file_path)
     else:
-        return FileResponse("dist/index.html")
+        return FileResponse("backend/dist/index.html")
 
 
 
