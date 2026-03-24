@@ -13,10 +13,6 @@ load_dotenv()
 STACKHERO_MARIADB_DATABASE_URL = os.getenv('STACKHERO_MARIADB_DATABASE_URL')
 
 
-
-
-
-
 class Base (DeclarativeBase):
     pass
 

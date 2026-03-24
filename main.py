@@ -274,7 +274,6 @@ async def pay_booking(data: validation.PaymentRequest, session: Session = Depend
 async def websocket(websocket: WebSocket, screening_id: int):
     try:
         await manager.connect(websocket, screening_id)
-        await manager.broadcast_json({"type": "ping", "msg": "joined", "screening_id": screening_id})
         with Session(engine) as session:
             booked_seat_ids = crud_operations.get_screening(int(websocket.path_params['screening_id']), session).booked_seat_ids
         await manager.send_personal_json({"type": "update", "screening_id": screening_id, "booked_seat_ids": booked_seat_ids}, websocket)
@@ -291,7 +290,6 @@ async def websocket(websocket: WebSocket, screening_id: int):
             await manager.broadcast_screening_json(screening_id, booked_seat_ids)
     except WebSocketDisconnect:
         manager.disconnect(websocket, screening_id)
-        await manager.broadcast_json({"type": "ping", "msg": "left", "screening_id": screening_id})
 
 async def get_management_token():
     url = f"https://{auth0_domain}/oauth/token"
