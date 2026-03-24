@@ -353,11 +353,4 @@ def get_user_bookings(user = Depends(verify_user), session: Session = Depends(cr
     return crud_operations.get_user_bookings(user, session)
 
 
-app.mount("/static", StaticFiles(directory="dist"), name="static")
-@app.get("/{full_path:path}")
-async def serve_spa(full_path: str):
-    file_path = f"dist/{full_path}"
-    if os.path.isfile(file_path):
-        return FileResponse(file_path)
-    else:
-        return FileResponse("dist/index.html")
+app.mount("/", StaticFiles(directory="dist", html=True), name="static")
