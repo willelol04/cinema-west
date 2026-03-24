@@ -50,7 +50,6 @@ const cancelBooking = async (booking) => {
       successToast("Booking cancelled.")
     }
   } catch (e) {
-    console.log(e);
     errorToast("Error cancelling booking. Try refreshing the page.")
   }
 };

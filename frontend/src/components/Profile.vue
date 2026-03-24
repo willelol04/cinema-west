@@ -37,7 +37,6 @@ const deleteUser = async () => {
             emit('delete');
         } catch(e) {
             errorToast("Error deleting account. Try refreshing the page.")
-            console.log(e)
         }
 
     }

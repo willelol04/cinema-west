@@ -18,7 +18,6 @@ const search_field = defineModel('Bing');
 const route = useRoute();
 const router = useRouter();
 const debounceUpdateData = debounce((newValue) => {
-  console.log(newValue)
   const query = { ...route.query }
   if (search_field.value) {
     router.push({query: {q: search_field.value}});

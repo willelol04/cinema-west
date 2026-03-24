@@ -28,7 +28,6 @@ async function fetchFilters() {
   try {
     fetchComplete.value = false;
     filters.value = await normalFetch("/api/filters");
-    console.log(filters.value);
   } catch(e){
     errorToast("Error fetching sort filters. Try refreshing the page.")
 
@@ -45,7 +44,6 @@ async function fetchFilters() {
 onMounted(async () => await fetchFilters())
 
 const debounceUpdateData = debounce((newValue) => {
-  console.log(newValue)
   emit('update', sortData)
 
 }, 300)

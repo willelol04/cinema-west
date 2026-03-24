@@ -18,7 +18,6 @@ async function fetchMovie() {
   try {
     fetchComplete.value = false;
     movieResults.value = await getMovie(route.params.id);
-    console.log(movieResults.value);
   } catch (e) {
     errorToast("Erroring fetching movie from database. Try refreshing the page.")
   } finally {

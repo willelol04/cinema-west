@@ -84,7 +84,6 @@ const addScreeningUpdate = async () => {
       successToast("Screening added to database.")
 
     } catch(e) {
-      console.log(e);
       errorToast("Error adding screening. Try refreshing the page.")
     }
   }
@@ -102,7 +101,6 @@ const handleDeleteScreening = async (screening) => {
         );
 
       } catch(e) {
-        console.log(e);
         errorToast("Error deleting screening. Try refreshing the page.");
       }
 

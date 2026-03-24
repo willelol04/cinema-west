@@ -53,7 +53,6 @@ const bookTickets = async () => {
       }
 
     } catch(e) {
-      console.log(e?.error_type);
       if(e?.error_type === 'conflict' ) {
         errorToast(e.detail)
         checkedSeats.value = [];
@@ -80,7 +79,6 @@ onMounted(async () => {
   await fetchScreening();
 
   if(screeningResult.value) {
-    console.log(screeningResult)
     ws = new WebSocket(`/api/ws/${screeningResult.value.id}`);
 
     ws.onerror = () => {

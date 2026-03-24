@@ -28,8 +28,6 @@ async function fetchMovies(sortData) {
   try {
     fetchComplete.value = false
     movieResults.value = await normalFetch(`/api/movies?${searchParams}`);
-    console.log(movieResults.value);
-    console.log(searchParams)
 
   } catch(e) {
     errorToast("Error fetching movies from database. Try refreshing the page.")

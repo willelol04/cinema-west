@@ -41,7 +41,6 @@ async function fetchBooking() {
     bookingResult.value = await getBooking(route.params.id, token);
 
     formData.amount = bookingResult.value.total_price
-    console.log(bookingResult.value);
     if(bookingResult.value.status == 'complete') {
       paymentComplete.value = true;
       router.push("/");
@@ -61,7 +60,6 @@ const cancelBooking = async () => {
     const token = await getAccessTokenSilently();
     await deleteBooking({id: bookingResult.value.id, screening_id: bookingResult.value.screening_id}, token);
   } catch (e) {
-    console.log(e);
     alert("Something went wrong: " + e.message);
   }
 };
@@ -74,7 +72,6 @@ watch(bookingResult, (newVal) => {
   }
 })
 onMounted(async () => {
-  console.log(route.params.id);
   await fetchBooking();
 })
 
@@ -122,7 +119,6 @@ const payBooking = async () => {
 
     }, 1500)
   } catch (e) {
-    console.log(e)
     alert("Something went wrong: " + e.message);
   }
   finally {

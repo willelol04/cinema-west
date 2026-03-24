@@ -31,8 +31,8 @@ def create_session():
                 yield session
                 session.commit()
             except Exception as e:
-                session.rollback()
                 print(e)
+                session.rollback()
                 raise
             finally:
                 session.close()
@@ -219,10 +219,8 @@ def add_movie(movie, session):
         return movie_to_add
 
     except IntegrityError as e:
-        print(e)
         raise DatabaseConflictError("Conflict occured while adding movie.") from e
     except SQLAlchemyError as e:
-        print(e)
         raise DatabaseError("Database query Failed. Cannot add movie to database.") from e
 
     
@@ -382,7 +380,7 @@ def delete_booking(booking, session, user):
 # tickets
 def get_user_bookings(user, session):
     result = session.execute(select(Booking)
-                             .where(Booking.user_id==user.id)
+                             .where(Booking.user_id==user.id, Booking.status == 'complete')
                              .options(
                                  selectinload(Booking.tickets).selectinload(Ticket.seat).selectinload(Seat.theatre),
                                  selectinload(Booking.tickets).selectinload(Ticket.screening).selectinload(Screening.movie),

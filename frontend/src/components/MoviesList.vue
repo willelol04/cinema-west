@@ -47,7 +47,6 @@ onBeforeMount(() => {
 });
 
 const visibleMovies = computed(() => {
-  console.log(props.movies.length, columns.value)
   if(props.movies.length > columns.value && props.scroll) {
     const visible = props.movies.slice(start_ind.value * columns.value, start_ind.value * columns.value + columns.value);
     showScroll.value = true;
@@ -90,7 +89,6 @@ const scrollRight = () => {
 
 
 
-console.log(props.movies);
 </script>
 
 <template>

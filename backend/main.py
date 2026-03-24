@@ -226,40 +226,6 @@ def get_booking(id, session: Session = Depends(crud_operations.create_session), 
 
 @app.post("/api/pay-booking", status_code=204)
 async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
-    DARWIN_BASE = "https://darwinbank.duckdns.org/"
-    """
-    async with httpx.AsyncClient() as client:
-        token_res = await client.post(
-            f"{DARWIN_BASE}/token",
-            data={"username": data.username, "password": data.password},
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-        )
-        print("Token status:", token_res.status_code)
-        print("Token response:", token_res.text)
-        print("Cookies after token:", client.cookies)
-        
-        if token_res.status_code != 200:
-            raise HTTPException(status_code=401, detail="Authentication failed")
-
-        transaction_res = await client.post(
-            f"{DARWIN_BASE}/transaction/new",
-            json={
-                "from_account": data.from_account,
-                "to_account": 63,
-                "amount": data.amount * 100,
-                "transaction_type": "cinema",
-                "message": "Stonks goin up for cinema west frfr",
-                "currency": "SEK",
-            },
-        )
-        
-        print("Transaction status:", transaction_res.status_code)
-        print("Transaction response:", transaction_res.text)
-
-        if transaction_res.status_code != 200:
-            raise HTTPException(status_code=400, detail=transaction_res.json())
-    
-    """
     crud_operations.confirm_booking(user, data.booking_id, session)
 
 

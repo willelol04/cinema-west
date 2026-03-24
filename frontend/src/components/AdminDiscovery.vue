@@ -51,7 +51,6 @@ const handleAdd = (movie) => {
 const movieDisplay = computed(() => {
   if (movieResults.value && addedMovies) {
     return movieResults.value.filter(item_one => ! addedMovies.value.some(item_two => item_one.id === item_two.id))
-    console.log(movieDisplay.value)
 
   }
   else {
