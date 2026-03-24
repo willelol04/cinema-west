@@ -1,1 +1,0 @@
-import{n,H as i}from"./index-BotGKuUE.js";function a(e){return n(`/api/screenings/${e}`)}function d(e,t){return i("/api/screenings",t,{method:"DELETE",body:JSON.stringify({id:e.id})})}function s(e,t){return i("/api/screenings",t,{method:"POST",body:JSON.stringify({movie_id:e.movie_id,theatre_id:e.theatre_id,start_times:e.start_times})})}export{s as a,d,a as g};

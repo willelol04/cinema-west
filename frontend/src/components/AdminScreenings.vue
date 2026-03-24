@@ -283,7 +283,7 @@ h3 {
 .screenings-table {
   width: 100%;
   box-sizing: border-box;
-  bakground-color: var(--main-bg);
+  background-color: var(--main-bg);
   min-height: 100px;
   text-align: left;
   border-collapse: separate;
