@@ -320,7 +320,7 @@ async def serve_spa(full_path: str):
     if os.path.isfile(file_path):
         return FileResponse(file_path)
     else:
-        return FileResponse("backend/dist/index.html")
+        return FileResponse("dist/index.html")
 
 
 
