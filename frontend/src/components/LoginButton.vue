@@ -14,7 +14,7 @@ const handleLogin = () => {
 </script>
 
 <template>
-  <button @click="handleLogin" class="button login" :disabled="isLoading">
+  <button @click="handleLogin" type="button" class="button login" :disabled="isLoading">
     {{ isLoading ? 'Loading...' : 'Log In/Sign up' }}
   </button>
 </template>

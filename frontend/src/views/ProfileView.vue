@@ -62,7 +62,7 @@ const cancelBooking = async (booking) => {
 </script>
 
 <template>
-  <main>
+  <main :class="{'center-main': !fetchComplete}">
     <div v-if="fetchComplete && isAuthenticated" class="my-profile">
       <Profile
           class="profile-info"
@@ -77,11 +77,11 @@ const cancelBooking = async (booking) => {
             class="go-to-booking-btn"
             @click="goToBooking(route.query.bookingId)"
         >
-          Go to booking
+          Scroll to booking
         </button>
       </div>
       <h1>My bookings</h1>
-      <div class="bookings">
+      <div v-if="bookings.length > 0" class="bookings">
         <BookingCard
             class="booking"
             v-for="(booking, ind) in bookings"
@@ -89,6 +89,7 @@ const cancelBooking = async (booking) => {
             :booking="booking"
         />
       </div>
+      <p v-else>You have no bookings</p>
     </div>
     <BeatLoader
         class="fetch-loading"
@@ -99,12 +100,18 @@ const cancelBooking = async (booking) => {
 </template>
 
 <style scoped>
+
+.center-main {
+  justify-content: center;
+}
+
 main {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: start;
   background-color: var(--main-bg);
+  text-align: center;
   flex: 1;
 }
 

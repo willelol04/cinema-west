@@ -39,8 +39,8 @@ async function fetchMovies(sortData) {
 onMounted( async () => {await fetchMovies({title: null, genre: null, rating: null})});
 </script>
 <template>
-  <main>
-    <h1 v-if="movieResults">Movies</h1>
+  <main :class="{'center-main' : !movieResults}">
+    <h1  v-if="movieResults">Movies</h1>
     <Sort @update="fetchMovies" />
     <MoviesList v-if="movieResults" :movies="movieResults" />
     <BeatLoader
@@ -51,6 +51,12 @@ onMounted( async () => {await fetchMovies({title: null, genre: null, rating: nul
   </main>
 </template>
 <style scoped>
+
+.center-main {
+  justify-content: center;
+
+}
+
 h1 {
   text-align: left;
   margin-bottom: 10px;

@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy.orm import Session
+from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 
 from backend import crud_operations
 from backend import validation
@@ -226,6 +227,45 @@ def get_booking(id, session: Session = Depends(crud_operations.create_session), 
 
 @app.post("/api/pay-booking", status_code=204)
 async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
+
+    # Edited out transaction to darwinbank for the presentation
+
+    DARWIN_BASE = "https://darwinbank.duckdns.org"
+    async with httpx.AsyncClient() as client:
+        token_res = await client.post(
+            f"{DARWIN_BASE}/token",
+            data={"username": data.username, "password": data.password},
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+        print("Token status:", token_res.status_code)
+        print("Token response:", token_res.text)
+        print("Cookies after token:", client.cookies)
+
+        if token_res.status_code != 200:
+            return JSONResponse(status_code=HTTP_401_UNAUTHORIZED,
+                                content={"detail": "Authorization to Darwinbank failed", "error_type": "conflict"}
+                                )
+
+        transaction_res = await client.post(
+            f"{DARWIN_BASE}/transaction/new",
+            json={
+                "from_account": data.from_account,
+                "to_account": 752358543,
+                "amount": data.amount * 100,
+                "transaction_type": "cinema",
+                "message": "Stocks rising up for cinema west",
+                "currency": "SEK",
+            },
+        )
+
+        print("Transaction status:", transaction_res.status_code)
+        print("Transaction response:", transaction_res.text)
+
+        if transaction_res.status_code != 200:
+            return JSONResponse(status_code=HTTP_400_BAD_REQUEST,
+                                content={"detail": transaction_res.json().detail, "error_type": "darwinbank"}
+                                )
+
     crud_operations.confirm_booking(user, data.booking_id, session)
 
 
@@ -321,6 +361,3 @@ async def serve_spa(full_path: str):
         return FileResponse(file_path)
     else:
         return FileResponse("dist/index.html")
-
-
-

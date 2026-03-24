@@ -32,10 +32,10 @@ const decrementTimer = () => {
 
 
 const formData = reactive({
-  ssn: "20040714-7377",
-  password: "bruh",
-  account: 52,
-  amount: 2342,
+  ssn: "20040808-3252",
+  password: "R0dy&a1wy*LbuV",
+  account: 265217004,
+  amount: 10000,
 })
 
 async function fetchBooking() {
@@ -44,6 +44,7 @@ async function fetchBooking() {
     bookingResult.value = await getBooking(route.params.id, token);
 
     formData.amount = bookingResult.value.total_price
+
     if(bookingResult.value.status == 'complete') {
       paymentComplete.value = true;
       router.push("/");
@@ -101,7 +102,7 @@ const payBooking = async () => {
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
-        booking_id: route.params.id,
+        booking_id: Number(route.params.id),
         username: formData.ssn,
         password: formData.password,
         from_account: formData.account,
@@ -148,6 +149,7 @@ const payBooking = async () => {
             id="social-security-nr"
             v-model="formData.ssn"
             required
+            disabled
         />
         <label for="password">Password</label>
         <input
@@ -155,9 +157,10 @@ const payBooking = async () => {
             id="password"
             v-model="formData.password"
             required
+            disabled
         />
         <label for="account">Account ID</label>
-        <input type="text" id="account" v-model="formData.account" required />
+        <input type="number" id="account" disabled v-model="formData.account" required />
         <p>Total price: <br />{{ formData.amount }} SEK</p>
         <h3 class="timer-header"><i class="pi pi-clock"></i>Pay within: {{timer}}s</h3>
         <button type="submit">Submit payment</button>
@@ -211,9 +214,6 @@ h2 i {
   font-size: 24px;
 }
 
-input {
-  border: 1px solid white;
-}
 
 label {
   display: block;
@@ -222,6 +222,7 @@ label {
 input {
   padding: 10px;
   border-radius: 6px;
+  opacity: 50%;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: #111;
   color: white;

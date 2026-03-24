@@ -3,7 +3,7 @@
 <template>
   <footer>
     <div class="descriptions">
-      <p>Copyright &copy; 2025 cinema west</p>
+      <p>Copyright &copy; 2026 cinema west</p>
       <p>
         This service uses TMDB and the TMDB APIs but is not endorsed, certified,
         or otherwise approved by TMDB.
