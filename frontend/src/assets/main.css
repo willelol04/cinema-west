@@ -16,7 +16,7 @@ button:hover, a:hover {
 }
 
 body {
-    background: #1a1a1a;
+    background: var(--main-bg);
     display: flex;
     flex-direction: column;
     width: 100%;

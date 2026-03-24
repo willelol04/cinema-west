@@ -1,4 +1,5 @@
 <script setup>
+import { format, formatDistance, formatRelative, subDays } from 'date-fns';
 import { RouterLink } from 'vue-router';
 import { ref, computed, onMounted } from 'vue';
 import MoviesView from '@/views/MoviesView.vue';
@@ -350,25 +351,34 @@ section {
   align-items: center;
 }
 @media screen and (max-width: 768px) {
-  .movie-card {
-    display: flex;
-    flex-direction: column;
-    width: 70%;
+
+
+  .movie-details h2 {
+    text-align: center;
+  }
+
+
+  .movie-poster {
+    height: 100%;
   }
 
   .movie-details {
-    padding: 10px;
+    padding: 5px;
   }
 
   .movie-actions {
     padding: 10px;
-    border-radius: 10px;
+
+  }
+
+  .movie-action i {
+    font-size: 24px;
   }
 
   .movies-header {
-    width: 70%;
-    margin: 0 auto;
-    font-size: 14px;
+    padding: 0;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 </style>

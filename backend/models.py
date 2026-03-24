@@ -14,10 +14,16 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import selectinload
 from datetime import timedelta, date, datetime, timezone
-
-
+from dotenv import load_dotenv
+import os
 
 import validation as validation
+
+load_dotenv()
+STACKHERO_MARIADB_DATABASE_URL = os.getenv('STACKHERO_MARIADB_DATABASE_URL')
+
+
+
 
 
 
@@ -39,12 +45,9 @@ class Movie(Base):
     runtime: Mapped[int]= mapped_column(Integer, nullable=True)
     rating: Mapped[str] = mapped_column(String(20), nullable=True)
     language: Mapped[str] = mapped_column(String(10))
-
     created_at: Mapped[datetime] = mapped_column(DateTime, default= lambda: datetime.now(timezone.utc))
-    #
 
     screenings: Mapped[List["Screening"]] = relationship(back_populates="movie", order_by="Screening.start_time", cascade="all, delete-orphan")
-
     genres: Mapped[List["Genre"]] = relationship(secondary=movie_genre, back_populates="movies")
 
 class Genre(Base):
@@ -80,16 +83,17 @@ class Theatre(Base):
     number_of_rows: Mapped[int] = mapped_column(Integer)
 
     seats: Mapped[List["Seat"]] = relationship(back_populates="theatre",
+            # Sorterar säten efter deras ID:n (t.ex. A12 på Rad A, Kolumn 12)
             order_by=lambda: (
-            func.substr(Seat.id, 1, 1),               # letter
-            cast(func.substr(Seat.id, 2), Integer)    # number
+            func.substr(Seat.id, 1, 1),               # bokstav
+            cast(func.substr(Seat.id, 2), Integer)    # nummer
         ))
     
 class Seat(Base):
     __tablename__ = "seat"
 
     id: Mapped[str] = mapped_column(String(10), primary_key=True)
-    theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id"), primary_key=True)
+    theatre_id: Mapped[int] = mapped_column(ForeignKey("theatre.id", ondelete="CASCADE"), primary_key=True)
 
     theatre: Mapped["Theatre"] = relationship(back_populates="seats")
     
@@ -155,5 +159,5 @@ jaws_db = "mysql+pymysql://gjisbozryr4hecgb:n1md8zcrm93ersbg@rmspavs8mpub7dkq.ch
 
 local_db = "mysql+pymysql://cinema:6P3AZdYtUaWb7tBxHQa%@127.0.0.1/cinema?charset=utf8mb4"
 
-engine = create_engine(jaws_db,
+engine = create_engine(STACKHERO_MARIADB_DATABASE_URL,
 echo = True)

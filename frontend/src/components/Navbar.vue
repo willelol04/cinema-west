@@ -117,7 +117,6 @@ watch(
 <style scoped>
 nav {
   width: 100%;
-  top: 0;
   background: var(--primary-bg);
   z-index: 20;
   padding-bottom: 0;

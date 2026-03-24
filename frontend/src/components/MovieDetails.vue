@@ -37,7 +37,13 @@ defineProps({
             {{ movie.title}} ({{ format(movie.release_date, "yyyy")}})
           </h2>
           <div class="movie-info">
-            <h3>Length:</h3>
+            <h3>Release date</h3>
+            <span v-if="movie.release_date">
+              {{format(movie.release_date, 'yyy.MM.d')}}</span
+            ><span v-else>N/A</span>
+          </div>
+          <div class="movie-info">
+            <h3>Length</h3>
             <span v-if="movie.runtime > 0"
             >{{ Math.floor(movie.runtime / 60) }}h
               {{ movie.runtime - Math.floor(movie.runtime / 60)*60 }}min</span
@@ -47,14 +53,14 @@ defineProps({
               class="movie-info"
               v-if="movie.genres && movie.genres.length > 0"
           >
-            <h3>Genres:</h3>
+            <h3>Genres</h3>
             <span
                 v-for="(genre, index) in movie.genres.slice(0, movie.genres.length - 1)"
             >{{ genre.name }} | </span
             ><span>{{movie.genres[movie.genres.length -1].name}}</span>
           </div>
           <div class="movie-info">
-            <h3>Rating:</h3>
+            <h3>Rating</h3>
             <span>{{movie.rating ? movie.rating : 'N/A'}}</span>
           </div>
           <div class="movie-info">
@@ -63,11 +69,11 @@ defineProps({
           </div>
         </div>
         <div class="movie-description">
-          <h3>Description:</h3>
+          <h3>Description</h3>
           <span>{{ movie.overview }}</span>
         </div>
         <div class="movie-screenings">
-          <h3>Book tickets:</h3>
+          <h3>Book tickets</h3>
           <div
               v-if="movie.screenings && movie.screenings.length !== 0"
               class="screenings"
@@ -153,6 +159,10 @@ section {
   justify-content: start;
   gap: 20px;
   flex-wrap: wrap;
+}
+
+.movie-info {
+  margin-bottom: 12px;
 }
 
 @media screen and (max-width: 1200px) {

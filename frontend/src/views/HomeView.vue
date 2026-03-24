@@ -55,8 +55,7 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  gap: 50px;
+  justify-content: center;
 }
 
 .movieslist {

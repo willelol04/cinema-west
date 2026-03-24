@@ -19,6 +19,8 @@ from datetime import timedelta, datetime, timezone
 from models import engine, Base, movie_genre, Movie, User, Genre, Theatre, Ticket, Screening, Seat, Booking
 import validation
 
+from tmdb import get_genres
+
 from contextlib import contextmanager
 
 
@@ -285,20 +287,23 @@ def add_screening(screening, session):
 
 # -- genres --
 
-def add_genres(genres, session):
-    session.execute(insert(Genre), genres)
+async def add_genres():
+    genres = await get_genres()
+    with Session(engine) as session:
+        session.execute(insert(Genre), genres)
+        session.commit()
 
 def get_genres_all(session):
     return session.execute(select(Genre).options(selectinload(Genre.movies)),).scalars().all()
 
-def add_theatre(id, name, per_row, rows, session):
+def add_theatre(name, per_row, rows, session):
     alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-    seats = [ {"id": alphabet[a]+str(n), "theatre_id": id} for a in range(rows) for n in range(1, per_row + 1)]
 
     try: 
-        theatre_to_add = Theatre(id=id, name=name, seats_per_row=per_row, number_of_rows=rows)
+        theatre_to_add = Theatre(name=name, seats_per_row=per_row, number_of_rows=rows)
         session.add(theatre_to_add)
         session.flush()
+        seats = [{"id": alphabet[a] + str(n), "theatre_id": theatre_to_add.id} for a in range(rows) for n in range(1, per_row + 1)]
         session.execute(insert(Seat), seats)
 
     except IntegrityError as e:
@@ -392,24 +397,24 @@ def get_filters(session):
     return {"genres": genres, "ratings": ratings}
 
 
+async def main():
+        #Base.metadata.drop_all(engine)
+        with Session(engine) as session:
+
+            Genre.__table__.create(bind=engine, checkfirst=True)
+            User.__table__.create(bind=engine, checkfirst=True)
+            Movie.__table__.create(bind=engine, checkfirst=True)
+            Theatre.__table__.create(bind=engine, checkfirst=True)
+            Seat.__table__.create(bind=engine, checkfirst=True)
+            Screening.__table__.create(bind=engine, checkfirst=True)
+            Booking.__table__.create(bind=engine, checkfirst=True)
+            Ticket.__table__.create(bind=engine, checkfirst=True)
+            add_theatre("Onyx", 24, 5, session)
+
+            session.commit()
+
+        Base.metadata.create_all(engine)
+        await add_genres()
 
 if __name__ == "__main__":
-
-    with Session(engine) as session:
-
-        Genre.__table__.create(bind=engine, checkfirst=True)
-        User.__table__.create(bind=engine, checkfirst=True)
-        Movie.__table__.create(bind=engine, checkfirst=True)
-        Theatre.__table__.create(bind=engine, checkfirst=True)
-        Seat.__table__.create(bind=engine, checkfirst=True)
-        Screening.__table__.create(bind=engine, checkfirst=True)
-        Booking.__table__.create(bind=engine, checkfirst=True)
-        Ticket.__table__.create(bind=engine, checkfirst=True)
-
-        session.commit()
-
-    Base.metadata.create_all(engine)
-
-
-        
-
+    asyncio.run(main())
