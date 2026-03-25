@@ -9,6 +9,12 @@ onMounted(async () => {
   loginWithRedirect();
 })
 </script>
-<template></template>
+<template><main></main></template>
 
-<style scoped></style>
+<style scoped>
+
+main {
+  flex: 1;
+}
+
+</style>
