@@ -21,13 +21,14 @@ const AdminCustomers = () => import('@/components/AdminCustomers.vue')
 
 const LoginGuard = async (to, from) => {
 
-    const {isLoading} = useAuth0();
+    const {isAuthenticated, checkSession, isLoading} = useAuth0();
+
+    await checkSession();
 
     while (isLoading.value) {
       await new Promise(resolve => setTimeout(resolve, 50))
     }
 
-    const { isAuthenticated } = useAuth0();
 
     if(! (isAuthenticated.value)) {
         return { name: 'home' };
