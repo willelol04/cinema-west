@@ -51,6 +51,8 @@ const cancelBooking = async (booking_cancel, customer) => {
 
 const handleCustomerDelete = (customer_delete) => {
   customerResults.value = customerResults.value.filter(customer => (customer.sub !== customer_delete.sub))
+  successToast("User deleted successfully.")
+
 
 }
 

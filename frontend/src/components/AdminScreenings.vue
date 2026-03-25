@@ -90,11 +90,10 @@ const handleDeleteScreening = async (screening) => {
       try {
         const token = await getAccessTokenSilently();
         await deleteScreening(screening, token);
-        successToast("Screening deleted from database.");
         screeningResults.value = screeningResults.value.filter(
             s => s.id !== screening.id
         );
-
+        successToast("Screening deleted successfully.");
       } catch(e) {
         errorToast("Error deleting screening. Try refreshing the page.");
       }
@@ -350,6 +349,10 @@ h1 {
 }
 
 .time-btn {
+  width: 100%;
+}
+
+.td-delete button {
   width: 100%;
 }
 
