@@ -21,7 +21,8 @@
     "vue": "^3.5.26",
     "vue-carousel-3d": "^0.2.0",
     "vue-router": "^4.6.4",
-    "vue-spinner": "^1.0.4"
+    "vue-spinner": "^1.0.4",
+    "vite": "^7.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.3",
