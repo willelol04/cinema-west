@@ -10,7 +10,7 @@
   ],
 
 "scripts": {
-    "heroku-postbuild": " npm i && cd frontend && npm install && npm run build",
+    "heroku-postbuild": " npm i && cd frontend && npm install && npm run build"
   },
   "dependencies": {
     "vite": "^7.3.0"
