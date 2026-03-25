@@ -20,11 +20,14 @@ const AdminScreenings = () => import('@/components/AdminScreenings.vue')
 const AdminCustomers = () => import('@/components/AdminCustomers.vue')
 
 const LoginGuard = async (to, from) => {
-    const { user, isLoading, isAuthenticated } = useAuth0();
+
+    const {isLoading} = useAuth0();
 
     while (isLoading.value) {
       await new Promise(resolve => setTimeout(resolve, 50))
     }
+
+    const { isAuthenticated } = useAuth0();
 
     if(! (isAuthenticated.value)) {
         return { name: 'home' };
