@@ -1,12 +1,10 @@
 <script setup>
 import MoviesListAdmin from '@/components/MoviesListAdmin.vue';
-import { onMounted, ref, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { onMounted, ref } from 'vue';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
-import MoviesList from './MoviesList.vue';
-import { getMovie, getMoviesAllAdmin } from '@/api/movies';
+import { getMoviesAllAdmin } from '@/api/movies';
 import {useAuth0} from "@auth0/auth0-vue";
-const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
+const { user, isAuthenticated, isLoading, error } = useAuth0();
 
 import {useAppToast} from "@/use/useToast.js";
 const {errorToast} = useAppToast();
@@ -30,7 +28,6 @@ async function fetchMovies() {
 const handleDelete = (movie) => {
   if(movieResults.value) {
     movieResults.value = movieResults.value.filter(m => m.id !== movie.id )
-
   }
 };
 

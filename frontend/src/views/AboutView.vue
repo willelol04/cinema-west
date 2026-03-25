@@ -1,9 +1,8 @@
 <script setup>
-import { RouterLink } from 'vue-router';
 </script>
 
 <template>
-  <section>
+  <main>
     <div class="about">
       <div class="about-box">
         <h1>About us</h1>
@@ -36,11 +35,11 @@ import { RouterLink } from 'vue-router';
         </p>
       </div>
     </div>
-  </section>
+  </main>
 </template>
 
 <style scoped>
-section {
+main {
   width: 100%;
   margin: 0 auto;
   text-align: center;
@@ -53,7 +52,7 @@ section {
   justify-content: center;
   padding: 24px;
 
-  background-image: url("@/assets/hero.jpg");
+  background-image: url("../assets/hero.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -75,21 +74,5 @@ h1 {
   text-align: center;
   margin-bottom: 20px;
   font-size: 36px;
-}
-a {
-  padding: 5px 10px;
-  display: block;
-  width: fit-content;
-  margin: 0 auto;
-  margin-top: 30px;
-  border-radius: 5px;
-  background-color: #e50914;
-  color: white;
-  transition: 300ms;
-}
-
-a:hover {
-  color: #e50914;
-  background-color: rgb(233, 222, 222);
 }
 </style>

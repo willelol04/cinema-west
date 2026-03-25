@@ -1,9 +1,6 @@
 <script setup>
 import { RouterLink } from 'vue-router';
-import {ref, computed, onMounted, onBeforeMount} from 'vue';
-import MoviesView from '@/views/MoviesView.vue';
-
-import Sort from '@/components/Sort.vue';
+import {ref, computed, onBeforeMount} from 'vue';
 
 const emit = defineEmits(['update'])
 
@@ -21,10 +18,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  showTimes: {
-    type: Boolean,
-    default: false,
-  }
 });
 
 const columns = ref(6);
@@ -60,18 +53,13 @@ const visibleMovies = computed(() => {
 });
 
 const canScrollLeft = () => {
-  if(start_ind.value > 0) {
-    return true;
+  return (start_ind.value > 0)
 
-  }
-  return false;
 };
 
 const canScrollRight = () => {
-  if((start_ind.value + 1) * columns.value < props.movies.length) {
-    return true;
-  }
-  return false;
+  return ((start_ind.value + 1) * columns.value < props.movies.length)
+
 }
 
 const scrollLeft = () => {
@@ -121,7 +109,7 @@ const scrollRight = () => {
       <div
           class="movie-card"
           v-for="(movie, index) in visibleMovies"
-          :key="movie"
+          :key="movie.id"
       >
         <RouterLink
             class="movie-link"
@@ -131,9 +119,6 @@ const scrollRight = () => {
               :src="(movie.poster_path ? `https://image.tmdb.org/t/p/original`+movie.poster_path : `https://placehold.co/400x600/000000/000000/png`)"
           />
           <h2 class="movie-card-title">{{ movie.title }}</h2>
-          <ul class="time-list" v-if="showTimes">
-            <li class="time" v-for="time in movie.times">{{ time }}</li>
-          </ul>
         </RouterLink>
       </div>
     </TransitionGroup>
@@ -203,8 +188,8 @@ section {
   opacity: 50%;
 }
 
-.movies-container,
-.movies-grid {
+.movies-container
+ {
   display: grid;
   grid-template-columns: repeat(5, minmax(100px, 1fr));
   margin: 0 auto;
@@ -215,26 +200,9 @@ section {
 
 .movie-card img {
   width: 100%;
-  border-radius: 10px;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
+  border-radius: 10px 10px 0px 0px;
 }
 
-.link {
-  background-color: var(--selected-default-color);
-  color: white;
-  width: 100%;
-  display: block;
-  margin: 0 auto;
-  padding: 15px;
-  border-radius: 10px;
-  transition: 300ms;
-}
-
-.link:hover {
-  background-color: rgb(233, 222, 222);
-  color: #e50914;
-}
 
 .movie-card {
   background-color: var(--secondary-bg);
@@ -276,8 +244,6 @@ section {
   transform: translateX(60px);
 }
 
-/* ensure leaving items are taken out of layout flow so that moving
-   animations can be calculated correctly. */
 .list-leave-active {
   visibility: hidden;
   transition: none;

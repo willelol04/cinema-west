@@ -1,6 +1,6 @@
 <script setup>
-import { format, formatDistance, formatRelative, subDays } from 'date-fns';
-import { RouterLink, useRouter } from 'vue-router';
+import { format } from 'date-fns';
+import { useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
 
 const Router = useRouter();
@@ -13,9 +13,6 @@ const goToMovie = (slide) => {
   const movie_id = props.upcomingMovies[slide.index].id;
   Router.push(`/movies/${movie_id}`);
 }
-
-
-
 
 const carousel = ref( {})
 
@@ -52,7 +49,7 @@ onMounted(() => {
 
 <template>
   <section>
-    <h1 style="text-align: center">Coming soon</h1>
+    <h1>Coming soon</h1>
     <Carousel3d
         class="carousel"
         :space="carousel.space"
@@ -98,6 +95,10 @@ onMounted(() => {
 section {
   padding: 20px 10vw;
   background-color: var(--main-bg);
+}
+
+section h1 {
+  text-align: center;
 }
 
 .slide,

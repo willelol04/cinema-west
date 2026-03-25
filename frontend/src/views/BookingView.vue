@@ -1,9 +1,8 @@
 <script setup>
-import { reactive, onMounted, ref, onBeforeUnmount, watch} from 'vue'; // probably want to use ref instead
-import MovieDetails from '@/components/MovieDetails.vue';
+import { onMounted, ref, onBeforeUnmount} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {useAuth0} from "@auth0/auth0-vue";
-import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+import { format } from 'date-fns';
 import {getScreening} from '@/api/screenings';
 import {addBooking} from '@/api/bookings';
 import NavigateBackButton from "@/components/NavigateBackButton.vue";
@@ -84,7 +83,6 @@ onMounted(async () => {
       }
     };
 
-
       ws.onmessage = async (event) => {
         if(JSON.parse(event.data)?.type === 'update') {
           booked_seat_ids.value = JSON.parse(event.data).booked_seat_ids
@@ -120,14 +118,11 @@ onMounted(async () => {
               class="screen"
               :style="{
     backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(https://image.tmdb.org/t/p/original${screeningResult.movie.backdrop_path})`,
-    backgroundSize: '100% 100%',
-    backgroundPosition: 'middle',
-    backgroundRepeat: 'no-repeat'
     }"
           ></div>
           <label
               v-for="(seat, ind) in screeningResult.theatre.seats"
-              :key="ind"
+              :key="seat"
               class="checkbox-label"
           >
             <div class="seat">
@@ -147,7 +142,7 @@ onMounted(async () => {
         <div class="booking-details">
           <div class="booking-info">
             <span class="booking-info-label">Seats selected:</span>
-            <span v-for="(seat, ind) in checkedSeats">{{seat.id}}, </span>
+            <span v-for="(seat, ind) in checkedSeats" :key="seat">{{seat.id}}, </span>
           </div>
           <div class="booking-info">
             <span class="booking-info-label">Total price:</span>
@@ -251,6 +246,9 @@ main {
   box-shadow: -1px 0px 40px 6px rgba(255, 255, 255, 0.45) inset;
   -webkit-box-shadow: -1px 0px 40px 6px rgba(255, 255, 255, 0.45) inset;
   -moz-box-shadow: -1px 0px 40px 6px rgba(255, 255, 255, 0.45) inset;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 form {
@@ -272,14 +270,6 @@ form {
   width: var(--seat-size);
   height: var(--seat-size);
   padding: 0;
-}
-.row {
-  margin-top: 40px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: nowrap;
 }
 
 input[type="checkbox"] {

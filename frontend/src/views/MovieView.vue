@@ -3,13 +3,12 @@ import MovieDetails from '@/components/MovieDetails.vue';
 import { useRoute } from 'vue-router';
 import { onMounted, ref } from 'vue';
 import { getMovie } from '@/api/movies';
-
+import {useAppToast} from "@/use/useToast.js";
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 
 const movieResults = ref(null);
 const fetchComplete = ref(true)
 
-import {useAppToast} from "@/use/useToast.js";
 const {successToast, errorToast} = useAppToast();
 
 const route = useRoute();

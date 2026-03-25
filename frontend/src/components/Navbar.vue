@@ -1,15 +1,13 @@
 <script setup>
 
 import { useRoute, RouterLink } from 'vue-router';
-import { ref, reactive, watch, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 
-import { useAuth0, User } from '@auth0/auth0-vue';
+import { useAuth0 } from '@auth0/auth0-vue';
 import LoginButton from './LoginButton.vue';
 import LogoutButton from './LogoutButton.vue';
 
 const { user, isAuthenticated, isLoading, error } = useAuth0()
-
-
 
 const dropDownState = ref(false);
 const route = useRoute();
@@ -46,11 +44,10 @@ watch(
 <template>
   <nav id="nav">
     <div class="top">
-      <h1>
+      <h1 style="vertical-align: middle">
         <RouterLink to="/"
         ><img
             src="../public/favicon.ico"
-            style="vertical-align: middle; margin-right: 15px"
             height="50"
         /><span class="logo-text">cinema west</span></RouterLink
         >
@@ -74,10 +71,10 @@ watch(
           <li>
             <RouterLink class="nav-item" to="/profile">My profile</RouterLink>
           </li>
-          <li class="nav-item" v-if="!isAuthenticated">
-            <LoginButton class="login-btn" />
+          <li  v-if="!isAuthenticated">
+            <LoginButton class="nav-item login-btn" />
           </li>
-          <li class="nav-item" v-else><LogoutButton class="logout-btn" /></li>
+          <li v-else><LogoutButton class="nav-item logout-btn" /></li>
         </ul>
       </div>
     </div>
@@ -116,10 +113,6 @@ watch(
 
 <style scoped>
 nav {
-  width: 100%;
-  background: var(--primary-bg);
-  z-index: 20;
-  padding-bottom: 0;
 }
 
 nav ul li {
@@ -132,12 +125,12 @@ nav ul li {
   transition: 300ms;
   width: 100%;
   border-bottom: 2px solid transparent;
+  text-align: center;
 }
 
 .activeNavLink {
   color: var(--selected-default-color);
   border-bottom: 2px solid var(--selected-default-color);
-  transition: 300ms;
 }
 
 .nav-item:hover,
@@ -160,7 +153,7 @@ nav ul li {
 }
 
 .dropdown-list {
-  width: 175px;
+  width: 200px;
   position: absolute;
   background-color: var(--secondary-bg);
   color: white;
@@ -195,9 +188,12 @@ nav ul li {
   font-size: 18px;
   border: 1px solid var(--default-border-bg);
   margin: 0;
+  width: 200px;
 }
 
 nav {
+  background: var(--primary-bg);
+  z-index: 20;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -228,6 +224,12 @@ nav > ul li a {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+.top h1{
+  a, img {
+    vertical-align: middle;
+  }
 }
 .login-btn {
   padding: 8px 5px;

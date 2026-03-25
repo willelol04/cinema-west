@@ -13,13 +13,13 @@ const props = defineProps({
   searchFunction: Function
 })
 
-const search_field = defineModel('Bing');
+const search_field = defineModel('search');
 
 const route = useRoute();
 const router = useRouter();
 const debounceUpdateData = debounce((newValue) => {
   const query = { ...route.query }
-  if (search_field.value) {
+  if (search_field.value && search_field.value.trim() !== '') {
     router.push({query: {q: search_field.value}});
   }
   else {
@@ -63,8 +63,7 @@ input {
   border-radius: 7px;
   margin: 0;
   width: 100%;
-  padding: 10px;
-  padding-left: 40px;
+  padding: 10px 10px 10px 40px;
 }
 
 label {

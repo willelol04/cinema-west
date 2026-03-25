@@ -1,17 +1,16 @@
 <script setup>
 import MoviesListAdmin from '@/components/MoviesListAdmin.vue';
-import { ref, watch, computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import { searchMovies, getMovie, getMoviesAll } from '../api/movies';
 import {useAuth0} from "@auth0/auth0-vue";
-const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
-import {debounce} from 'lodash';
 import Search from '@/components/Search.vue';
-
-
 import {useAppToast} from "@/use/useToast.js";
+
+
 const {errorToast} = useAppToast();
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
 const fetchComplete = ref(true);
 const movieResults = ref([]);
@@ -19,10 +18,6 @@ const addedMovies = ref([]);
 
 const route = useRoute();
 const router = useRouter();
-
-async function movieIsAdded(id) {
-  return (await getMovie(id) !== null ? true : false);
-}
 
 async function fetchMovieResults() {
   if(route.query.q) {

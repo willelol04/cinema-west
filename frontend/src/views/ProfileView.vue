@@ -2,22 +2,23 @@
 import Profile from '@/components/Profile.vue';
 import BookingCard from '@/components/BookingCard.vue';
 import { nextTick, onMounted, ref } from 'vue';
-import { useAuth0, User } from '@auth0/auth0-vue';
+import { useAuth0 } from '@auth0/auth0-vue';
 
 import {useRoute, useRouter} from 'vue-router';
 import { deleteBooking, getMyBookings } from '@/api/bookings'
 import BeatLoader from "vue-spinner/src/BeatLoader.vue";
+import {useAppToast} from "@/use/useToast.js";
 
 const route = useRoute();
 const router = useRouter();
 const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 
-import {useAppToast} from "@/use/useToast.js";
 const {successToast, errorToast} = useAppToast();
 
 const bookings = ref([])
 const showAlert = ref(false);
 const fetchComplete = ref(true)
+
 const fetchBookings = async () => {
   try {
     fetchComplete.value = false;
@@ -37,7 +38,7 @@ const fetchBookings = async () => {
 onMounted(async () => {
   await fetchBookings();
   await nextTick();
-  if(route.query.state=='new-booking' && route.query.bookingId) {
+  if(route.query.state==='new-booking' && route.query.bookingId) {
     showAlert.value = true;
   }
 })
@@ -53,8 +54,8 @@ const goToBooking = (bookingId) => {
 const cancelBooking = async (booking) => {
   try {
     const token = await getAccessTokenSilently();
-    const result = await deleteBooking({id: booking.id, screening_id: booking.screening_id}, token)
-    fetchBookings();
+    await deleteBooking({id: booking.id, screening_id: booking.screening_id}, token)
+    await fetchBookings();
   } catch (e) {
     errorToast("Error cancelling booking. Try refreshing the page.");
   }
@@ -87,6 +88,7 @@ const cancelBooking = async (booking) => {
             v-for="(booking, ind) in bookings"
             @delete="cancelBooking(booking)"
             :booking="booking"
+            :key="booking.id"
         />
       </div>
       <p v-else>You have no bookings</p>

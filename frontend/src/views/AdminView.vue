@@ -77,9 +77,8 @@ i {
 .dashboard-menu {
   width: 1000px;
   text-align: right;
-  margin: 0 auto;
   border-radius: 7px;
-  margin-bottom: 50px;
+  margin: 0 auto 50px;
 }
 
 ul {
@@ -89,8 +88,6 @@ ul {
   gap: 15px;
 }
 
-.main-content {
-}
 
 li a {
   width: 100%;

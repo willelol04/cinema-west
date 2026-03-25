@@ -1,6 +1,6 @@
 <script setup>
 
-import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+import { format } from 'date-fns';
 import NavigateBackButton from "@/components/NavigateBackButton.vue";
 
 defineProps({
@@ -15,9 +15,6 @@ defineProps({
   <section
       :style="{
     backgroundImage: `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'top',
-    backgroundRepeat: 'no-repeat'
     }"
   >
     <NavigateBackButton
@@ -56,6 +53,7 @@ defineProps({
             <h3>Genres</h3>
             <span
                 v-for="(genre, index) in movie.genres.slice(0, movie.genres.length - 1)"
+                :key="genre.id"
             >{{ genre.name }} | </span
             ><span>{{movie.genres[movie.genres.length -1].name}}</span>
           </div>
@@ -81,7 +79,7 @@ defineProps({
             <RouterLink
                 v-for="(screening, ind) in movie.screenings"
                 :to="`/booking/`+screening.id"
-                :key="screening"
+                :key="screening.id"
                 class="screening"
             ><h3>{{ format(screening.start_time, "HH:mm") }}</h3>
               {{ format(screening.start_time, "EEEE, MMM d") }}</RouterLink
@@ -98,6 +96,9 @@ defineProps({
 section {
   padding: 20px 200px;
   flex: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .movie-container {

@@ -22,16 +22,15 @@ a {
   padding: 5px 10px;
   display: block;
   width: fit-content;
-  margin: 0 auto;
-  margin-top: 30px;
+  margin: 30px auto 0;
   border-radius: 5px;
-  background-color: #e50914;
+  background-color: var(--selected-default-color);
   color: white;
   transition: 300ms;
 }
 
 a:hover {
-  color: #e50914;
-  background-color: rgb(233, 222, 222);
+  color: var(--selected-default-color);
+  background-color: white;
 }
 </style>

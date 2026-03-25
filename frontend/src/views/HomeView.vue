@@ -2,14 +2,12 @@
 import Hero from '@/components/Hero.vue';
 import MoviesList from '@/components/MoviesList.vue';
 import { ref, onMounted } from 'vue';
-import { ConfirmPopupStyle } from 'primevue';
-import { format, formatDistance, formatRelative, subDays } from 'date-fns';
 import { getMovieSchedule } from '@/api/movies';
-
+import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 import {useAppToast} from "@/use/useToast.js";
+
 const {successToast, errorToast} = useAppToast();
 
-import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
 const schedule = ref(null)
 const fetchComplete = ref(true)
 
@@ -32,9 +30,9 @@ const fetchComplete = ref(true)
   <main>
   <Hero v-if="schedule?.upcoming.length > 0" :upcomingMovies="schedule.upcoming"/>
     <div v-if="schedule?.today.length > 0 " class="hr"></div>
-  <MoviesList class="movieslist" v-if="schedule?.today.length > 0 " :scroll="true" :movies="schedule.today" title="Playing Today:" :showTimes="false" />
+  <MoviesList class="movies-list" v-if="schedule?.today.length > 0 " :scroll="true" :movies="schedule.today" title="Playing Today:" />
     <div v-if="schedule?.tomorrow.length > 0 " class="hr"></div>
-  <MoviesList class="movieslist" v-if="schedule?.tomorrow.length > 0 " :scroll="true" :movies="schedule.tomorrow" title="Playing Tomorrow:" :showTimes="false" />
+  <MoviesList class="movies-list" v-if="schedule?.tomorrow.length > 0 " :scroll="true" :movies="schedule.tomorrow" title="Playing Tomorrow:"/>
     <BeatLoader class="fetch-loading" :color="'#bdc7bf'" v-if="!fetchComplete"/>
   </main>
 
@@ -58,12 +56,12 @@ main {
   justify-content: center;
 }
 
-.movieslist {
+.movies-list {
   padding: 20px 200px;
 }
 
 @media screen and (max-width: 1200px) {
-  .movieslist {
+  .movies-list {
     padding: 10px;
   }
 }

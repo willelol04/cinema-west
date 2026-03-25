@@ -1,19 +1,17 @@
 <script setup>
-import MoviesList from './MoviesList.vue';
 import { ref, onMounted, reactive } from 'vue';
-import {useAuth0} from "@auth0/auth0-vue";
 import { getMoviesAll } from '@/api/movies';
 import { getTheatres } from '@/api/theatres';
-import { addScreening, getScreenings, deleteScreening } from '@/api/screenings';
-import router from '@/router';
+import { addScreening, deleteScreening } from '@/api/screenings';
+import {useAuth0} from "@auth0/auth0-vue";
 import {useRoute} from 'vue-router';
 import BeatLoader from "vue-spinner/src/BeatLoader.vue";
 import {format} from 'date-fns';
+import {useAppToast} from "@/use/useToast.js";
+import Search from '@/components/Search.vue'
 
 
 const route = useRoute();
-import {useAppToast} from "@/use/useToast.js";
-import Search from '@/components/Search.vue'
 const {successToast, errorToast} = useAppToast();
 
 import {normalFetch} from "@/api/general.js";
@@ -48,8 +46,6 @@ const fetchScreenings = async () => {
       searchParams.append('title', route.query.q);
     }
     screeningResults.value = await normalFetch(`/api/screenings?${searchParams}`);
-
-
   } catch (e) {
     errorToast("Error fetching screenings. Try refreshing the page.")
   } finally {
@@ -87,7 +83,6 @@ const addScreeningUpdate = async () => {
       errorToast("Error adding screening. Try refreshing the page.")
     }
   }
-
 }
 
 const handleDeleteScreening = async (screening) => {
@@ -103,7 +98,6 @@ const handleDeleteScreening = async (screening) => {
       } catch(e) {
         errorToast("Error deleting screening. Try refreshing the page.");
       }
-
     }
 }
 
@@ -155,49 +149,46 @@ onMounted(async () => {fetchComplete.value = false; await fetchMovies(); await f
     <div v-if="displayForm" class="add-screening">
       <form
           v-if="fetchComplete"
-          method="POST"
           @submit.prevent="addScreeningUpdate"
       >
         <h1>New Screening</h1>
-        <label for="movies">Movie:</label>
-        <span>
+        <div class="form-row">
+          <label for="movies">Movie:</label>
         <select v-model="screening.movie_id" id="movies" required>
           <option :value="null" selected>Select a Movie</option>
-          <option v-for="(movie,ind) in movieResults" :value="movie.id">
+          <option v-for="(movie,ind) in movieResults" :value="movie.id" :key="movie.id">
             {{ movie.title }}
           </option>
         </select>
-      </span>
+      </div>
 
-        <label for="time">Time:</label>
-        <span>
+        <div class="form-row">
+          <label for="time">Time:</label>
         <input type="datetime-local" v-model="start_time" id="time" />
         <button type="button" @click="addStartTime()">Add time</button>
-      </span>
-        <span>
-        <div class="screening_times">
+      </div>
+        <div class="form-row">
           <h3>Added times:</h3>
-          <div class="time" v-for="(time, ind) in screening.start_times">
-            <button type="button" @click="deleteTime(ind)">
-              {{time}}<i class="pi pi-times"></i>
+          <div class="time" v-for="(time, ind) in screening.start_times" :key="time">
+            <button type="button" class="time-btn" @click="deleteTime(ind)">
+              {{format(time, 'yyyy-MM-dd HH:mm')}}<i class="pi pi-times"></i>
             </button>
           </div>
         </div>
-      </span>
 
+        <div class="form-row">
         <label for="theatres">Theatre:</label>
-        <span>
         <select v-model="screening.theatre_id" id="theatres" required>
           <option :value="null" selected>Select a Theatre</option>
-          <option v-for="theatre in theatreResults" :value="theatre.id">
+          <option v-for="theatre in theatreResults" :value="theatre.id" :key="theatre.id">
             {{ theatre.name }}
           </option>
         </select>
-      </span>
-        <span>
+      </div>
+        <div class="form-row">
         <input type="submit" value="Submit" />
         <input type="button" @click="resetScreening" value="Cancel" />
-      </span>
+      </div>
       </form>
     </div>
 
@@ -263,14 +254,14 @@ option:hover {
   background-color: #494949;
 }
 
-span {
+.form-row {
   display: block;
   width: 100%;
-  margin-bottom: 32px;
+  margin-top: 16px;
 }
 
-span > input,
-span > button {
+ input,
+ button {
   width: 50%;
 }
 
@@ -292,7 +283,6 @@ h3 {
   overflow: hidden;
   border: 1px solid var(--default-border-bg);
   margin: 0 auto;
-  overflow: hidden;
 }
 
 td {
@@ -307,7 +297,7 @@ th {
 
 thead {
   position: sticky;
-  top: 0; /* Don't forget this, required for the stickiness */
+  top: 0;
 }
 
 tr {
@@ -358,4 +348,9 @@ h1 {
   gap: 5px;
   justify-content: space-between;
 }
+
+.time-btn {
+  width: 100%;
+}
+
 </style>

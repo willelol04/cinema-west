@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+
+</script>
 
 <template>
   <footer>
@@ -13,13 +15,13 @@
       <img src="../assets/tmdb-logo-text.svg" />
       <ul>
         <li>
-          <a href="#"><i class="pi pi-facebook"></i></a>
+          <RouterLink to="#"><i class="pi pi-facebook"></i></RouterLink>
         </li>
         <li>
-          <a href="#"><i class="pi pi-twitter"></i></a>
+          <RouterLink to="#"><i class="pi pi-twitter"></i></RouterLink>
         </li>
         <li>
-          <a href="#"><i class="pi pi-instagram"></i></a>
+          <RouterLink to="#"><i class="pi pi-instagram"></i></RouterLink>
         </li>
       </ul>
     </div>

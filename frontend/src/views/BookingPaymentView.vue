@@ -46,16 +46,16 @@ async function fetchBooking() {
 
     formData.amount = bookingResult.value.total_price
 
-    if(bookingResult.value.status == 'complete') {
+    if(bookingResult.value.status === 'complete') {
       paymentComplete.value = true;
-      router.push("/");
+      await router.push("/");
     } else {
       fetchComplete.value = true;
 
     }
 
   } catch(e) {
-      router.push("/");
+      await router.push("/");
   }
 }
 
@@ -125,7 +125,7 @@ const payBooking = async () => {
 
 <template>
   <main>
-    <div v-if="!paymentComplete" class="booking-confirmation">
+    <div v-if="!paymentComplete" class="booking-payment">
       <span>
       <NavigateBackButton
           v-if="fetchComplete"
@@ -188,7 +188,7 @@ main {
   padding: 100px;
 }
 
-.booking-confirmation {
+.booking-payment {
   width: 700px;
   min-height: 500px;
   margin: 0 auto;
@@ -203,7 +203,8 @@ h2 i {
   vertical-align: middle;
 }
 
-.booking-confirmation h1 {
+.booking-payment h1 {
+  margin-bottom: 16px;
   font-size: 24px;
 }
 
@@ -219,13 +220,13 @@ input {
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: #111;
   color: white;
+  margin-bottom: 16px;
 }
 button {
   padding: 5px 10px;
   display: block;
   width: fit-content;
-  margin: 0 auto;
-  margin-top: 30px;
+  margin: 30px auto 0;
   border-radius: 5px;
   background-color: #e50914;
   color: white;
@@ -241,7 +242,7 @@ form {
     padding: 10px;
   }
 
-  .booking-confirmation {
+  .booking-payment {
     width: 100%;
   }
 

@@ -15,9 +15,6 @@ const emits = defineEmits(['delete']);
       :id="`booking-`+booking.id"
       :style="{
     backgroundImage: `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url(https://image.tmdb.org/t/p/original${booking.screening.movie.poster_path})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'top',
-    backgroundRepeat: 'no-repeat'
     }"
   >
     <div class="booking-header">
@@ -32,8 +29,7 @@ const emits = defineEmits(['delete']);
       <div class="booking-info">
         <span class="seats-label label">Seats</span>
         <span class="seats-info"
-        ><span class="seat-info" v-for="(ticket, ind) in booking.tickets"
-        >{{ ticket.seat.id
+        ><span class="seat-info" v-for="(ticket, ind) in booking.tickets" :key="ticket.id">{{ ticket.seat.id
           }}<span v-if="ind < booking.tickets.length - 1">, </span></span
         ></span
         >
@@ -58,6 +54,9 @@ const emits = defineEmits(['delete']);
   border-radius: 10px;
   padding: 20px;
   height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .booking-info {

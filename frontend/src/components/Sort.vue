@@ -1,6 +1,5 @@
 <script setup>
 
-import { eachMinuteOfInterval } from 'date-fns';
 import {ref, onMounted, reactive, watch} from 'vue';
 import {debounce} from 'lodash';
 import { normalFetch } from '@/api/general';
@@ -37,10 +36,6 @@ async function fetchFilters() {
   }
 }
 
-
-
-
-
 onMounted(async () => await fetchFilters())
 
 const debounceUpdateData = debounce((newValue) => {
@@ -61,14 +56,14 @@ watch(sortData, debounceUpdateData, {deep: true})
 
     <select class="genre-select" v-model="sortData.genre">
       <option :value="null">All genres</option>
-      <option v-for="(genre, ind) in filters.genres" :value="genre.id">
+      <option v-for="(genre, ind) in filters.genres" :key="genre.id" :value="genre.id">
         {{ genre.name }}
       </option>
     </select>
 
     <select class="rating-select" v-model="sortData.rating">
       <option :value="null">All ratings</option>
-      <option v-for="(rating, ind) in filters.ratings" :value="rating">
+      <option v-for="(rating, ind) in filters.ratings" :key="rating" :value="rating">
         {{ rating }}
       </option>
     </select>
@@ -81,7 +76,6 @@ watch(sortData, debounceUpdateData, {deep: true})
   </div>
 </template>
 
-<script setup></script>
 
 <style scoped>
 .sort-container {

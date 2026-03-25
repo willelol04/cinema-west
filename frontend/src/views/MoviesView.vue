@@ -1,6 +1,5 @@
 <script setup>
 import { normalFetch } from '@/api/general';
-import { getMoviesAll } from '@/api/movies';
 import MoviesList from '@/components/MoviesList.vue';
 import Sort from '@/components/Sort.vue';
 import { onMounted, ref } from 'vue';

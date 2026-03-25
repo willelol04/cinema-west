@@ -1,25 +1,21 @@
 <script setup>
-import MoviesListAdmin from '@/components/MoviesListAdmin.vue';
 import Profile from '@/components/Profile.vue';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BeatLoader from 'vue-spinner/src/BeatLoader.vue';
-import {debounce} from 'lodash';
 import Search from '@/components/Search.vue'
-
-import { Auth0Plugin, useAuth0, User } from '@auth0/auth0-vue';
-const { user, isAuthenticated, isLoading, error, getAccessTokenSilently, checkSession } = useAuth0();
-
 import { searchUsers} from '../api/users';
 import { deleteBooking } from '../api/bookings';
+import {useAuth0 } from '@auth0/auth0-vue';
+import {useAppToast} from "@/use/useToast.js";
 
+const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
 const fetchComplete = ref(true);
 const customerResults = ref([]);
 
 const route = useRoute();
 const router = useRouter();
 
-import {useAppToast} from "@/use/useToast.js";
 const {successToast, errorToast} = useAppToast();
 
 async function fetchCustomerResults() {
@@ -29,7 +25,6 @@ async function fetchCustomerResults() {
     try {
       const token = await getAccessTokenSilently();
       customerResults.value = await searchUsers(route.query.q, token);
-
 
     } catch(e) {
       errorToast("Error fetching customers from database. Try refreshing the page.")
@@ -41,18 +36,23 @@ async function fetchCustomerResults() {
 }
 
 
-const cancelBooking = async (booking) => {
+const cancelBooking = async (booking_cancel, customer) => {
   try {
     if (confirm("Do you want to cancel the booking?")) {
       const token = await getAccessTokenSilently();
-      await deleteBooking({id: booking.id, screening_id: booking.screening.id}, token)
-      await fetchCustomerResults();
+      await deleteBooking({id: booking_cancel.id, screening_id: booking_cancel.screening.id}, token)
+      customer.bookings = customer.bookings.filter(booking => (booking.id !== booking_cancel.id))
       successToast("Booking cancelled.")
     }
   } catch (e) {
     errorToast("Error cancelling booking. Try refreshing the page.")
   }
 };
+
+const handleCustomerDelete = (customer_delete) => {
+  customerResults.value = customerResults.value.filter(customer => (customer.sub !== customer_delete.sub))
+
+}
 
 </script>
 
@@ -64,11 +64,16 @@ const cancelBooking = async (booking) => {
     <Search :header="`Search Customers:`" :searchFunction="fetchCustomerResults"/>
 
     <div class="customer-results" v-if="fetchComplete">
-      <div class="customer" v-for="customer in customerResults">
-        <Profile class="profile" v-if="fetchComplete"  @delete="fetchCustomerResults" :user="{email: customer.email, sub: customer.sub}"/>
+      <div class="customer" v-for="customer in customerResults" :key="customer.id">
+        <Profile class="profile" v-if="fetchComplete"  @delete="handleCustomerDelete" :user="{email: customer.email, sub: customer.sub}"/>
         <h3>Bookings:</h3>
         <ul class="bookings">
-          <li class="booking" v-for="booking in customer.bookings"><span class="booking-name"> {{ booking.tickets.length}} tickets to {{ booking.screening.movie.title }}, Booking ID:{{ booking.id }}</span><button @click="cancelBooking(booking)" class="delete-booking"><i class="pi pi-times"></i>Cancel</button></li>
+          <li class="booking" v-for="booking in customer.bookings" :key="booking.id">
+            <span class="booking-name">
+            {{ booking.tickets.length}} tickets to {{ booking.screening.movie.title }}, Booking ID:{{ booking.id }}
+            </span>
+            <button @click="cancelBooking(booking, customer)" class="delete-booking"><i class="pi pi-times"></i>Cancel</button>
+          </li>
         </ul>
       </div>
     </div>
@@ -77,12 +82,6 @@ const cancelBooking = async (booking) => {
     <BeatLoader v-if="!fetchComplete" class="fetch-loading" :color="'#bdc7bf'"/>
     <div v-if="fetchComplete && customerResults.length === 0 && route.query.q" class="empty">No results were found</div>
   </div>
-
-
-
-  <!--
-  <MoviesList title="Already added movies:"/>
-  -->
 
 </template>
 

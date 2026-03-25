@@ -1,9 +1,5 @@
 <script setup>
-import { format, formatDistance, formatRelative, subDays } from 'date-fns';
-import { RouterLink } from 'vue-router';
 import { ref, computed, onMounted } from 'vue';
-import MoviesView from '@/views/MoviesView.vue';
-import MovieDetails from './MovieDetails.vue';
 import {addMovie, deleteMovie} from '../api/movies'
 import {useAuth0} from "@auth0/auth0-vue";
 
@@ -23,37 +19,25 @@ const props = defineProps({
   action: String,
   limit: {
     type: Number,
-    default: 200,
+    default: 20,
   },
   display: {
     type: Number,
     default: 5,
   },
-  showTimes: {
-    type: Boolean,
-    default: false,
-  }
 });
 
 const visibleMovies = computed(() => {
-  const visible = props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
-  return visible;
+  return props.movies.slice(start_ind.value * props.display, start_ind.value * props.display + props.display);
 
 });
 
 const canScrollLeft = () => {
-  if(start_ind.value > 0) {
-    return true;
-
-  }
-  return false;
+  return (start_ind.value > 0)
 };
 
 const canScrollRight = () => {
-  if((start_ind.value + 1) * props.display < props.movies.length) {
-    return true;
-  }
-  return false;
+  return ((start_ind.value + 1) * props.display < props.movies.length)
 };
 
 const scrollLeft = () => {
@@ -133,9 +117,6 @@ const deleteMovieUpdate = async (movie) => {
         <div class="movie-details">
           <h2>{{ movie.title }}</h2>
           <p v-if="movie.overview">{{ movie.overview.slice(0, 300) }}...</p>
-          <ul class="time-list" v-if="showTimes">
-            <li class="time" v-for="time in movie.times">{{ time }}</li>
-          </ul>
         </div>
         <div class="movie-actions">
           <button
@@ -284,8 +265,6 @@ section {
   transform: translateX(30px);
 }
 
-/* ensure leaving items are taken out of layout flow so that moving
-   animations can be calculated correctly. */
 .list-leave-active {
   visibility: hidden;
   transition: none;

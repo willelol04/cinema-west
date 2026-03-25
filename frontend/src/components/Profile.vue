@@ -1,9 +1,9 @@
 
 <script setup>
-import { onMounted } from 'vue';
+
 import LogoutButton from './LogoutButton.vue';
 
-import { useAuth0, User } from '@auth0/auth0-vue';
+import { useAuth0 } from '@auth0/auth0-vue';
 import { deleteUser as deleteUserReq } from '@/api/users';
 
 import {useAppToast} from "@/use/useToast.js";
@@ -34,7 +34,7 @@ const deleteUser = async () => {
               });
 
             }
-            emit('delete');
+            emit('delete', props.user);
         } catch(e) {
             errorToast("Error deleting account. Try refreshing the page.")
         }
