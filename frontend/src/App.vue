@@ -16,16 +16,13 @@ watch(
     if(Auth0User && Auth0User.sub && !checkedUser.value) {
         checkedUser.value = true;
         const token = await getAccessTokenSilently();
-        const Auth0UserIsAdmin = Auth0User['http://localhost:8000/roles'].includes('admin')
+        const Auth0UserIsAdmin = Auth0User['http://localhost:8000/roles']?.includes('admin')
         let dbUser;
         try {
             dbUser = await getCurrentUser(token);
          } catch {
            dbUser = null
          }
-
-
-
 
         if(!dbUser) {
           await addUser({sub: Auth0User.sub, email:Auth0User.email, nickname: Auth0User.nickname, is_admin: Auth0UserIsAdmin}, token);
@@ -57,7 +54,7 @@ const toast = useToast();
 </script>
 
 <template>
-  <Navbar id="routerView"  />
+  <Navbar />
   <RouterView />
   <Toast position="top-center" id="toast"/>
   <Footer  />

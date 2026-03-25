@@ -55,7 +55,7 @@ watch(
         /><span class="logo-text">cinema west</span></RouterLink
         >
       </h1>
-      <div class="nav-dropdown first">
+      <div class="nav-dropdown">
         <button
             v-if="isAuthenticated && !isLoading && user"
             @click="toggleDropdown()"
@@ -187,7 +187,7 @@ nav ul li {
 }
 
 .user-btn {
-  width: 175px;
+  width: fit-content;
   background-color: var(--secondary-bg);
   color: var(--text-default-color);
   padding: 8px 5px;
