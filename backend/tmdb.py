@@ -13,7 +13,7 @@ tmdb_headers = {
 
 tmdb_client = httpx.AsyncClient(headers=tmdb_headers, base_url="https://api.themoviedb.org/3")
 
-async def get_from_TMDB(path, parameters):
+async def get_from_tmdb(path, parameters):
     response = await tmdb_client.get(url=path, params=parameters)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)

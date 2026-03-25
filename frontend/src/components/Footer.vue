@@ -44,7 +44,6 @@
 footer {
   width: 100%;
   display: flex;
-  height: 150px;
   justify-content: space-between;
   flex-direction: row;
   align-items: center;

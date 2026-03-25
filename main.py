@@ -229,7 +229,6 @@ def get_booking(id, session: Session = Depends(crud_operations.create_session), 
 @app.post("/api/pay-booking", status_code=204)
 async def pay_booking(data: validation.PaymentRequest, session: Session = Depends(crud_operations.create_session), user = Depends(verify_user)):
 
-    # Edited out transaction to darwinbank for the presentation
 
     DARWIN_BASE = "https://darwinbank.duckdns.org"
     async with httpx.AsyncClient() as client:
