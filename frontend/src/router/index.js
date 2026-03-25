@@ -23,12 +23,12 @@ const LoginGuard = async (to, from) => {
 
     const {isAuthenticated, checkSession, isLoading} = useAuth0();
 
-
     while (isLoading.value) {
       await new Promise(resolve => setTimeout(resolve, 50))
     }
 
     await checkSession();
+
 
     if(! (isAuthenticated.value)) {
         return { name: 'home' };
@@ -89,7 +89,7 @@ const router = createRouter({
             path: '/profile',
             name: 'profile',
             component: ProfileView,
-            meta : {Login: true},
+            beforeEnter: LoginGuard,
         },
         {
             path: '/admin',
@@ -136,23 +136,4 @@ const router = createRouter({
     ],
 });
 
-router.beforeEach( async (to, from) => {
-
-    if(to.meta?.Login === true) {
-        const {isAuthenticated, checkSession, isLoading} = useAuth0();
-
-
-        while (isLoading.value) {
-            await new Promise(resolve => setTimeout(resolve, 50))
-        }
-
-        await checkSession();
-
-        if(! (isAuthenticated.value)) {
-            return { name: 'home' };
-        }
-
-    }
-
-});
 export default router;

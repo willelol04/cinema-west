@@ -38,7 +38,15 @@ watch(
   }
 )
 
-onMounted(checkSession);
+onMounted(() => {
+  window.addEventListener('pageshow', (e) => {
+  if (e.persisted) {
+
+    window.location.reload();
+  }
+});
+
+});
 
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';

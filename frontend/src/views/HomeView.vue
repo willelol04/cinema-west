@@ -29,6 +29,7 @@ const fetchComplete = ref(true)
 
 </script>
 <template>
+  yesyes
   <main>
   <Hero v-if="schedule?.upcoming.length > 0" :upcomingMovies="schedule.upcoming"/>
     <div v-if="schedule?.today.length > 0 " class="hr"></div>
