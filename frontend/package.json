@@ -26,5 +26,5 @@
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/tsconfig": "^0.8.1",
     "vite-plugin-vue-devtools": "^8.0.5"
-  },
+  }
 }
