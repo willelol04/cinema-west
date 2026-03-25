@@ -25,8 +25,7 @@ const columns = ref(6);
 const updateColumns = () => {
   const width = window.innerWidth;
 
-  if (width < 400) columns.value = 1;
-  else if (width < 600) columns.value = 2;
+  if (width < 600) columns.value = 2;
   else if (width < 800) columns.value = 3;
   else if (width < 1000) columns.value = 4;
   else if (width < 1500) columns.value = 5;
