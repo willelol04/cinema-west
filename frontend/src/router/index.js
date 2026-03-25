@@ -23,12 +23,12 @@ const LoginGuard = async (to, from) => {
 
     const {isAuthenticated, checkSession, isLoading} = useAuth0();
 
-    await checkSession();
 
     while (isLoading.value) {
       await new Promise(resolve => setTimeout(resolve, 50))
     }
 
+    await checkSession();
 
     if(! (isAuthenticated.value)) {
         return { name: 'home' };
